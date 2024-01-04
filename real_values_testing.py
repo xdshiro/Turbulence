@@ -17,10 +17,10 @@ l0 (float) – inner scale in metres
 # %% Beam parameters
 lmbda = 633e-9
 L_prop = 150  # ! точно
-width0 = 15e-3  # !? может точно
+width0 = 15e-3 / 20  # !? может точно
 l, p = 0, 0
 # xy_lim_2D = (-8.0e-6, 8.0e-6)
-xy_lim_2D = (-50.0e-3, 50.0e-3)
+xy_lim_2D = np.array((-50.0e-3, 50.0e-3))
 res_xy_2D = 201
 
 # print(51 % 2)
@@ -53,7 +53,7 @@ r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=L_prop)
 print(f'r0 parameter: {r0}')
 L0 = 5
 L0 = 9
-l0 = 10e-3  # !!!!!!
+l0 = 5e-3  # !!!!!!
 psh_par = (r0, res_xy_2D, pxl_scale, L0, l0)
 
 # %%
@@ -66,6 +66,22 @@ print(f'SR={np.exp(-ryt)} (Rytov)')
 # exit()
 # exit()
 LG_21_2D = LG_simple(*mesh_2D, z=0, l=l, p=p, width=width0, k0=k0, x0=0, y0=0, z0=0)
+plot_field_both(LG_21_2D, extend=None)
+phase_screen = psh_wrap(psh_par)
+# print((np.sum(np.abs(LG_21_2D * np.exp(1j * phase_screen)) ** 2) * pxl_scale ** 2) / (np.sum(np.abs(LG_21_2D) ** 2) * pxl_scale ** 2))
+plot_field_both(phase_screen, extend=None)
+print(np.abs((np.sum(LG_21_2D * np.exp(1j * phase_screen)))) ** 2 / np.abs((np.sum(LG_21_2D))) ** 2)
+print(1, np.abs((np.sum(np.exp(1j * phase_screen * k0) * pxl_scale ** 2))) ** 2 / D_window ** 2)
+print(np.abs((np.sum(np.exp(1j * phase_screen) * pxl_scale ** 2))) ** 2)
+print(1 - np.var(phase_screen), np.exp(-np.var(phase_screen)))
+print(1 - np.var(phase_screen * lmbda / (2*np.pi)), np.exp(-np.var(phase_screen * lmbda / (2*np.pi))))
+print(np.var(phase_screen))
+field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, 150, screens_num=1)
+SR_gauss(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=3, max_cut=False)
+exit()
+
+
+# exit()
 # LG_21_2D_z01 = LG_simple(*mesh_2D, z=L_prop, l=2, p=1, width=width0, k0=k0, x0=0, y0=0, z0=0)
 
 
@@ -81,5 +97,5 @@ LG_21_2D = LG_simple(*mesh_2D, z=0, l=l, p=p, width=width0, k0=k0, x0=0, y0=0, z
 # field = propagation_ps(LG_21_2D, beam_par, psh_par, L_prop, screens_num=50)
 # plot_field_both(field, extend=None)
 #
-SR_gauss(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=5, max_cut=True)
+
 # 0.81
