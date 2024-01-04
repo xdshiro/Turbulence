@@ -17,7 +17,7 @@ l0 (float) – inner scale in metres
 # %% Beam parameters
 lmbda = 633e-9
 L_prop = 150  # ! точно
-width0 = 15e-3 / 20  # !? может точно
+width0 = 15e-3 / np.sqrt(2)  # !? может точно
 l, p = 0, 0
 # xy_lim_2D = (-8.0e-6, 8.0e-6)
 xy_lim_2D = np.array((-50.0e-3, 50.0e-3))
@@ -48,9 +48,11 @@ Cn2 = 10e-1
 Cn2 = 5e-1
 Cn2 = 3.21e-14
 # Cn2 = 1.35e-13
-Cn2 = 1.35e-13
+# Cn2 = 1.35e-13
 r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=L_prop)
-print(f'r0 parameter: {r0}')
+
+print(f'r0 parameter: {r0}, 2w0/r0={2 * width0 / r0}')
+exit()
 L0 = 5
 L0 = 9
 l0 = 5e-3  # !!!!!!

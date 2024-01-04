@@ -242,7 +242,7 @@ def psh_wrap(psh_par, seed=None):
 	return psh(r0, N, delta, L0, l0, seed=seed)
 
 
-def propagation_ps(beam_2D, beam_par, psh_par, L_prop, screens_num=1):
+def propagation_ps_simple(beam_2D, beam_par, psh_par, L_prop, screens_num=1):
 	l, p, width0, lmbda = beam_par
 	r0, res_xy_2D, pxl_scale, L0, l0 = psh_par
 	k0 = 2 * np.pi / lmbda
@@ -256,4 +256,30 @@ def propagation_ps(beam_2D, beam_par, psh_par, L_prop, screens_num=1):
 		E = opticalpropagation.angularSpectrum(
 			E * np.exp(1j * phase_screen_i), lmbda, pxl_scale, pxl_scale * 10, dL
 		)
+	return E
+
+def propagation_ps(beam_2D, beam_par, psh_par, L_prop, screens_num=1, multiplier=1, seed=None):
+	_, _, _, lmbda = beam_par
+	r0, res_xy_2D, pxl_scale, L0, l0 = psh_par
+	k0 = 2 * np.pi / lmbda
+	Cn2 = Cn2_from_r0(r0, k0, L_prop)
+	dL = L_prop / screens_num
+	if type(multiplier) is not list:
+		dMult = [multiplier ** (1 / screens_num)] * screens_num
+	else:
+		dMult = multiplier
+	r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=dL)
+
+
+	E = beam_2D
+	current_scale = 1
+	for i in range(screens_num):
+		psh_par_dL = r0, res_xy_2D, pxl_scale / current_scale, L0, l0
+		phase_screen_i = psh_wrap(psh_par_dL, seed=seed)
+		E = opticalpropagation.angularSpectrum(
+			E * np.exp(1j * phase_screen_i), lmbda,
+			pxl_scale / current_scale, pxl_scale / (current_scale * dMult[i]), dL
+		)
+		# plot_field_both(E, extend=None)
+		current_scale *= dMult[i]
 	return E
