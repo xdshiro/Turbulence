@@ -10,8 +10,9 @@ L_prop = 150  # propagation distance
 width0 = 15e-3 / np.sqrt(2)  # beam width
 xy_lim_2D = (-100.0e-3, 100.0e-3)  # window size to start with
 res_xy_2D = 401  # resolution
-# Cn2 = 1.35e-13  # turbulence strength
+# Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
 Cn2 = 3.21e-14
+# https://www.mdpi.com/2076-3417/11/22/10548
 L0 = 9
 l0 = 5e-3  # !!!!!!
 

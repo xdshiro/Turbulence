@@ -52,7 +52,7 @@ Cn2 = 3.21e-14
 r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=L_prop)
 
 print(f'r0 parameter: {r0}, 2w0/r0={2 * width0 / r0}')
-exit()
+
 L0 = 5
 L0 = 9
 l0 = 5e-3  # !!!!!!
@@ -64,7 +64,7 @@ screens_num = screens_number(Cn2, k0, dz=L_prop)
 print(f'Number of screen required: {screens_num}')
 
 ryt = rytov(Cn2, k0, L_prop)
-print(f'SR={np.exp(-ryt)} (Rytov)')
+print(f'SR={np.exp(-ryt)} (Rytov {ryt})')
 # exit()
 # exit()
 LG_21_2D = LG_simple(*mesh_2D, z=0, l=l, p=p, width=width0, k0=k0, x0=0, y0=0, z0=0)
@@ -72,16 +72,66 @@ plot_field_both(LG_21_2D, extend=None)
 phase_screen = psh_wrap(psh_par)
 # print((np.sum(np.abs(LG_21_2D * np.exp(1j * phase_screen)) ** 2) * pxl_scale ** 2) / (np.sum(np.abs(LG_21_2D) ** 2) * pxl_scale ** 2))
 plot_field_both(phase_screen, extend=None)
-print(np.abs((np.sum(LG_21_2D * np.exp(1j * phase_screen)))) ** 2 / np.abs((np.sum(LG_21_2D))) ** 2)
-print(1, np.abs((np.sum(np.exp(1j * phase_screen * k0) * pxl_scale ** 2))) ** 2 / D_window ** 2)
-print(np.abs((np.sum(np.exp(1j * phase_screen) * pxl_scale ** 2))) ** 2)
-print(1 - np.var(phase_screen), np.exp(-np.var(phase_screen)))
-print(1 - np.var(phase_screen * lmbda / (2*np.pi)), np.exp(-np.var(phase_screen * lmbda / (2*np.pi))))
-print(np.var(phase_screen))
+# print(np.abs((np.sum(LG_21_2D * np.exp(1j * phase_screen)))) ** 2 / np.abs((np.sum(LG_21_2D))) ** 2)
+# print(1, np.abs((np.sum(np.exp(1j * phase_screen * k0) * pxl_scale ** 2))) ** 2 / D_window ** 2)
+# print(np.abs((np.sum(np.exp(1j * phase_screen) * pxl_scale ** 2))) ** 2)
+# print(1 - np.var(phase_screen), np.exp(-np.var(phase_screen)))
+# print(1 - np.var(phase_screen * lmbda / (2*np.pi)), np.exp(-np.var(phase_screen * lmbda / (2*np.pi))))
+# print(np.var(phase_screen))
 field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, 150, screens_num=1)
-SR_gauss(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=3, max_cut=False)
-exit()
 
+
+def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_cut=False, seed=None):
+    _, _, width0, lmbda = beam_par
+    k0 = 2 * np.pi / lmbda
+    r0, N, pxl_scale, L0, l0 = psh_par
+    xy_array, _ = arrays_from_mesh(mesh_2D)
+    # res_xy_2D = len(xy_array)
+    # xy_scale = xy_array[1] - xy_array[0]
+    # assert N == len(xy_array), 'Resolution of the beam isn"t equal to the phase screen N'
+    # assert len(xy_array) % 2 == 0, 'Odd resolution of the beam'
+    LG_00 = LG_simple(*mesh_2D, z=0, l=0, p=0, width=width0, k0=k0, x0=0, y0=0, z0=0)
+    # I0 = np.abs(LG_simple(x=0, y=0, z=L_prop,
+    #                       l=0, p=0, width=width0, k0=k0, x0=0, y0=0, z0=0)) ** 2
+    I_avg_tot = 0
+    I_sqr_avg_tot = 0
+
+    Cn2 = Cn2_from_r0(r0, k0, L_prop)
+    dL = L_prop / screens_num
+    r0d = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=dL)
+    psh_par_dL = r0d, N, pxl_scale, L0, l0
+    # E = beam_2D
+
+    for i in range(epochs):
+        E = LG_00
+        for _ in range(screens_num):
+            if seed is not None:
+                phase_screen_i = psh_wrap(psh_par_dL, seed=seed+i)
+            else:
+                phase_screen_i = psh_wrap(psh_par_dL)
+            E = opticalpropagation.angularSpectrum(
+                E * np.exp(1j * phase_screen_i), lmbda, pxl_scale, pxl_scale, dL
+            )
+        current = np.abs(E) ** 2
+        I_avg_tot += current
+        I_sqr_avg_tot += current ** 2
+        # print(current, I0)
+        # if max_cut:
+        #     I_avg_tot += min(current, I0)
+        # else:
+        #     I_avg_tot += current
+        if i == 1:
+            plot_field_both(E, extend=None)
+    scin = (I_sqr_avg_tot / epochs) / (I_avg_tot / epochs) ** 2 - 1
+    return scin
+
+# print()
+# exit()
+scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=500, screens_num=2 , max_cut=False, seed=None)
+print(scin[res_xy_2D // 2, res_xy_2D // 2])
+plot_field_both(scin, extend=None)
+exit()
+SR_gauss(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=3, max_cut=False)
 
 # exit()
 # LG_21_2D_z01 = LG_simple(*mesh_2D, z=L_prop, l=2, p=1, width=width0, k0=k0, x0=0, y0=0, z0=0)
@@ -92,8 +142,6 @@ exit()
 
 
 # psh_test = psh_wrap(psh_par)
-
-
 
 
 # field = propagation_ps(LG_21_2D, beam_par, psh_par, L_prop, screens_num=50)

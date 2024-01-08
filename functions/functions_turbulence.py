@@ -172,6 +172,9 @@ def SR_gauss(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_
 	print(f'SR={SR}')
 	return SR
 
+
+
+
 def SR_gauss_or(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1):
 	l, p, width0, lmbda = beam_par
 	k0 = 2 * np.pi / lmbda
