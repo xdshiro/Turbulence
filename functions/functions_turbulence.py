@@ -7,6 +7,7 @@ from aotools.turbulence.phasescreen import ft_phase_screen as ps
 from aotools.turbulence.phasescreen import ft_sh_phase_screen as psh
 import math
 from scipy.special import assoc_laguerre
+import my_functions.functions_general as fg
 
 
 def plot_field_both(E, extend=None):
@@ -262,6 +263,8 @@ def propagation_ps_simple(beam_2D, beam_par, psh_par, L_prop, screens_num=1):
 	return E
 
 def propagation_ps(beam_2D, beam_par, psh_par, L_prop, screens_num=1, multiplier=1, seed=None):
+	if L_prop == 0:
+		return beam_2D
 	_, _, _, lmbda = beam_par
 	r0, res_xy_2D, pxl_scale, L0, l0 = psh_par
 	k0 = 2 * np.pi / lmbda
@@ -286,3 +289,53 @@ def propagation_ps(beam_2D, beam_par, psh_par, L_prop, screens_num=1, multiplier
 		# plot_field_both(E, extend=None)
 		current_scale *= dMult[i]
 	return E
+
+
+def propagation_no_ps(beam_2D, beam_par, psh_par, L_prop, screens_num=1, multiplier=1, seed=None):
+	if L_prop == 0:
+		return beam_2D
+	_, _, _, lmbda = beam_par
+	_, _, pxl_scale, _, _ = psh_par
+	# k0 = 2 * np.pi / lmbda
+
+	dL = L_prop / screens_num
+	if type(multiplier) is not list:
+		dMult = [multiplier ** (1 / screens_num)] * screens_num
+	else:
+		dMult = multiplier
+
+
+	E = beam_2D
+	current_scale = 1
+	for i in range(screens_num):
+
+		E = opticalpropagation.angularSpectrum(
+			E, lmbda,
+			pxl_scale / current_scale, pxl_scale / (current_scale * dMult[i]), dL
+		)
+		# plot_field_both(E, extend=None)
+		current_scale *= dMult[i]
+	return E
+
+
+def beam_expander(field, beam_par, psh_par, distance_both, steps_one):
+	beam_3d = np.zeros((*np.shape(field), steps_one * 2 + 1), dtype=complex)
+	beam_3d[:, :, steps_one] = field
+	# print((steps_one * 2 + 1) // 2, steps_one)
+	dz = distance_both / steps_one
+	# field_c = field
+	for i in range(steps_one):
+		beam_3d[:, :, steps_one + 1 + i] = propagation_no_ps(
+			beam_3d[:, :, steps_one + i], beam_par, psh_par, dz, multiplier=[1], screens_num=1, seed=None)
+	for i in range(steps_one):
+		beam_3d[:, :, steps_one - 1 - i] = propagation_no_ps(
+			beam_3d[:, :, steps_one - i], beam_par, psh_par, -dz, multiplier=[1], screens_num=1, seed=None)
+	return beam_3d
+
+def cut_circle_dots(points, R, x0, y0):
+	# Calculating the distance of each point from the center
+	distances = np.sqrt((points[:, 0] - x0) ** 2 + (points[:, 1] - y0) ** 2)
+
+	# Filtering points that are inside the ring (distance <= R)
+	filtered_points = points[distances <= R]
+	return filtered_points
