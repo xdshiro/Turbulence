@@ -339,3 +339,43 @@ def cut_circle_dots(points, R, x0, y0):
 	# Filtering points that are inside the ring (distance <= R)
 	filtered_points = points[distances <= R]
 	return filtered_points
+
+def rotation_matrix_x(angle):
+    c = np.cos(angle)
+    s = np.sin(angle)
+    return np.array([[1, 0, 0],
+                     [0, c, -s],
+                     [0, s, c]])
+
+
+def rotation_matrix_y(angle):
+    c = np.cos(angle)
+    s = np.sin(angle)
+    return np.array([[c, 0, s],
+                     [0, 1, 0],
+                     [-s, 0, c]])
+
+
+def rotation_matrix_z(angle):
+    c = np.cos(angle)
+    s = np.sin(angle)
+    return np.array([[c, -s, 0],
+                     [s, c, 0],
+                     [0, 0, 1]])
+
+
+def rotate_meshgrid(x, y, z, rx, ry, rz):
+    R_x = rotation_matrix_x(rx)
+    R_y = rotation_matrix_y(ry)
+    R_z = rotation_matrix_z(rz)
+
+    R = np.dot(R_z, np.dot(R_y, R_x))
+
+    xyz = np.stack([x.ravel(), y.ravel(), z.ravel()])
+    rotated_xyz = np.dot(R, xyz)
+
+    x_rotated = rotated_xyz[0].reshape(x.shape)
+    y_rotated = rotated_xyz[1].reshape(y.shape)
+    z_rotated = rotated_xyz[2].reshape(z.shape)
+
+    return x_rotated, y_rotated, z_rotated

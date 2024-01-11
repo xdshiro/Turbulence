@@ -23,8 +23,8 @@ import scipy.io as sio
 import matplotlib.pyplot as plt
 import my_functions.singularities as sing
 import my_functions.functions_general as fg
-import knots_ML.dots_processing as dp
-import knots_ML.center_beam_search as cbs
+import functions.dots_processing as dp
+import functions.center_beam_search as cbs
 import my_functions.beams_and_pulses as bp
 from os import listdir
 from os.path import isfile, join
