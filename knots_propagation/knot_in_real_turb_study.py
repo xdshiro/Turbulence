@@ -6,7 +6,7 @@ import functions.dots_processing as dp
 import functions.center_beam_search as cbs
 
 plot = True
-plot_3d = False
+plot_3d = True
 
 # %%  main parameters
 
@@ -28,9 +28,9 @@ crop = 300  # for the knot propagation
 crop_3d = 120  # for the knot
 
 
-z0 = knot_length * 1 + L_prop  # the source position
+z0 = knot_length * 0 + L_prop  # the source position
 prop1 = L_prop  # z0-prop1 - detector position
-prop2 = knot_length * 1  # z0-prop1-pro2 - knot center (assumed)
+prop2 = knot_length * 0  # z0-prop1-pro2 - knot center (assumed)
 # l = 0
 # p = 0
 # %%
@@ -84,10 +84,10 @@ field = (
 		C_31 * LG_simple(*mesh_2D, z0=z0, l=-3, p=1, width=width0, k0=k0)
 )
 
-if plot and 0:
+if plot:
 	plot_field_both(field, extend=extend)
 
-field_z = propagation_ps(field, beam_par, psh_par, prop1, multiplier=[1], screens_num=1, seed=1)
+field_z = propagation_ps(field, beam_par, psh_par, prop1, multiplier=[1], screens_num=1, seed=None)
 if plot and 0:
 	plot_field_both(field_z, extend=extend)
 
@@ -98,7 +98,7 @@ if plot and 0:
 field_z = propagation_ps(field_z, beam_par, psh_par_0, prop2, multiplier=[1], screens_num=1, seed=None)
 if plot:
 	plot_field_both(field_z, extend=extend)
-	exit()
+
 
 field_z_crop = field_z[
                res_xy_2D // 2 - crop // 2: res_xy_2D // 2 + crop // 2,
