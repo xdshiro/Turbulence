@@ -1,8 +1,6 @@
-from functions.functions_turbulence import *
-import my_functions.singularities as sing
-import functions.center_beam_search as cbs
+from functions_based import *
 import my_functions.plotings as pl
-import functions.data_generation as dg
+import knots_ML.data_generation as dg
 
 import numpy as np
 from scipy.special import assoc_laguerre
@@ -52,7 +50,7 @@ def LG_simple_xyz(x, y, z, l=1, p=0, width=1, k0=1, x0=0, y0=0, z0=0, width_gaus
 
 
 def LG_spectre_coeff_3D(field, l, p, xM=(-1, 1), yM=(-1, 1), zM=(-1, 1), width=1., k0=1., mesh=None,
-                        functions=LG_simple):
+                        functions=bp.LG_simple):
     """
     Function calculates a single coefficient of LG_l_p in the LG spectrum of the field
     :param field: complex electric field
@@ -83,7 +81,7 @@ def LG_spectre_coeff_3D(field, l, p, xM=(-1, 1), yM=(-1, 1), zM=(-1, 1), width=1
 
 
 def LG_spectrum(beam, l=(-3, 3), p=(0, 5), xM=(-1, 1), yM=(-1, 1), width=1., k0=1., mesh=None, plot=True,
-                functions=LG_simple, **kwargs):
+                functions=bp.LG_simple, **kwargs):
     """
 
     :param beam:
@@ -149,7 +147,7 @@ cmapE = 'hot'
 alpha_size = 5
 rotation_angle = 45 - np.degrees(np.arcsin(1 / alpha_size / np.sqrt(2)))
 rotation_angle = (45 - np.degrees(np.arcsin(1 / alpha_size / np.sqrt(2))))
-rotation_angle = 0
+
 # rotation_angle = (40)
 # rotation_angle = (35)
 # rotation_angle = 0
@@ -175,7 +173,7 @@ a_sin_array_CONST = [1, 1]
 # a_sin_array_CONST = [1.3, 1.3]
 # shift = 0.3  # 0.2
 shift = 0.0  # 0.2
-l1, l2, l3 = 0, 0, 0
+l1, l2, l3 = 1, 0, 0
 x_shift1, x_shift2 = +shift * l1, -shift * l2
 y_shift1, y_shift2 = -0.0 * l1, +0
 x_shift1 = +shift * np.cos(C_lobe1) * l1
@@ -344,18 +342,17 @@ def braid_before_trans(x, y, z, angle=0, pow_cos=1, pow_sin=1, theta=0, a_cos=1,
 
 
 def field_of_braids_separate_trefoil(mesh_3D, braid_func=braid, scale=None):
-    # mesh_3D_rotated = rotate_meshgrid(*mesh_3D, np.radians(180 - rotation_angle), np.radians(00), np.radians(0))
-    # mesh_3D_rotated = rotate_meshgrid(*mesh_3D, np.radians(-rotation_angle), np.radians(00), np.radians(0))
-    # mesh_3D_rotated_2 = rotate_meshgrid(*mesh_3D, np.radians(-180 + rotation_angle), np.radians(00), np.radians(0))
-    # mesh_3D_rotated_2 = rotate_meshgrid(*mesh_3D, np.radians(rotation_angle), np.radians(00), np.radians(0))
-    #
-    # xyz_array = [
-    #     (mesh_3D_rotated_2[0], mesh_3D_rotated_2[1], mesh_3D_rotated_2[2]),
-    #     (mesh_3D_rotated[0], mesh_3D_rotated[1], mesh_3D_rotated[2])
-    # ]
+    # mesh_3D_rotated = rotate_meshgrid(*mesh_3D, np.radians(45), np.radians(30), np.radians(30))
+    mesh_3D_rotated = rotate_meshgrid(*mesh_3D, np.radians(180 - rotation_angle), np.radians(00), np.radians(0))
+    mesh_3D_rotated = rotate_meshgrid(*mesh_3D, np.radians(-rotation_angle), np.radians(00), np.radians(0))
+    # mesh_3D_rotated = rotate_meshgrid(*mesh_3D, np.radians(180-43), np.radians(00), np.radians(0))
+    mesh_3D_rotated_2 = rotate_meshgrid(*mesh_3D, np.radians(-180 + rotation_angle), np.radians(00), np.radians(0))
+    mesh_3D_rotated_2 = rotate_meshgrid(*mesh_3D, np.radians(rotation_angle), np.radians(00), np.radians(0))
+    # mesh_3D_rotated_2 = rotate_meshgrid(*mesh_3D, np.radians(43-180), np.radians(00), np.radians(0))
+    # mesh_3D_rotated_2 =mesh_3D
     xyz_array = [
-        (mesh_3D[0], mesh_3D[1], mesh_3D[2]),
-        (mesh_3D[0], mesh_3D[1], mesh_3D[2])
+        (mesh_3D_rotated_2[0], mesh_3D_rotated_2[1], mesh_3D_rotated_2[2]),
+        (mesh_3D_rotated[0], mesh_3D_rotated[1], mesh_3D_rotated[2])
     ]
     # starting angle for each braid
     angle_array = np.array([0, 1. * np.pi])
@@ -438,21 +435,11 @@ y_ind = res_y_3D // 2 + 0
 # a_cos_array = [1, 1]
 # a_sin_array = [1, 1]
 field = field_of_braids_separate_trefoil(mesh_3D, braid_func=braid)
-plt.imshow(np.abs(field))
-plt.show()
 """field transformations"""
 # cone transformation
 field_milnor = field * (1 + R ** 2) ** 2
-plt.imshow(np.abs(field_milnor))
-plt.show()
-field_gauss = field_milnor * LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
-print(field_gauss)
-plt.imshow(np.abs(field_gauss.astype('uint8')))
-plt.show()
+field_gauss = field_milnor * bp.LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
 field_norm = dg.normalization_field(field_gauss)
-plt.imshow(np.abs(field_norm))
-plt.show()
-exit()
 moment0 = moments['l'][0]
 values_total = 0
 y_value = 0
@@ -465,9 +452,7 @@ k_0_spec = 1
 # pl.plot_3D_density(np.abs(field_norm))
 # plt.show()
 if plot_milnor_field:
-    plt.imshow(np.abs(field_norm))
-    plt.show()
-    plot_field_both(field_norm)
+    plot_field(field_norm)
     plt.show()
     # plot_field(field_norm[:, :, res_z_3D//2 - 10])
     # plt.show()
@@ -481,11 +466,11 @@ if plot_milnor_field:
     # plt.show()
     # plot_field(field_norm[:, :, res_z_3D // 2 - 60])
     # plt.show()
-    plot_field_both(field_norm[:, y_ind, :])
+    plot_field(field_norm[:, y_ind, :])
     plt.show()
 if plot_milnor_lines:
     _, dots_init = sing.get_singularities(np.angle(field_norm), axesAll=False, returnDict=True)
-    pl.plotDots(dots_init, boundary_3D, color='blue', show=True, size=7)
+    dp.plotDots(dots_init, boundary_3D, color='blue', show=True, size=7)
     plt.show()
 
 if plot_braids:
@@ -501,14 +486,14 @@ if plot_braids:
             f'_scale={str(scale[0]).replace(".", "d")}_resXY={res_x_3D}_resZ={res_z_3D}'
     )
     # np.save(file_name, np.array(dots_init))
-    pl.plotDots(dots_init, boundary_3D, color='red', show=True, size=7)
+    dp.plotDots(dots_init, boundary_3D, color='red', show=True, size=7)
     plt.show()
 
 # building 'LG' field
 #################################################################################
 
 # new_function = functools.partial(LG_simple_xz, y=y_value, width_gauss=width_gauss)#, width=w * w_spec)
-# new_function = functools.partial(LG_simple_xyz, width_gauss=width_gauss)  # , width=w * w_spec)
+new_function = functools.partial(LG_simple_xyz, width_gauss=width_gauss)  # , width=w * w_spec)
 field_norm = field_norm * gauss_z(*mesh_3D, width=width_gauss)
 # field_norm = np.load('trefoil3d.npy') * gauss_z(x=mesh_2D_xz[0], y=0, z=mesh_2D_xz[1], width=width_gauss)
 # plot_field(new_function(*mesh_2D_xz, l=1, p=1))
@@ -549,7 +534,7 @@ for l, p_array in enumerate(values):
             p_save.append(p)
             weight_save.append(value)
             # weights_important[f'{l + moment0}, {p}'] = value
-            field_new_3D += value * LG_simple(*mesh_3D, l=l + moment0, p=p,
+            field_new_3D += value * bp.LG_simple(*mesh_3D, l=l + moment0, p=p,
                                                  width=w * w_spec, k0=1, x0=0, y0=0, z0=0)
 print(np.array(weight_save) / np.linalg.norm(np.array(weight_save)))
 weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
@@ -557,8 +542,8 @@ field_new_3D = field_new_3D / np.abs(field_new_3D).max()
 print(weights_important)
 # scipy.io.savemat('weights_hopf_short_x5.mat', weights_important)
 # exit()
-if plot_real_field and 0:
-    plot_field_both(field_new_3D)
+if plot_real_field:
+    plot_field(field_new_3D, titles=('', ''), intensity=False, cmapF=cmapF, cmapE=cmapE, axes=False)
 
     plt.show()
     # plot_field(field_new_3D[:, y_ind, :])
@@ -572,7 +557,7 @@ if plot_real_lines:
     for l, p_array in enumerate(values):
         for p, value in enumerate(p_array):
             if abs(value) > modes_cutoff * abs(values).max():
-                field_new_3D_k += value * LG_simple(*mesh_3D_k, l=l + moment0, p=p,
+                field_new_3D_k += value * bp.LG_simple(*mesh_3D_k, l=l + moment0, p=p,
                                                        width=w * w_spec, k0=1, x0=0, y0=0, z0=0)
 
 

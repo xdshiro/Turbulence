@@ -70,17 +70,22 @@ def field_of_braids_trefoil_classic(mesh_3D, braid_func=braid):
 
 
 def field_of_braids_hopf_classic(mesh_3D, braid_func=braid):
+	mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(0), np.radians(00), np.radians(0))
 	xyz_array = [
-		(mesh_3D[0], mesh_3D[1], mesh_3D[2]),
+		(mesh_3D_new1[0], mesh_3D_new1[1], mesh_3D_new1[2]),
 		(mesh_3D[0], mesh_3D[1], mesh_3D[2])
 	]
+	# xyz_array = [
+	# 	(mesh_3D[0], mesh_3D[1], mesh_3D[2]),
+	# 	(mesh_3D[0], mesh_3D[1], mesh_3D[2])
+	# ]
 	# starting angle for each braid
 	angle_array = np.array([0, 1. * np.pi])
 	# powers in cos in sin
-	pow_cos_array = [0.5, 0.5]
-	pow_sin_array = [0.5, 0.5]
+	pow_cos_array = [1, 3]
+	pow_sin_array = [1, 3]
 	# conjugating the braid (in "Milnor" space)
-	conj_array = [0, 1]
+	conj_array = [0, 0]
 	# moving x+iy (same as in the paper)
 	theta_array = [0.0 * np.pi, 0 * np.pi]
 	# braid scaling
@@ -106,7 +111,7 @@ def field_of_braids_hopf_classic(mesh_3D, braid_func=braid):
 
 x_lim_3D, y_lim_3D, z_lim_3D = (-8.0, 8.0), (-8.0, 8.0), (-1.5, 1.5)
 # x_lim_3D, y_lim_3D, z_lim_3D = (-4.0, 4.0), (-4.0, 4.0), (-1.5, 1.5)
-res_x_3D, res_y_3D, res_z_3D = 180, 180, 40
+res_x_3D, res_y_3D, res_z_3D = 120, 120, 40
 # res_x_3D, res_y_3D, res_z_3D = 100, 100, 100
 x_3D = np.linspace(*x_lim_3D, res_x_3D)
 y_3D = np.linspace(*y_lim_3D, res_y_3D)
@@ -124,10 +129,10 @@ w = 1.6
 # plot_field_both(field[:, :, res_z_3D // 2])
 # plt.show()
 
-w = 1.2
+w = 1.1
 # field = field_of_braids_separate_trefoil(mesh_3D, braid_func=braid)
 field = field_of_braids_hopf_classic(mesh_3D, braid_func=braid)
-field *= (1 + R ** 2) ** 3
+field *= (1 + R ** 2) ** 4
 field *= LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
 
 plot_field_both(field[:, :, res_z_3D // 2])
@@ -148,7 +153,7 @@ total = 0
 l_save = []
 p_save = []
 weight_save = []
-modes_cutoff = 0.001
+modes_cutoff = 0.03
 moment0 = moments['l'][0]
 
 for l, p_array in enumerate(values):

@@ -127,7 +127,7 @@ def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1,
 
 # print()
 # exit()
-scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=500, screens_num=2 , max_cut=False, seed=None)
+scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=1000, screens_num=2 , max_cut=False, seed=None)
 print(scin[res_xy_2D // 2, res_xy_2D // 2])
 plot_field_both(scin, extend=None)
 exit()
