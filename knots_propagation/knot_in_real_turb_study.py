@@ -9,12 +9,12 @@ plot = True
 plot_3d = True
 
 # %%  main parameters
-
 lmbda = 633e-9  # wavelength
 L_prop = 100  # propagation distance
-knot_length = 1000  # 1000 how far is detector from the knot center
+knot_length = 100  # 1000 how far is detector from the knot center
 width0 = 15e-3 / np.sqrt(2)  # beam width
-xy_lim_2D = (-110.0e-3, 110.0e-3)  # window size to start with
+width0 = 5e-3 / np.sqrt(2)  # beam width
+xy_lim_2D = (-30.0e-3, 30.0e-3)  # window size to start with
 res_xy_2D = 401  # resolution
 # Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
 Cn2 = 3.21e-14
@@ -27,10 +27,9 @@ res_z = 40  # resolution of the knot is res_z+1
 crop = 300  # for the knot propagation
 crop_3d = 120  # for the knot
 
-
-z0 = knot_length * 0 + L_prop  # the source position
+z0 = knot_length * 1 + L_prop  # the source position
 prop1 = L_prop  # z0-prop1 - detector position
-prop2 = knot_length * 0  # z0-prop1-pro2 - knot center (assumed)
+prop2 = knot_length * 1  # z0-prop1-pro2 - knot center (assumed)
 # l = 0
 # p = 0
 # %%
@@ -88,9 +87,8 @@ if plot:
 	plot_field_both(field, extend=extend)
 
 field_z = propagation_ps(field, beam_par, psh_par, prop1, multiplier=[1], screens_num=1, seed=None)
-if plot and 0:
+if plot:
 	plot_field_both(field_z, extend=extend)
-
 
 # psh_par_0 = (r0 * 1e100, res_xy_2D, pxl_scale / 100, L0, l0 * 1e100)
 # beam_par = (0, 0, width0 / 100, lmbda)
@@ -99,13 +97,12 @@ field_z = propagation_ps(field_z, beam_par, psh_par_0, prop2, multiplier=[1], sc
 if plot:
 	plot_field_both(field_z, extend=extend)
 
-
 field_z_crop = field_z[
                res_xy_2D // 2 - crop // 2: res_xy_2D // 2 + crop // 2,
                res_xy_2D // 2 - crop // 2: res_xy_2D // 2 + crop // 2,
                ]
 
-if plot and 0:
+if plot:
 	plot_field_both(field_z_crop, extend=extend)
 
 
@@ -123,11 +120,14 @@ if plot_3d and 0:
 # plot_field_both(field_3d[:, :, res_z // 2 + 2], extend=extend)
 # plot_field_both(field_3d[:, :, res_z], extend=extend)
 
+x_cent_R, y_cent_R = find_center_of_intensity(field_z_crop)
+x_cent, y_cent = int(x_cent_R), int(y_cent_R)
+
 # phase = np.angle(x_new + 1j * y_new)
 # phase_mask = (phase > A) & (phase < B)
 field_3d_crop = field_3d[
-                crop // 2 - crop_3d // 2: crop // 2 + crop_3d // 2,
-                crop // 2 - crop_3d // 2: crop // 2 + crop_3d // 2,
+                x_cent - crop_3d // 2: x_cent + crop_3d // 2,
+                y_cent - crop_3d // 2: y_cent + crop_3d // 2,
                 :
                 ]
 
@@ -143,11 +143,12 @@ dots_init_dict, dots_init = sing.get_singularities(np.angle(field_3d_crop), axes
 dots_cut = cut_circle_dots(dots_init, crop_3d // 2, crop_3d // 2, crop_3d // 2)
 
 if plot_3d:
+	dots_bound = [
+		[0, 0, 0],
+		[crop_3d, crop_3d, res_z + 1],
+	]
 	# pl.plotDots(dots_init, dots_init, color='black', show=True, size=10)
-	pl.plotDots(dots_cut , dots_cut , color='black', show=True, size=10)
-	
-	
-	
+	pl.plotDots(dots_cut, dots_bound, color='black', show=True, size=10)
 
 # def find_beam_waist(field, mesh=None):
 # 	"""
