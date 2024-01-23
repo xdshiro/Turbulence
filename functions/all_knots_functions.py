@@ -33,7 +33,7 @@ def braid(x, y, z, angle=0, pow_cos=1, pow_sin=1, theta=0, a_cos=1, a_sin=1):
 			* sin_v(x, y, z, pow_sin) / a_sin_3D) * np.exp(1j * angle_3D)
 
 
-def hopf_standard(mesh_3D, braid_func=braid, modes_cutoff=0.01):
+def hopf_standard(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
 	mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
 	mesh_3D_new2 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
 	xyz_array = [
@@ -67,9 +67,14 @@ def hopf_standard(mesh_3D, braid_func=braid, modes_cutoff=0.01):
 	ans *= LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
 	
 	moments = {'p': (0, 6), 'l': (-6, 6)}
-	
+
+	_, _, res_z_3D = np.shape(mesh_3D_new1[0])
+	x_2D = mesh_3D[0][:, :, 0]
+	y_2D = mesh_3D[1][:, :, 0]
+	if plot:
+		plot_field_both(ans[:, :, res_z_3D // 2])
 	values = cbs.LG_spectrum(
-		ans[:, :, res_z_3D // 2], **moments, mesh=mesh_2D, plot=True, width=w, k0=1,
+		ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=True, width=w, k0=1,
 	)
 	l_save = []
 	p_save = []
@@ -88,22 +93,21 @@ def hopf_standard(mesh_3D, braid_func=braid, modes_cutoff=0.01):
 
 def field_knot_from_weights(values, mesh, w_real, k0=1, x0=0, y0=0, z0=0):
 	res = np.shape(mesh[0])
-	field_new_3D = np.zeros(res).astype(np.complex128)
+	field_new = np.zeros(res).astype(np.complex128)
 	
 	for i in range(len(values['l'])):
 		l, p, weight = values['l'][i], values['p'][i], values['weight'][i]
-		field_new_3D += weight * LG_simple(*mesh, l=l, p=p,
+		field_new += weight * LG_simple(*mesh, l=l, p=p,
 		                                   width=w_real, k0=k0, x0=x0, y0=y0, z0=z0)
 	
-	field_new_3D = field_new_3D / np.abs(field_new_3D).max()
-	return field_new_3D
+	field_new = field_new / np.abs(field_new).max()
+	return field_new
 
 
-# plot_field_both(field_new_3D[:, :, res_z_3D // 2])
-exit()
-dots_bound = [
-	[0, 0, 0],
-	[res_x_3D, res_y_3D, res_z_3D],
-]
-dots_init_dict, dots_init = sing.get_singularities(np.angle(field_new_3D), axesAll=True, returnDict=True)
-pl.plotDots(dots_init, dots_bound, color='black', show=True, size=10)
+
+# dots_bound = [
+# 	[0, 0, 0],
+# 	[res_x_3D, res_y_3D, res_z_3D],
+# ]
+# dots_init_dict, dots_init = sing.get_singularities(np.angle(field_new_3D), axesAll=True, returnDict=True)
+# pl.plotDots(dots_init, dots_bound, color='black', show=True, size=10)

@@ -75,27 +75,27 @@ C_31 = 0
 
 
 field = (
-		C00 * LG_simple(*mesh_2D, z0=z0, l=0, p=0, width=width0, k0=k0) +
-		C01 * LG_simple(*mesh_2D, z0=z0, l=0, p=1, width=width0, k0=k0) +
-		C02 * LG_simple(*mesh_2D, z0=z0, l=0, p=2, width=width0, k0=k0) +
-		C03 * LG_simple(*mesh_2D, z0=z0, l=0, p=3, width=width0, k0=k0) +
-		C30 * LG_simple(*mesh_2D, z0=z0, l=3, p=0, width=width0, k0=k0) +
-		C_31 * LG_simple(*mesh_2D, z0=z0, l=-3, p=1, width=width0, k0=k0)
+        C00 * LG_simple(*mesh_2D, z0=z0, l=0, p=0, width=width0, k0=k0) +
+        C01 * LG_simple(*mesh_2D, z0=z0, l=0, p=1, width=width0, k0=k0) +
+        C02 * LG_simple(*mesh_2D, z0=z0, l=0, p=2, width=width0, k0=k0) +
+        C03 * LG_simple(*mesh_2D, z0=z0, l=0, p=3, width=width0, k0=k0) +
+        C30 * LG_simple(*mesh_2D, z0=z0, l=3, p=0, width=width0, k0=k0) +
+        C_31 * LG_simple(*mesh_2D, z0=z0, l=-3, p=1, width=width0, k0=k0)
 )
 
 if plot:
-	plot_field_both(field, extend=extend)
+    plot_field_both(field, extend=extend)
 
 field_z = propagation_ps(field, beam_par, psh_par, prop1, multiplier=[1], screens_num=1, seed=None)
 if plot:
-	plot_field_both(field_z, extend=extend)
+    plot_field_both(field_z, extend=extend)
 
 # psh_par_0 = (r0 * 1e100, res_xy_2D, pxl_scale / 100, L0, l0 * 1e100)
 # beam_par = (0, 0, width0 / 100, lmbda)
 # field_z = propagation_ps(field_z, beam_par, psh_par_0, prop2 / 10000, multiplier=[1], screens_num=1, seed=None)
 field_z = propagation_ps(field_z, beam_par, psh_par_0, prop2, multiplier=[1], screens_num=1, seed=None)
 if plot:
-	plot_field_both(field_z, extend=extend)
+    plot_field_both(field_z, extend=extend)
 
 field_z_crop = field_z[
                res_xy_2D // 2 - crop // 2: res_xy_2D // 2 + crop // 2,
@@ -103,19 +103,14 @@ field_z_crop = field_z[
                ]
 
 if plot:
-	plot_field_both(field_z_crop, extend=extend)
-
-
-
-
-
+    plot_field_both(field_z_crop, extend=extend)
 
 # print(np.shape(field_z_c, rop))
 field_3d = beam_expander(field_z_crop, beam_par, psh_par_0, distance_both=knot_length, steps_one=res_z // 2)
 #
 if plot_3d and 0:
-	# plot_field_both(field_3d[:, :, 0], extend=extend)
-	plot_field_both(field_3d[:, :, res_z // 2], extend=extend)
+    # plot_field_both(field_3d[:, :, 0], extend=extend)
+    plot_field_both(field_3d[:, :, res_z // 2], extend=extend)
 # plot_field_both(field_3d[:, :, res_z // 2 + 1], extend=extend)
 # plot_field_both(field_3d[:, :, res_z // 2 + 2], extend=extend)
 # plot_field_both(field_3d[:, :, res_z], extend=extend)
@@ -132,8 +127,8 @@ field_3d_crop = field_3d[
                 ]
 
 if plot_3d:
-	# plot_field_both(field_3d_crop[:, :, 0], extend=extend)
-	plot_field_both(field_3d_crop[:, :, res_z // 2], extend=extend)
+    # plot_field_both(field_3d_crop[:, :, 0], extend=extend)
+    plot_field_both(field_3d_crop[:, :, res_z // 2], extend=extend)
 # plot_field_both(field_3d_crop[:, :, res_z // 2 + 1], extend=extend)
 # plot_field_both(field_3d_crop[:, :, res_z // 2 + 2], extend=extend)
 # plot_field_both(field_3d_crop[:, :, res_z], extend=extend)
@@ -143,12 +138,12 @@ dots_init_dict, dots_init = sing.get_singularities(np.angle(field_3d_crop), axes
 dots_cut = cut_circle_dots(dots_init, crop_3d // 2, crop_3d // 2, crop_3d // 2)
 
 if plot_3d:
-	dots_bound = [
-		[0, 0, 0],
-		[crop_3d, crop_3d, res_z + 1],
-	]
-	# pl.plotDots(dots_init, dots_init, color='black', show=True, size=10)
-	pl.plotDots(dots_cut, dots_bound, color='black', show=True, size=10)
+    dots_bound = [
+        [0, 0, 0],
+        [crop_3d, crop_3d, res_z + 1],
+    ]
+    # pl.plotDots(dots_init, dots_init, color='black', show=True, size=10)
+    pl.plotDots(dots_cut, dots_bound, color='black', show=True, size=10)
 
 # def find_beam_waist(field, mesh=None):
 # 	"""
