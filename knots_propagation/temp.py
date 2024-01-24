@@ -4,10 +4,12 @@ import my_functions.plotings as pl
 from functions.all_knots_functions import *
 
 plot = 1
-plot_3d = 1
+plot_3d = 0
 print_coeff = 1
 print_values = 1
-seed = 1
+seed = None
+
+no_turb = 0
 
 # meshes and boundaries for getting a knot
 x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2.0)
@@ -85,6 +87,8 @@ if print_values:
     print(f'Rayleigh Range (Zr) = {zR} (m)')
 psh_par = (r0, res_xy_2D_origin, pxl_scale, L0, l0)
 psh_par_0 = (r0 * 1e100, res_xy_2D_origin, pxl_scale, L0, l0 * 1e100)
+if no_turb:
+	psh_par = psh_par_0
 
 # getting the knot
 values = hopf_standard(mesh_3D_knot, braid_func=braid, plot=True)

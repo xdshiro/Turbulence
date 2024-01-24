@@ -274,7 +274,9 @@ def propagation_ps(beam_2D, beam_par, psh_par, L_prop, screens_num=1, multiplier
         dMult = [multiplier ** (1 / screens_num)] * screens_num
     else:
         dMult = multiplier
+    # print(1, r0)
     r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=dL)
+    # print(2, r0)
 
 
     E = beam_2D
@@ -282,6 +284,7 @@ def propagation_ps(beam_2D, beam_par, psh_par, L_prop, screens_num=1, multiplier
     for i in range(screens_num):
         psh_par_dL = r0, res_xy_2D, pxl_scale / current_scale, L0, l0
         phase_screen_i = psh_wrap(psh_par_dL, seed=seed)
+        # plot_field_both(phase_screen_i, extend=None)
         E = opticalpropagation.angularSpectrum(
             E * np.exp(1j * phase_screen_i), lmbda,
             pxl_scale / current_scale, pxl_scale / (current_scale * dMult[i]), dL
