@@ -393,7 +393,7 @@ def find_center_of_intensity(array):
         raise ValueError("Total intensity is zero, center of intensity is undefined")
     
     # Create grid of coordinates
-    x, y = np.meshgrid(np.arange(array.shape[1]), np.arange(array.shape[0]))
+    x, y = np.meshgrid(np.arange(array.shape[0]), np.arange(array.shape[1]), indexing='ij')
     
     # Calculate weighted sum of coordinates
     x_center = np.sum(x * np.abs(array) ** 2) / total_intensity
