@@ -19,7 +19,7 @@ import my_functions.beams_and_pulses as bp
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.io as sio
-from data_generation import *
+from data_generation_old import *
 
 
 from collections import Counter
