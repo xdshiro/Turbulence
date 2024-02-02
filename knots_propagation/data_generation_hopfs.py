@@ -135,7 +135,7 @@ for knot in knots:
 	)
 	if plot:
 		plot_field_both(field_before_prop)
-	for indx in trange(13, desc="Progress"):
+	for indx in trange(250, desc="Progress"):
 		# propagating in the turbulence prop1
 		field_after_turb = propagation_ps(
 			field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
