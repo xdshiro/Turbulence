@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from functions.all_knots_functions import *
 import os
 import pickle
@@ -136,7 +138,7 @@ for knot in knots:
     )
     if plot:
         plot_field_both(field_before_prop)
-    for indx in trange(1, desc="Progress"):
+    for indx in trange(2, desc="Progress"):
         # propagating in the turbulence prop1
         field_after_turb = propagation_ps(
             field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
@@ -154,7 +156,9 @@ for knot in knots:
                        res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
                        res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
                        ]
-
+        if 1:
+            filename = f'..\\data\\fields\\data_{knot}_{indx}.npy'  # l rows, p columns
+            np.save(filename, field_z_crop)
         if plot:
             plot_field_both(field_z_crop, extend=extend_crop)
 
@@ -179,14 +183,16 @@ for knot in knots:
                 field_center, **moments, mesh=mesh_2D_original, plot=False, width=width0, k0=k0,
                 functions=LG_simple, x0=x_cent_big_r, y0=y_cent_big_r
             )
-            plt.imshow(np.imag(spectrum).T[::-1, :])
-            plt.show()
-            plt.imshow(np.real(spectrum).T[::-1, :])
-            plt.show()
-            if 0:
+            # plt.imshow(np.imag(spectrum).T[::-1, :])
+            # plt.colorbar()
+            # plt.show()
+            # plt.imshow(np.real(spectrum).T[::-1, :])
+            # plt.colorbar()
+            # plt.show()
+            if 1:
                 filename = f'..\data\data_{knot}_spectr.csv'  # l rows, p columns
                 spectrum_list = (
-                        [moments['l'][0], moments['l'][1], moments['p'][0], moments['p'][1]] +
+                        [moments['l'][0], moments['l'][1], moments['p'][0], moments['p'][1]] + [indx] +
                         [[x.real, x.imag] for x in spectrum.flatten()]
                 )
                 dots_json = json.dumps(spectrum_list)
@@ -248,7 +254,7 @@ for knot in knots:
         else:
             knot_resolution = [new_resolution[0], new_resolution[0], res_z + 1]
         dots_cut_modified = np.vstack([[indx, 0, 0], knot_resolution, scaled_data])
-        if 0:
+        if 1:
             filename = f'..\data\data_{knot}.csv'
             dots_json = json.dumps(dots_cut_modified.tolist())
             with open(filename, 'a', newline='') as file:
