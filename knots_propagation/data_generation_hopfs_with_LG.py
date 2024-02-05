@@ -57,9 +57,9 @@ beam_par = (0, 0, width0, lmbda)
 # extra values (simulations)
 x_3D_knot, y_3D_knot = np.linspace(*x_lim_3D_knot, res_x_3D_knot), np.linspace(*y_lim_3D_knot, res_y_3D_knot)
 if res_z_3D_knot != 1:
-	z_3D_knot = np.linspace(*z_lim_3D_knot, res_z_3D_knot)
+    z_3D_knot = np.linspace(*z_lim_3D_knot, res_z_3D_knot)
 else:
-	z_3D_knot = 0
+    z_3D_knot = 0
 mesh_3D_knot = np.meshgrid(x_3D_knot, y_3D_knot, z_3D_knot, indexing='ij')
 x_2D_origin = np.linspace(*xy_lim_2D_origin, res_xy_2D_origin)
 y_2D_origin = np.linspace(*xy_lim_2D_origin, res_xy_2D_origin)
@@ -74,183 +74,186 @@ pxl_scale = (xy_lim_2D_origin[1] - xy_lim_2D_origin[0]) / (res_xy_2D_origin - 1)
 D_window = (xy_lim_2D_origin[1] - xy_lim_2D_origin[0])
 perfect_scale = lmbda * np.sqrt(L_prop ** 2 + (D_window / 2) ** 2) / D_window
 if print_values:
-	print(f'dx={pxl_scale * 1e6: .2f}um, perfect={perfect_scale * 1e6: .2f}um,'
-	      f' resolution required={math.ceil(D_window / perfect_scale + 1)}')
+    print(f'dx={pxl_scale * 1e6: .2f}um, perfect={perfect_scale * 1e6: .2f}um,'
+          f' resolution required={math.ceil(D_window / perfect_scale + 1)}')
 
 # extra values (turbulence)
 r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=L_prop)
 if print_values:
-	print(f'r0 parameter: {r0}, 2w0/r0={2 * width0 / r0}')
+    print(f'r0 parameter: {r0}, 2w0/r0={2 * width0 / r0}')
 screens_num = screens_number(Cn2, k0, dz=L_prop)
 if print_values:
-	print(f'Number of screen required: {screens_num}')
+    print(f'Number of screen required: {screens_num}')
 ryt = rytov(Cn2, k0, L_prop)
 if print_values:
-	print(f'SR={np.exp(-ryt)} (Rytov)')
+    print(f'SR={np.exp(-ryt)} (Rytov)')
 zR = (k0 * width0 ** 2)
 if print_values:
-	print(f'Rayleigh Range (Zr) = {zR} (m)')
+    print(f'Rayleigh Range (Zr) = {zR} (m)')
 psh_par = (r0, res_xy_2D_origin, pxl_scale, L0, l0)
 psh_par_0 = (r0 * 1e100, res_xy_2D_origin, pxl_scale, L0, l0 * 1e100)
 if no_turb:
-	psh_par = psh_par_0
+    psh_par = psh_par_0
 
 knot_types = {
-	'standard_16': hopf_standard_16,  # 1
-	'standard_14': hopf_standard_14,  # 2
-	'standard_18': hopf_standard_18,  # 3
-	'30both': hopf_30both,  # 4
-	'30oneZ': hopf_30oneZ,  # 5
-	'optimized': hopf_optimized,  # 6
-	'pm_03_z': hopf_pm_03_z,  # 7
-	'4foil': hopf_4foil,  # 8
-	'6foil': hopf_6foil,  # 9
-	'stand4foil': hopf_stand4foil,  # 10
-	'30oneX': hopf_30oneX,  # 11
-	
+    'standard_16': hopf_standard_16,  # 1
+    'standard_14': hopf_standard_14,  # 2
+    'standard_18': hopf_standard_18,  # 3
+    '30both': hopf_30both,  # 4
+    '30oneZ': hopf_30oneZ,  # 5
+    'optimized': hopf_optimized,  # 6
+    'pm_03_z': hopf_pm_03_z,  # 7
+    '4foil': hopf_4foil,  # 8
+    '6foil': hopf_6foil,  # 9
+    'stand4foil': hopf_stand4foil,  # 10
+    '30oneX': hopf_30oneX,  # 11
+
 }
 knots = [
-	'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
-	'optimized', 'pm_03_z', '4foil', '6foil', 'stand4foil',
-	'30oneX'
+    'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
+    'optimized', 'pm_03_z', '4foil', '6foil', 'stand4foil',
+    '30oneX'
 ]
 # getting the knot
 for knot in knots:
-	print(knot)
-	if os.path.exists(f'..\data\{knot}.pkl'):
-		with open(f'..\data\{knot}.pkl', 'rb') as file:
-			values = pickle.load(file)
-	else:
-		values = knot_types[knot](mesh_3D_knot, braid_func=braid, plot=True)
-		with open(f'..\data\{knot}.pkl', 'wb') as file:
-			pickle.dump(values, file)
-	# printing values
-	if print_coeff:
-		values_print = np.real(values['weight']) / np.sqrt(np.sum(np.real(values['weight']) ** 2)) * 10
-		values_print_formatted = [f'{val:.2f}' for val in values_print]
-		print(f'vales l: {values["l"]}, p: {values["p"]}, weights: {values_print_formatted}')
-	
-	# building the knot from the coefficients
-	field_before_prop = field_knot_from_weights(
-		values, mesh_2D_original, width0, k0=k0, x0=0, y0=0, z0=z0
-	)
-	if plot:
-		plot_field_both(field_before_prop)
-	for indx in trange(10, desc="Progress"):
-		# propagating in the turbulence prop1
-		field_after_turb = propagation_ps(
-			field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
-		)
-		if plot:
-			plot_field_both(field_after_turb, extend=extend)
-		
-		field_center = propagation_ps(
-			field_after_turb, beam_par, psh_par_0, prop2, multiplier=multiplier2, screens_num=screens_num2, seed=seed
-		)
-		if plot:
-			plot_field_both(field_center, extend=extend)
-		
-		field_z_crop = field_center[
-		               res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
-		               res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
-		               ]
-		
-		if plot:
-			plot_field_both(field_z_crop, extend=extend_crop)
-		
-		if spectrum_save:
-			x_cent_R_big, y_cent_R_big = find_center_of_intensity(field_center)
-			x_cent_big, y_cent_big = x_cent_R_big, y_cent_R_big
-			# x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * x_cent_big
-			# x_cent_big_r_2 = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * int(x_cent_big)
-			x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * round(x_cent_big)
-			# print(x_2D_origin[int(x_cent_big)], x_cent_big_r, x_cent_big_r_2, x_cent_big_r_3)
-			# y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * y_cent_big
-			y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * round(y_cent_big)
-			# # plot_field_both(field_center)
-			# field_spectrum = field_center[
-			#                x_cent_big - crop // 2: x_cent_big + crop // 2,
-			#                y_cent_big - crop // 2: y_cent_big + crop // 2,
-			#                ]
-			# radius_spectrum =
-			moments = {'p': (0, 6), 'l': (-6, 6)}
-			# mesh_2D =
-			spectrum = cbs.LG_spectrum(
-				field_center, **moments, mesh=mesh_2D_original, plot=False, width=width0, k0=k0,
-				functions=LG_simple, x0=x_cent_big_r, y0=y_cent_big_r
-			)
+    print(knot)
+    if os.path.exists(f'..\data\{knot}.pkl'):
+        with open(f'..\data\{knot}.pkl', 'rb') as file:
+            values = pickle.load(file)
+    else:
+        values = knot_types[knot](mesh_3D_knot, braid_func=braid, plot=True)
+        with open(f'..\data\{knot}.pkl', 'wb') as file:
+            pickle.dump(values, file)
+    # printing values
+    if print_coeff:
+        values_print = np.real(values['weight']) / np.sqrt(np.sum(np.real(values['weight']) ** 2)) * 10
+        values_print_formatted = [f'{val:.2f}' for val in values_print]
+        print(f'vales l: {values["l"]}, p: {values["p"]}, weights: {values_print_formatted}')
 
-			filename = f'..\data\data_{knot}_spectr.csv'  # l rows, p columns
-			spectrum_list = (
-					[moments['l'][0], moments['l'][1], moments['p'][0], moments['p'][1]] +
-			                 [[x.real, x.imag] for x in spectrum.flatten()]
-			)
-			dots_json = json.dumps(spectrum_list)
-			with open(filename, 'a', newline='') as file:
-				writer = csv.writer(file)
-				writer.writerow([dots_json])
-			# plot_field_both(field_center)
-		# exit()
-		x_cent_R, y_cent_R = find_center_of_intensity(field_z_crop)
-		x_cent, y_cent = int(x_cent_R), int(y_cent_R)
-		field_3d = beam_expander(field_z_crop, beam_par, psh_par_0, distance_both=knot_length, steps_one=res_z // 2)
-		
-		
-		if print_values:
-			print(f'Centers: {x_cent}, {y_cent} out of {crop}')
-		
-		field_3d_crop = field_3d[
-		                x_cent - crop_3d // 2: x_cent + crop_3d // 2,
-		                y_cent - crop_3d // 2: y_cent + crop_3d // 2,
-		                :
-		                ]
-		if no_last_plane:
-			field_3d_crop = field_3d_crop[:, :, :-1]
-		if plot_3d:
-			plot_field_both(field_3d_crop[:, :, res_z // 2], extend=extend_crop3d)
-		
-		dots_init_dict, dots_init = sing.get_singularities(np.angle(field_3d_crop), axesAll=False, returnDict=True)
-		
-		dots_cut_non_unique = cut_circle_dots(dots_init, crop_3d // 2, crop_3d // 2, crop_3d // 2)
-		
-		# check if there is no same points
-		# Creating a view with a compound data type
-		view = np.ascontiguousarray(dots_cut_non_unique).view(
-			np.dtype((np.void, dots_cut_non_unique.dtype.itemsize * dots_cut_non_unique.shape[1]))
-		)
-		# Using np.unique with the view
-		_, idx = np.unique(view, return_index=True)
-		dots_cut = dots_cut_non_unique[idx]
-		
-		# decreasing the resolution of knots
-		# knot_resolution = [crop_3d, crop_3d, res_z + 1]
-		original_resolution = (crop_3d, crop_3d)
-		
-		scale_x = new_resolution[0] / original_resolution[0]
-		scale_y = new_resolution[1] / original_resolution[1]
-		xy = dots_cut[:, :2]  # First two columns (x and y)
-		z = dots_cut[:, 2]  # Third column
-		scaled_xy = xy * [scale_x, scale_y]
-		scaled_xy = np.rint(scaled_xy).astype(int)
-		scaled_data = np.column_stack((scaled_xy, z))
-		if plot_3d:
-			dots_bound = [
-				[0, 0, 0],
-				[crop_3d, crop_3d, res_z + 1],
-			]
-			pl.plotDots(scaled_data, dots_bound, color='black', show=True, size=10)
-		
-		if no_last_plane:
-			knot_resolution = [new_resolution[0], new_resolution[0], res_z]
-		else:
-			knot_resolution = [new_resolution[0], new_resolution[0], res_z + 1]
-		dots_cut_modified = np.vstack([[indx, 0, 0], knot_resolution, scaled_data])
-		
-		filename = f'..\data\data_{knot}.csv'
-		dots_json = json.dumps(dots_cut_modified.tolist())
-		with open(filename, 'a', newline='') as file:
-			writer = csv.writer(file)
-			writer.writerow([dots_json])
+    # building the knot from the coefficients
+    field_before_prop = field_knot_from_weights(
+        values, mesh_2D_original, width0, k0=k0, x0=0, y0=0, z0=z0
+    )
+    if plot:
+        plot_field_both(field_before_prop)
+    for indx in trange(1, desc="Progress"):
+        # propagating in the turbulence prop1
+        field_after_turb = propagation_ps(
+            field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
+        )
+        if plot:
+            plot_field_both(field_after_turb, extend=extend)
+
+        field_center = propagation_ps(
+            field_after_turb, beam_par, psh_par_0, prop2, multiplier=multiplier2, screens_num=screens_num2, seed=seed
+        )
+        if plot:
+            plot_field_both(field_center, extend=extend)
+
+        field_z_crop = field_center[
+                       res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
+                       res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
+                       ]
+
+        if plot:
+            plot_field_both(field_z_crop, extend=extend_crop)
+
+        if spectrum_save:
+            x_cent_R_big, y_cent_R_big = find_center_of_intensity(field_center)
+            x_cent_big, y_cent_big = x_cent_R_big, y_cent_R_big
+            # x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * x_cent_big
+            # x_cent_big_r_2 = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * int(x_cent_big)
+            x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * round(x_cent_big)
+            # print(x_2D_origin[int(x_cent_big)], x_cent_big_r, x_cent_big_r_2, x_cent_big_r_3)
+            # y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * y_cent_big
+            y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * round(y_cent_big)
+            # # plot_field_both(field_center)
+            # field_spectrum = field_center[
+            #                x_cent_big - crop // 2: x_cent_big + crop // 2,
+            #                y_cent_big - crop // 2: y_cent_big + crop // 2,
+            #                ]
+            # radius_spectrum =
+            moments = {'p': (0, 6), 'l': (-6, 6)}
+            # mesh_2D =
+            spectrum = cbs.LG_spectrum(
+                field_center, **moments, mesh=mesh_2D_original, plot=False, width=width0, k0=k0,
+                functions=LG_simple, x0=x_cent_big_r, y0=y_cent_big_r
+            )
+            plt.imshow(np.imag(spectrum).T[::-1, :])
+            plt.show()
+            plt.imshow(np.real(spectrum).T[::-1, :])
+            plt.show()
+            if 0:
+                filename = f'..\data\data_{knot}_spectr.csv'  # l rows, p columns
+                spectrum_list = (
+                        [moments['l'][0], moments['l'][1], moments['p'][0], moments['p'][1]] +
+                        [[x.real, x.imag] for x in spectrum.flatten()]
+                )
+                dots_json = json.dumps(spectrum_list)
+                with open(filename, 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([dots_json])
+        # plot_field_both(field_center)
+        # exit()
+        x_cent_R, y_cent_R = find_center_of_intensity(field_z_crop)
+        x_cent, y_cent = int(x_cent_R), int(y_cent_R)
+        field_3d = beam_expander(field_z_crop, beam_par, psh_par_0, distance_both=knot_length, steps_one=res_z // 2)
+
+        if print_values:
+            print(f'Centers: {x_cent}, {y_cent} out of {crop}')
+
+        field_3d_crop = field_3d[
+                        x_cent - crop_3d // 2: x_cent + crop_3d // 2,
+                        y_cent - crop_3d // 2: y_cent + crop_3d // 2,
+                        :
+                        ]
+        if no_last_plane:
+            field_3d_crop = field_3d_crop[:, :, :-1]
+        if plot_3d:
+            plot_field_both(field_3d_crop[:, :, res_z // 2], extend=extend_crop3d)
+
+        dots_init_dict, dots_init = sing.get_singularities(np.angle(field_3d_crop), axesAll=False, returnDict=True)
+
+        dots_cut_non_unique = cut_circle_dots(dots_init, crop_3d // 2, crop_3d // 2, crop_3d // 2)
+
+        # check if there is no same points
+        # Creating a view with a compound data type
+        view = np.ascontiguousarray(dots_cut_non_unique).view(
+            np.dtype((np.void, dots_cut_non_unique.dtype.itemsize * dots_cut_non_unique.shape[1]))
+        )
+        # Using np.unique with the view
+        _, idx = np.unique(view, return_index=True)
+        dots_cut = dots_cut_non_unique[idx]
+
+        # decreasing the resolution of knots
+        # knot_resolution = [crop_3d, crop_3d, res_z + 1]
+        original_resolution = (crop_3d, crop_3d)
+
+        scale_x = new_resolution[0] / original_resolution[0]
+        scale_y = new_resolution[1] / original_resolution[1]
+        xy = dots_cut[:, :2]  # First two columns (x and y)
+        z = dots_cut[:, 2]  # Third column
+        scaled_xy = xy * [scale_x, scale_y]
+        scaled_xy = np.rint(scaled_xy).astype(int)
+        scaled_data = np.column_stack((scaled_xy, z))
+        if plot_3d:
+            dots_bound = [
+                [0, 0, 0],
+                [crop_3d, crop_3d, res_z + 1],
+            ]
+            pl.plotDots(scaled_data, dots_bound, color='black', show=True, size=10)
+
+        if no_last_plane:
+            knot_resolution = [new_resolution[0], new_resolution[0], res_z]
+        else:
+            knot_resolution = [new_resolution[0], new_resolution[0], res_z + 1]
+        dots_cut_modified = np.vstack([[indx, 0, 0], knot_resolution, scaled_data])
+        if 0:
+            filename = f'..\data\data_{knot}.csv'
+            dots_json = json.dumps(dots_cut_modified.tolist())
+            with open(filename, 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([dots_json])
 
 # Now, 'data_array' is your original array
 # df = pd.DataFrame(dots_cut_modified)
@@ -260,9 +263,9 @@ for knot in knots:
 # df_dots.to_excel(excel_filename, index=False)
 exit()
 if plot_3d and 0:
-	dots_bound = [
-		[0, 0, 0],
-		[crop_3d, crop_3d, res_z + 1],
-	]
-	# pl.plotDots(dots_init, dots_init, color='black', show=True, size=10)
-	pl.plotDots(dots_cut, dots_bound, color='black', show=True, size=10)
+    dots_bound = [
+        [0, 0, 0],
+        [crop_3d, crop_3d, res_z + 1],
+    ]
+    # pl.plotDots(dots_init, dots_init, color='black', show=True, size=10)
+    pl.plotDots(dots_cut, dots_bound, color='black', show=True, size=10)
