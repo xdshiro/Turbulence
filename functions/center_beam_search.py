@@ -18,7 +18,7 @@ import my_functions.plotings as pl
 import my_functions.beams_and_pulses as bp
 import numpy as np
 
-def LG_spectre_coeff(field, l, p, xM=(-1, 1), yM=(-1, 1), width=1., k0=1., mesh=None, functions=bp.LG_simple):
+def LG_spectre_coeff(field, l, p, xM=(-1, 1), yM=(-1, 1), width=1., k0=1., mesh=None, functions=bp.LG_simple, **kwargs):
     """
     Function calculates a single coefficient of LG_l_p in the LG spectrum of the field
     :param field: complex electric field
@@ -41,7 +41,7 @@ def LG_spectre_coeff(field, l, p, xM=(-1, 1), yM=(-1, 1), width=1., k0=1., mesh=
         # print(123, xArray)
     # shape = np.shape(field)
     # xyMesh = fg.create_mesh_XY_old(xMax=xM[1], yMax=yM[1], xRes=shape[0], yRes=shape[1], xMin=xM[0], yMin=yM[0])
-    LGlp = functions(*mesh, l=l, p=p, width=width, k0=k0)
+    LGlp = functions(*mesh, l=l, p=p, width=width, k0=k0, **kwargs)
     # plt.imshow(LGlp)
     # plt.show()
     # print('hi')
