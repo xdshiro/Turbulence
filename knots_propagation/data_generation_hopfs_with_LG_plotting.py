@@ -7,13 +7,14 @@ import csv
 import json
 from tqdm import trange
 
-plot = 0
-plot_3d = 0
+plot_all = 0
+plot_final = 1
+plot_3d = 1
 print_coeff = 0
 print_values = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'data_strong_135_13'
+save = 0
 
 spectrum_save = 1
 no_turb = 0
@@ -32,17 +33,17 @@ res_xy_2D_origin = 300  # resolution
 
 res_z = 64  # resolution of the knot is res_z+1
 crop = 185  # for the knot propagation
-crop_3d = 100  # for the knot
+crop_3d = 110  # for the knot
 new_resolution = (64, 64)  # resolution of the knot to save
 
-screens_num1 = 4
+screens_num1 = 1
 multiplier1 = [1] * screens_num1
 screens_num2 = 1
 multiplier2 = [1] * screens_num2
 
 # turbulence
-Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
-# Cn2 = 3.21e-14
+# Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
+Cn2 = 3.21e-14
 # Cn2 = 3.21e-40
 # https://www.mdpi.com/2076-3417/11/22/10548
 L0 = 9  # outer scale
@@ -118,24 +119,17 @@ knots = [
     '30oneX'
 ]
 # knots = [
-#     '30oneX'
+#     'standard_14'
 # ]
-folder_path = os.path.join("..", folder)
-if not os.path.exists(folder_path):
-    os.makedirs(folder_path)
-folder_path = os.path.join("..", folder, "fields")
-if not os.path.exists(folder_path):
-    os.makedirs(folder_path)
-
 # getting the knot
 for knot in knots:
     print(knot)
-    if os.path.exists(f'../{folder}\{knot}.pkl'):
-        with open(f'../{folder}\{knot}.pkl', 'rb') as file:
+    if os.path.exists(f'..\data\{knot}.pkl'):
+        with open(f'..\data\{knot}.pkl', 'rb') as file:
             values = pickle.load(file)
     else:
         values = knot_types[knot](mesh_3D_knot, braid_func=braid, plot=True)
-        with open(f'../{folder}\{knot}.pkl', 'wb') as file:
+        with open(f'..\data\{knot}.pkl', 'wb') as file:
             pickle.dump(values, file)
     # printing values
     if print_coeff:
@@ -147,32 +141,30 @@ for knot in knots:
     field_before_prop = field_knot_from_weights(
         values, mesh_2D_original, width0, k0=k0, x0=0, y0=0, z0=z0
     )
-    if plot:
+    if plot_all:
         plot_field_both(field_before_prop)
-    for indx in trange(396, desc="Progress"):
+    for indx in trange(1, desc="Progress"):
         # propagating in the turbulence prop1
         field_after_turb = propagation_ps(
             field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
         )
-        if plot:
+        if plot_all:
             plot_field_both(field_after_turb, extend=extend)
 
         field_center = propagation_ps(
             field_after_turb, beam_par, psh_par_0, prop2, multiplier=multiplier2, screens_num=screens_num2, seed=seed
         )
-        if plot:
+        if plot_all:
             plot_field_both(field_center, extend=extend)
 
         field_z_crop = field_center[
                        res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
                        res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
                        ]
-        if 1:
-
-            filename = f'../{folder}\\fields\\data_{knot}_{indx}.npy'  # l rows, p columns
-
+        if save:
+            filename = f'..\\data\\fields\\data_{knot}_{indx}.npy'  # l rows, p columns
             np.save(filename, field_z_crop)
-        if plot:
+        if plot_final:
             plot_field_both(field_z_crop, extend=extend_crop)
 
         if spectrum_save:
@@ -202,8 +194,8 @@ for knot in knots:
             # plt.imshow(np.real(spectrum).T[::-1, :])
             # plt.colorbar()
             # plt.show()
-            if 1:
-                filename = f'../{folder}\data_{knot}_spectr.csv'  # l rows, p columns
+            if save:
+                filename = f'..\data\data_{knot}_spectr.csv'  # l rows, p columns
                 spectrum_list = (
                         [moments['l'][0], moments['l'][1], moments['p'][0], moments['p'][1]] + [indx] +
                         [[x.real, x.imag] for x in spectrum.flatten()]
@@ -260,15 +252,25 @@ for knot in knots:
                 [0, 0, 0],
                 [crop_3d, crop_3d, res_z + 1],
             ]
-            pl.plotDots(scaled_data, dots_bound, color='black', show=True, size=10)
+            fig = pl.plotDots(dots_cut, dots_bound, color='black', show=False, size=10)
+            fig.update_layout(
+                scene=dict(
+                    camera=dict(
+                        eye=dict(x=0, y=0, z=7),  # Adjust x, y, and z to set the default angle of view
+                        up=dict(x=0, y=1, z=0)
+                    )
+                )
+            )
+            # fig.update_layout(scene=dict(camera=dict(projection=dict(type='orthographic'))))
+            fig.show()
 
         if no_last_plane:
             knot_resolution = [new_resolution[0], new_resolution[0], res_z]
         else:
             knot_resolution = [new_resolution[0], new_resolution[0], res_z + 1]
         dots_cut_modified = np.vstack([[indx, 0, 0], knot_resolution, scaled_data])
-        if 1:
-            filename = f'../{folder}\data_{knot}.csv'
+        if save:
+            filename = f'..\data\data_{knot}.csv'
             dots_json = json.dumps(dots_cut_modified.tolist())
             with open(filename, 'a', newline='') as file:
                 writer = csv.writer(file)

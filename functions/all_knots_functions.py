@@ -326,7 +326,7 @@ def hopf_30oneZ(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
 def hopf_optimized(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     l_save = [0, 0, 0, 2]
     p_save = [0, 1, 2, 0]
-    weight_save = [2.96, -6.23, 4.75, 5.49]
+    weight_save = [2.96, -6.23, 4.75, -5.49]
     weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
     return weights_important
@@ -620,6 +620,70 @@ def hopf_30oneX(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
     return weights_important
 
+def unknot(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
+    mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
+    phase = np.angle(mesh_3D[0] + 1j * mesh_3D[1])
+    A, B = 0 * np.pi, 1 / 2 * np.pi
+
+
+    # phase_mask = (phase >= A) & (phase <= B)
+    phase_mask = (phase > A) & (phase < B)
+    # indexes = np.where(phase_mask)
+    # angle_3D[indexes] += C_lobe1
+    # angle_3D[phase_mask] += C_lobe1
+    xyz_array = [
+        (mesh_3D_new1[0], mesh_3D_new1[1], mesh_3D_new1[2]),
+    ]
+    # starting angle for each braid
+    angle_array = np.array([0])
+    # powers in cos in sin
+    pow_cos_array = [6]
+    pow_sin_array = [6]
+    # conjugating the braid (in "Milnor" space)
+    conj_array = [0]
+    # moving x+iy (same as in the paper)
+    theta_array = [0.0 * np.pi, 0 * np.pi]
+    # braid scaling
+    a_cos_array = [1, 1]
+    a_sin_array = [1, 1]
+
+    ans = 1
+    for i, xyz in enumerate(xyz_array):
+        if conj_array[i]:
+            ans *= np.conjugate(braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
+                                           a_cos_array[i], a_sin_array[i]))
+        else:
+            ans *= braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
+                              a_cos_array[i], a_sin_array[i])
+    R = np.sqrt(mesh_3D[0] ** 2 + mesh_3D[1] ** 2)
+    ans *= (1 + R ** 2) ** 6
+    w = 0.8
+    ans *= LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
+
+    moments = {'p': (0, 10), 'l': (-10, 10)}
+
+    _, _, res_z_3D = np.shape(mesh_3D_new1[0])
+    x_2D = mesh_3D[0][:, :, 0]
+    y_2D = mesh_3D[1][:, :, 0]
+    if plot:
+        plot_field_both(ans[:, :, res_z_3D // 2])
+    values = cbs.LG_spectrum(
+        ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=True, width=w, k0=1,
+    )
+    l_save = []
+    p_save = []
+    weight_save = []
+    moment0 = moments['l'][0]
+    for l, p_array in enumerate(values):
+        for p, value in enumerate(p_array):
+            if abs(value) > modes_cutoff * abs(values).max():
+                l_save.append(l + moment0)
+                p_save.append(p)
+                weight_save.append(value)
+    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+    return weights_important
+
 def hopf_new0(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
     mesh_3D_new2 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
@@ -708,7 +772,7 @@ if __name__ == "__main__":
     # y_2D_origin = np.linspace(*x_lim_3D_knot, res_x_3D_knot)
     # mesh_2D_original = np.meshgrid(x_2D_origin, y_2D_origin, indexing='ij')
 
-    values = hopf_new(mesh_3D_knot, braid_func=braid, plot=True)
+    values = unknot(mesh_3D_knot, braid_func=braid, plot=True)
 
     field = field_knot_from_weights(
         values, mesh_3D_knot, width0, k0=k0, x0=0, y0=0, z0=z0
