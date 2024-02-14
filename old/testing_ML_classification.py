@@ -24,7 +24,7 @@ from tqdm import trange
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #%%
 knot = 'standard_16'
-filename = f'..\data\data_{knot}.csv'
+filename = f'../data_weak\data_{knot}.csv'
 with open(filename, 'r') as file:
     reader = csv.reader(file)
     for row in reader:
@@ -68,7 +68,7 @@ num_classes = len(knots)
 X_list = []
 Y_list = []
 for knot in knots:
-    filename = f'..\data\data_{knot}.csv'
+    filename = f'../data_weak\data_{knot}.csv'
     with open(filename, 'r') as file:
         reader = csv.reader(file)
         for row in reader:

@@ -10,7 +10,8 @@ from tqdm import trange
 plot_all = 0
 plot_final = 1
 plot_3d = 1
-print_coeff = 0
+plot_spectrum = 1
+print_coeff = 1
 print_values = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
@@ -118,6 +119,12 @@ knots = [
     'optimized', 'pm_03_z', '4foil', '6foil', 'stand4foil',
     '30oneX'
 ]
+folder_path = os.path.join("..", 'data')
+if not os.path.exists(folder_path):
+    os.makedirs(folder_path)
+folder_path = os.path.join("..", 'data', "fields")
+if not os.path.exists(folder_path):
+    os.makedirs(folder_path)
 # knots = [
 #     'standard_14'
 # ]
@@ -185,7 +192,7 @@ for knot in knots:
             moments = {'p': (0, 6), 'l': (-6, 6)}
             # mesh_2D =
             spectrum = cbs.LG_spectrum(
-                field_center, **moments, mesh=mesh_2D_original, plot=False, width=width0, k0=k0,
+                field_center, **moments, mesh=mesh_2D_original, plot=plot_spectrum, width=width0, k0=k0,
                 functions=LG_simple, x0=x_cent_big_r, y0=y_cent_big_r
             )
             # plt.imshow(np.imag(spectrum).T[::-1, :])

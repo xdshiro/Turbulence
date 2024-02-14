@@ -116,12 +116,12 @@ knots = [
 # getting the knot
 for knot in knots:
 	print(knot)
-	if os.path.exists(f'..\data\{knot}.pkl'):
-		with open(f'..\data\{knot}.pkl', 'rb') as file:
+	if os.path.exists(f'../data_weak\{knot}.pkl'):
+		with open(f'../data_weak\{knot}.pkl', 'rb') as file:
 			values = pickle.load(file)
 	else:
 		values = knot_types[knot](mesh_3D_knot, braid_func=braid, plot=True)
-		with open(f'..\data\{knot}.pkl', 'wb') as file:
+		with open(f'../data_weak\{knot}.pkl', 'wb') as file:
 			pickle.dump(values, file)
 	# printing values
 	if print_coeff:
@@ -179,7 +179,7 @@ for knot in knots:
 		dots_cut_non_unique = cut_circle_dots(dots_init, crop_3d // 2, crop_3d // 2, crop_3d // 2)
 		
 		# check if there is no same points
-		# Creating a view with a compound data type
+		# Creating a view with a compound data_weak type
 		view = np.ascontiguousarray(dots_cut_non_unique).view(
 			np.dtype((np.void, dots_cut_non_unique.dtype.itemsize * dots_cut_non_unique.shape[1]))
 		)
@@ -211,7 +211,7 @@ for knot in knots:
 			knot_resolution = [new_resolution[0], new_resolution[0], res_z + 1]
 		dots_cut_modified = np.vstack([[indx, 0, 0], knot_resolution, scaled_data])
 		
-		filename = f'..\data\data_{knot}.csv'
+		filename = f'../data_weak\data_{knot}.csv'
 		dots_json = json.dumps(dots_cut_modified.tolist())
 		with open(filename, 'a', newline='') as file:
 			writer = csv.writer(file)

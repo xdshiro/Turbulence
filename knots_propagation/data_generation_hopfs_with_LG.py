@@ -7,16 +7,21 @@ import csv
 import json
 from tqdm import trange
 
+SAMPLES = 1
+indx_plus = 0
+
 plot = 0
 plot_3d = 0
 print_coeff = 0
 print_values = 0
+centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'data_strong_135_13'
+folder = 'data_basis'
+# folder = 'delete'
 
 spectrum_save = 1
-no_turb = 0
+no_turb = 1
 
 # meshes and boundaries for getting a knot
 x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2.0)
@@ -41,8 +46,9 @@ screens_num2 = 1
 multiplier2 = [1] * screens_num2
 
 # turbulence
-Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
-# Cn2 = 3.21e-14
+# Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
+Cn2 = 3.21e-14
+Cn2 = 3.21e-15
 # Cn2 = 3.21e-40
 # https://www.mdpi.com/2076-3417/11/22/10548
 L0 = 9  # outer scale
@@ -117,6 +123,11 @@ knots = [
     'optimized', 'pm_03_z', '4foil', '6foil', 'stand4foil',
     '30oneX'
 ]
+knots = [
+    'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
+    'optimized', 'pm_03_z',
+    '30oneX'
+]
 # knots = [
 #     '30oneX'
 # ]
@@ -149,7 +160,7 @@ for knot in knots:
     )
     if plot:
         plot_field_both(field_before_prop)
-    for indx in trange(396, desc="Progress"):
+    for indx in trange(SAMPLES, desc="Progress"):
         # propagating in the turbulence prop1
         field_after_turb = propagation_ps(
             field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
@@ -169,27 +180,24 @@ for knot in knots:
                        ]
         if 1:
 
-            filename = f'../{folder}\\fields\\data_{knot}_{indx}.npy'  # l rows, p columns
+            filename = f'../{folder}\\fields\\data_{knot}_{indx + indx_plus}.npy'  # l rows, p columns
 
             np.save(filename, field_z_crop)
         if plot:
             plot_field_both(field_z_crop, extend=extend_crop)
 
         if spectrum_save:
-            x_cent_R_big, y_cent_R_big = find_center_of_intensity(field_center)
-            x_cent_big, y_cent_big = x_cent_R_big, y_cent_R_big
-            # x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * x_cent_big
-            # x_cent_big_r_2 = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * int(x_cent_big)
-            x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * round(x_cent_big)
-            # print(x_2D_origin[int(x_cent_big)], x_cent_big_r, x_cent_big_r_2, x_cent_big_r_3)
-            # y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * y_cent_big
-            y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * round(y_cent_big)
-            # # plot_field_both(field_center)
-            # field_spectrum = field_center[
-            #                x_cent_big - crop // 2: x_cent_big + crop // 2,
-            #                y_cent_big - crop // 2: y_cent_big + crop // 2,
-            #                ]
-            # radius_spectrum =
+            if centering:
+                x_cent_R_big, y_cent_R_big = find_center_of_intensity(field_center)
+                x_cent_big, y_cent_big = x_cent_R_big, y_cent_R_big
+
+                x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * round(x_cent_big)
+
+                y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * round(y_cent_big)
+            else:
+                x_cent_big_r = 0
+                y_cent_big_r = 0
+
             moments = {'p': (0, 6), 'l': (-6, 6)}
             # mesh_2D =
             spectrum = cbs.LG_spectrum(
@@ -205,7 +213,7 @@ for knot in knots:
             if 1:
                 filename = f'../{folder}\data_{knot}_spectr.csv'  # l rows, p columns
                 spectrum_list = (
-                        [moments['l'][0], moments['l'][1], moments['p'][0], moments['p'][1]] + [indx] +
+                        [moments['l'][0], moments['l'][1], moments['p'][0], moments['p'][1]] + [indx + indx_plus] +
                         [[x.real, x.imag] for x in spectrum.flatten()]
                 )
                 dots_json = json.dumps(spectrum_list)
@@ -214,9 +222,13 @@ for knot in knots:
                     writer.writerow([dots_json])
         # plot_field_both(field_center)
         # exit()
-        x_cent_R, y_cent_R = find_center_of_intensity(field_z_crop)
-        x_cent, y_cent = int(x_cent_R), int(y_cent_R)
         field_3d = beam_expander(field_z_crop, beam_par, psh_par_0, distance_both=knot_length, steps_one=res_z // 2)
+
+        if centering:
+            x_cent_R, y_cent_R = find_center_of_intensity(field_z_crop)
+            x_cent, y_cent = int(x_cent_R), int(y_cent_R)
+        else:
+            x_cent, y_cent = crop // 2, crop // 2
 
         if print_values:
             print(f'Centers: {x_cent}, {y_cent} out of {crop}')
@@ -260,13 +272,13 @@ for knot in knots:
                 [0, 0, 0],
                 [crop_3d, crop_3d, res_z + 1],
             ]
-            pl.plotDots(scaled_data, dots_bound, color='black', show=True, size=10)
+            pl.plotDots(dots_cut, dots_bound, color='black', show=True, size=10)
 
         if no_last_plane:
             knot_resolution = [new_resolution[0], new_resolution[0], res_z]
         else:
             knot_resolution = [new_resolution[0], new_resolution[0], res_z + 1]
-        dots_cut_modified = np.vstack([[indx, 0, 0], knot_resolution, scaled_data])
+        dots_cut_modified = np.vstack([[indx + indx_plus, 0, 0], knot_resolution, scaled_data])
         if 1:
             filename = f'../{folder}\data_{knot}.csv'
             dots_json = json.dumps(dots_cut_modified.tolist())

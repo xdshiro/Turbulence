@@ -15,7 +15,7 @@ print(convolution_result)
 import numpy as np
 from scipy.signal import convolve2d
 import matplotlib.pyplot as plt
-# Load a standard image from skimage's data module
+# Load a standard image from skimage's data_weak module
 from skimage import data
 image = data.camera()
 kernel = np.array([[0, -0.5, 0], [-0.5, 1, -0.5], [0, -0.5, 0]])

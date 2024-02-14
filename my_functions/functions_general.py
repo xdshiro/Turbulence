@@ -153,10 +153,10 @@ def interpolation_real(field, xArray=None, yArray=None, **kwargs):
     return CloughTocher2DInterpolator(list(zip(xArrayFull, yArrayFull)), fArray1D, **kwargs)
 
 
-# function interpolate complex 2D array of any data into the function(x, y)
+# function interpolate complex 2D array of any data_weak into the function(x, y)
 def interpolation_complex(field, xArray=None, yArray=None, mesh=None, fill_value=False):
     """
-    function interpolate complex 2D array of any data into the function(x, y)
+    function interpolate complex 2D array of any data_weak into the function(x, y)
     :param field: initial complex 2D array
     :param xArray: x interval (range)
     :param yArray: y interval (range)
