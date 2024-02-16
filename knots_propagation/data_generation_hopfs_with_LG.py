@@ -7,7 +7,7 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 10
+SAMPLES = 1
 indx_plus = 0
 
 plot = 0
@@ -18,11 +18,11 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'data_high_10_norm'
+folder = 'data_basis'
 # folder = 'delete'
 
 spectrum_save = 1
-no_turb = 0
+no_turb = 1
 
 # meshes and boundaries for getting a knot
 x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2.0)
