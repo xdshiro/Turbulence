@@ -8,17 +8,18 @@ import json
 from tqdm import trange
 
 plot_all = 0
-plot_final = 1
-plot_3d = 1
+plot_final = 0
+plot_3d = 0
 plot_spectrum = 1
 print_coeff = 1
 print_values = 0
+centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
 save = 0
 
 spectrum_save = 1
-no_turb = 0
+no_turb = 1
 
 # meshes and boundaries for getting a knot
 x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2.0)
@@ -150,7 +151,8 @@ for knot in knots:
     )
     if plot_all:
         plot_field_both(field_before_prop)
-    for indx in trange(1, desc="Progress"):
+        # for indx in trange(1, desc="Progress"):
+    for indx in range(1):
         # propagating in the turbulence prop1
         field_after_turb = propagation_ps(
             field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
@@ -175,18 +177,18 @@ for knot in knots:
             plot_field_both(field_z_crop, extend=extend_crop)
 
         if spectrum_save:
-            x_cent_R_big, y_cent_R_big = find_center_of_intensity(field_center)
-            x_cent_big, y_cent_big = x_cent_R_big, y_cent_R_big
-            # x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * x_cent_big
-            # x_cent_big_r_2 = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * int(x_cent_big)
-            x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * round(x_cent_big)
-            # print(x_2D_origin[int(x_cent_big)], x_cent_big_r, x_cent_big_r_2, x_cent_big_r_3)
-            # y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * y_cent_big
-            y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * round(y_cent_big)
-            # # plot_field_both(field_center)
-            # field_spectrum = field_center[
-            #                x_cent_big - crop // 2: x_cent_big + crop // 2,
-            #                y_cent_big - crop // 2: y_cent_big + crop // 2,
+            if centering:
+                x_cent_R_big, y_cent_R_big = find_center_of_intensity(field_center)
+                x_cent_big, y_cent_big = x_cent_R_big, y_cent_R_big
+        
+                x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * round(
+                    x_cent_big)
+        
+                y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * round(
+                    y_cent_big)
+            else:
+                x_cent_big_r = 0
+                y_cent_big_r = 0
             #                ]
             # radius_spectrum =
             moments = {'p': (0, 6), 'l': (-6, 6)}
@@ -195,6 +197,12 @@ for knot in knots:
                 field_center, **moments, mesh=mesh_2D_original, plot=plot_spectrum, width=width0, k0=k0,
                 functions=LG_simple, x0=x_cent_big_r, y0=y_cent_big_r
             )
+            spectrum = spectrum / np.sqrt(np.sum(np.abs(spectrum) ** 2))
+            # print('\n', np.abs(np.sum((spectrum))))
+            # print(np.sum(np.abs(spectrum)))
+            # print(np.abs(np.sum(spectrum ** 2)))
+            print(np.sum(np.abs(spectrum) ** 2))
+            # print(np.sqrt(np.sum(np.abs(spectrum) ** 2)))
             # plt.imshow(np.imag(spectrum).T[::-1, :])
             # plt.colorbar()
             # plt.show()
