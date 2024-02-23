@@ -117,6 +117,8 @@ knot_types = {
     '6foil': hopf_6foil,  # 9
     'stand4foil': hopf_stand4foil,  # 10
     '30oneX': hopf_30oneX,  # 11
+    '15oneZ': hopf_15oneZ,
+    'dennis': hopf_dennis
 
 }
 knots = [
@@ -128,6 +130,9 @@ knots = [
     'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
     'optimized', 'pm_03_z',
     '30oneX'
+]
+knots = [
+    '15oneZ', 'dennis'
 ]
 # knots = [
 #     '30oneX'
