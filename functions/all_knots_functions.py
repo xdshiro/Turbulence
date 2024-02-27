@@ -843,7 +843,7 @@ if __name__ == "__main__":
     # y_2D_origin = np.linspace(*x_lim_3D_knot, res_x_3D_knot)
     # mesh_2D_original = np.meshgrid(x_2D_origin, y_2D_origin, indexing='ij')
 
-    values = unknot(mesh_3D_knot, braid_func=braid, plot=True)
+    values = hopf_dennis(mesh_3D_knot, braid_func=braid, plot=True)
 
     field = field_knot_from_weights(
         values, mesh_3D_knot, width0, k0=k0, x0=0, y0=0, z0=z0

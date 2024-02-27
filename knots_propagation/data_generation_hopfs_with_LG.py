@@ -7,7 +7,7 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 10
+SAMPLES = 1
 indx_plus = 0
 
 plot = 0
@@ -18,11 +18,13 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'data_low_10'
+folder = 'data_no_centers_135_13'
+folder = 'data_basis_delete'
+# folder = 'data_no_centers_32114'
 # folder = 'delete'
 
 spectrum_save = 1
-no_turb = 0
+no_turb = 1
 
 # meshes and boundaries for getting a knot
 x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2.0)
@@ -47,8 +49,8 @@ screens_num2 = 1
 multiplier2 = [1] * screens_num2
 
 # turbulence
-# Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
-Cn2 = 3.21e-14
+Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
+# Cn2 = 3.21e-14
 # Cn2 = 3.21e-15
 # Cn2 = 3.21e-40
 # https://www.mdpi.com/2076-3417/11/22/10548
@@ -213,7 +215,7 @@ for knot in knots:
                 field_center, **moments, mesh=mesh_2D_original, plot=False, width=width0, k0=k0,
                 functions=LG_simple, x0=x_cent_big_r, y0=y_cent_big_r
             )
-            print(np.sum(np.abs(spectrum) ** 2))
+            # print(np.sum(np.abs(spectrum) ** 2))
             # plt.imshow(np.imag(spectrum).T[::-1, :])
             # plt.colorbar()
             # plt.show()
