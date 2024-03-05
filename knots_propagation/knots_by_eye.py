@@ -52,12 +52,13 @@ knots = [
 	'optimized', 'pm_03_z',
 	'30oneX', '15oneZ', 'dennis'
 ]
-knots = [
-	'15oneZ', 'dennis'
-]
+# knots = [
+# 	'15oneZ', 'dennis'
+# ]
 folder = 'data_no_centers_32114'
+folder = 'data_no_centers_135_13'
 desired_res = (16, 16, 16)
-csv_file_path = 'dennis_15.csv'
+csv_file_path = 'big_turb.csv'
 num_classes = len(knots)
 X_list = []
 Y_list = []

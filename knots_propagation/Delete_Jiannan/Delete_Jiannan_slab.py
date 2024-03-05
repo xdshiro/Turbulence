@@ -19,23 +19,25 @@ file_names = [
 df_weighted = []
 df_middle = []
 df_max = []
-pathes = [
-    'M1',
-'M2',
-'M3',
-'M4',
-'M5',
-'M6',
-'M7',
-'M8',
+names = [
+    '258',
+'pi',
+'pi_2',
 ]
-for path in pathes:
+# names = [
+#     'H_258',
+# 'new',
+#
+# ]
+for name in names:
     # file_path_imag = f'{file_name}_imagEy.csv'
     # file_path_real = f'{file_name}_realEy.csv'
-    file_path_imag = f'dima\\{path}\\Imag_FF_{path}.csv'
-    file_path_real = f'dima\\{path}\\Real_FF_{path}.csv'
-    file_path_imag = f'dima\\{path}\\Imag_THG_{path}.csv'
-    file_path_real = f'dima\\{path}\\Real_THG_{path}.csv'
+    file_path_imag = f'Slab\\Imag_FF_H_{name}.csv'
+    file_path_real = f'Slab\\Real_FF_H_{name}.csv'
+    file_path_imag = f'Slab\\Imag_FF_H_{name}.csv'
+    file_path_real = f'Slab\\Real_FF_H_{name}.csv'
+    # file_path_imag = f'Slab2\\Imag_THG_{name}.csv'
+    # file_path_real = f'Slab2\\Real_THG_{name}.csv'
 
 
     # Reading CSV file, assuming the data starts directly without headers
