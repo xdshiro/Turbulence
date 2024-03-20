@@ -29,14 +29,19 @@ pathes = [
 'M7',
 'M8',
 ]
+pathes = [
+    'M1',
+'M2',
+]
 for path in pathes:
     # file_path_imag = f'{file_name}_imagEy.csv'
     # file_path_real = f'{file_name}_realEy.csv'
-    file_path_imag = f'dima\\{path}\\Imag_FF_{path}.csv'
-    file_path_real = f'dima\\{path}\\Real_FF_{path}.csv'
-    file_path_imag = f'dima\\{path}\\Imag_THG_{path}.csv'
-    file_path_real = f'dima\\{path}\\Real_THG_{path}.csv'
-
+    # file_path_imag = f'dima\\{path}\\Imag_FF_{path}.csv'
+    # file_path_real = f'dima\\{path}\\Real_FF_{path}.csv'
+    # file_path_imag = f'dima\\{path}\\Imag_THG_{path}.csv'
+    # file_path_real = f'dima\\{path}\\Real_THG_{path}.csv'
+    file_path_imag = f'Imag_{path}.csv'
+    file_path_real = f'Real_{path}.csv'
 
     # Reading CSV file, assuming the data starts directly without headers
     # Adjust 'skiprows' as needed if there are additional header lines
