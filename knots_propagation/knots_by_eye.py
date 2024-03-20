@@ -56,16 +56,16 @@ knots = [
 # 	'15oneZ', 'dennis'
 # ]
 folder = 'data_no_centers_32114'
-folder = 'data_no_centers_135_13'
+# folder = 'data_no_centers_135_13'
 desired_res = (16, 16, 16)
-csv_file_path = 'big_turb.csv'
+csv_file_path = 'big_turb_2.csv'
 num_classes = len(knots)
 X_list = []
 Y_list = []
 csv.field_size_limit(10000000)
 stop_big = 0
 limits_to_stop = 50  # how many
-skip_knots = 0
+skip_knots = 50
 knots_breaks = []
 j = 0
 for knot in knots:
