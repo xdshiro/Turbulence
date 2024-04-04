@@ -27,11 +27,25 @@ res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 
 # beam
 lmbda = 633e-9  # wavelength
-L_prop = 100  # propagation distance
-knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
-width0 = 5e-3 / np.sqrt(2)  # beam width
-xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
+L_prop = 500  # propagation distance
+knot_length = 400  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+width0 = 10e-3 / np.sqrt(2)  # beam width
+print(width0 * 1e3, "mm")
+xy_lim_2D_origin = (-50.0e-3, 50.0e-3)  # window size to start with
 res_xy_2D_origin = 300  # resolution
+# beam
+lmbda = 633e-9  # wavelength
+L_prop = 1000  # propagation distance
+knot_length = 400  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+width0 = 10e-3 / np.sqrt(2)  # beam width
+print(width0 * 1e3, "mm")
+xy_lim_2D_origin = (-100.0e-3, 100.0e-3)  # window size to start with
+res_xy_2D_origin = 300  # resolution
+# L_prop = 1000  # propagation distance
+# knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+# width0 = 20e-3 / np.sqrt(2)  # beam width
+# xy_lim_2D_origin = (-100.0e-3, 100.0e-3)  # window size to start with
+# res_xy_2D_origin = 300  # resolution
 
 res_z = 64  # resolution of the knot is res_z+1
 crop = 185  # for the knot propagation
