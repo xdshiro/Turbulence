@@ -27,20 +27,36 @@ res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 
 # beam
 lmbda = 633e-9  # wavelength
-L_prop = 500  # propagation distance
-knot_length = 400  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
-width0 = 10e-3 / np.sqrt(2)  # beam width
-print(width0 * 1e3, "mm")
-xy_lim_2D_origin = (-50.0e-3, 50.0e-3)  # window size to start with
+
 res_xy_2D_origin = 300  # resolution
 # beam
-lmbda = 633e-9  # wavelength
-L_prop = 1000  # propagation distance
-knot_length = 400  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
-width0 = 10e-3 / np.sqrt(2)  # beam width
-print(width0 * 1e3, "mm")
-xy_lim_2D_origin = (-100.0e-3, 100.0e-3)  # window size to start with
-res_xy_2D_origin = 300  # resolution
+
+L_prop = 3000  # propagation distance
+knot_length =  400 * 1.5 ** 2 * (5/3) ** 2  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+width0 = 25e-3 / np.sqrt(2)  # beam width
+xy_lim_2D_origin = (-150.0e-3, 150.0e-3)  # window size to start with
+
+# L_prop = 3000  # propagation distance
+# knot_length =  400 * 1.5 ** 2   # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+# width0 = 15e-3 / np.sqrt(2)  # beam width
+# xy_lim_2D_origin = (-150.0e-3, 150.0e-3)  # window size to start with
+
+# L_prop = 500  # propagation distance
+# knot_length = 400  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+# width0 = 10e-3 / np.sqrt(2)  # beam width
+# xy_lim_2D_origin = (-50.0e-3, 50.0e-3)  # window size to start with
+
+# L_prop = 500  # propagation distance
+# knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+# width0 = 5e-3 / np.sqrt(2)  # beam width
+# xy_lim_2D_origin = (-70.0e-3, 70.0e-3)  # window size to start with
+
+# L_prop = 100  # propagation distance
+# knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+# width0 = 5e-3 / np.sqrt(2)  # beam width
+# xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
+
+print(2 * width0 * 1e3, "mm")
 # L_prop = 1000  # propagation distance
 # knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
 # width0 = 20e-3 / np.sqrt(2)  # beam width
@@ -73,7 +89,8 @@ prop2 = knot_length * 1  # z0-prop1-pro2 - knot center (assumed)
 # extra values (physical)
 k0 = 2 * np.pi / lmbda  # wave number
 beam_par = (0, 0, width0, lmbda)
-
+zR = (k0 * width0 ** 2)
+print(f'Rayleigh Range (Zr) = {zR} (m)')
 # extra values (simulations)
 x_3D_knot, y_3D_knot = np.linspace(*x_lim_3D_knot, res_x_3D_knot), np.linspace(*y_lim_3D_knot, res_y_3D_knot)
 if res_z_3D_knot != 1:
