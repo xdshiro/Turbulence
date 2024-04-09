@@ -6,30 +6,16 @@ import pickle
 import csv
 import json
 from tqdm import trange
+import itertools
 
-angles = [0, 1, 2, 3]
-# Generate all possible combinations of angles
-angle_combinations = []
-for r in range(0, len(angles) + 1):
-    for combo in combinations(angles, r):
-        angle_combinations.append(combo)
+foils = list(itertools.product(range(3), repeat=4))
 
-# For each combination of angles, generate all possible size combinations
-all_combinations = []
-for angle_combo in angle_combinations:
-    # Generate all size combinations (1 and 2) for the current angle combination
-    size_combinations = product([0, 1], repeat=len(angle_combo))
-    for size_combo in size_combinations:
-        # Combine each angle with its corresponding size
-        combined = list(zip(angle_combo, size_combo))
-        all_combinations.append(combined)
+# Display the generated combinations
+# for combo in foils:
+#     print(combo)
 
-# Display the total number of combinations
-total_combinations = len(all_combinations)
-print(all_combinations, total_combinations)
-exit()
-
-SAMPLES = 10
+# foils = [[2, 2, 2, 1]]
+SAMPLES = 1
 indx_plus = 0
 
 plot = 0
@@ -43,10 +29,10 @@ no_last_plane = True
 # folder = 'data_no_centers_135_13'
 # folder = 'data_basis_delete'
 folder = 'data_no_centers_32114'
-folder = 'data_low_10'
+folder = 'data_4_foils_weak'
 
 spectrum_save = 1
-no_turb = 1
+no_turb = 0
 
 # meshes and boundaries for getting a knot
 x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2.0)
@@ -129,35 +115,8 @@ psh_par_0 = (r0 * 1e100, res_xy_2D_origin, pxl_scale, L0, l0 * 1e100)
 if no_turb:
     psh_par = psh_par_0
 
-knot_types = {
-    'standard_16': hopf_standard_16,  # 1
-    'standard_14': hopf_standard_14,  # 2
-    'standard_18': hopf_standard_18,  # 3
-    '30both': hopf_30both,  # 4
-    '30oneZ': hopf_30oneZ,  # 5
-    'optimized': hopf_optimized,  # 6
-    'pm_03_z': hopf_pm_03_z,  # 7
-    '4foil': hopf_4foil,  # 8
-    '6foil': hopf_6foil,  # 9
-    'stand4foil': hopf_stand4foil,  # 10
-    '30oneX': hopf_30oneX,  # 11
-    '15oneZ': hopf_15oneZ,
-    'dennis': hopf_dennis
 
-}
-knots = [
-    'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
-    'optimized', 'pm_03_z', '4foil', '6foil', 'stand4foil',
-    '30oneX'
-]
-knots = [
-    'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
-    'optimized', 'pm_03_z',
-    '30oneX'
-]
-knots = [
-    '15oneZ', 'dennis'
-]
+
 # knots = [
 #     '30oneX'
 # ]
@@ -169,13 +128,15 @@ if not os.path.exists(folder_path):
     os.makedirs(folder_path)
 
 # getting the knot
-for knot in knots:
+for foil in foils:
+    knot = ''.join([str(element) for element in foil])
     print(knot)
     if os.path.exists(f'../{folder}\{knot}.pkl'):
         with open(f'../{folder}\{knot}.pkl', 'rb') as file:
             values = pickle.load(file)
     else:
-        values = knot_types[knot](mesh_3D_knot, braid_func=braid, plot=True)
+        values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
+                              angle_size=foil)
         with open(f'../{folder}\{knot}.pkl', 'wb') as file:
             pickle.dump(values, file)
     # printing values

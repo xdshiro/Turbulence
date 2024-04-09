@@ -875,10 +875,10 @@ def unknot_4(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
 
 
 def unknot_4_any(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False,
-                 angle_size_pairs=()):
-                 # angle_size_pairs=((1, 0), (3, 1), (4, 0))):
+                 angle_size=(2, 2, 2, 2)):
+                 # angle_size=((1, 0), (3, 1), (4, 0))):
     mesh_3D_new = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
-    for angle, size in angle_size_pairs:
+    for angle, size in enumerate(angle_size):
         angles_dict = {
             0: [(-np.pi / 4, np.pi / 4)],
             1: [(np.pi / 4, 3 * np.pi / 4)],
@@ -886,6 +886,8 @@ def unknot_4_any(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False,
             3: [(-3 * np.pi / 4, -np.pi / 4)]
         }
         for ang in angles_dict[angle]:
+            if size == 2:
+                continue
             if size == 1:
                 mesh_3D_new = lobe_smaller(mesh_3D_new, ang[0], ang[1], rot_x=0, rot_y=0, rot_z=0)
             elif size == 0:
@@ -940,7 +942,7 @@ def unknot_4_any(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False,
         # 2: 1.6,
         2: 2.6 ** (1 / 2),
         3: 1.2,
-        4: 0.9,
+        4: 0.85,
         5: 0.75,
         6: 0.65,
     }
@@ -1064,7 +1066,8 @@ if __name__ == "__main__":
     # y_2D_origin = np.linspace(*x_lim_3D_knot, res_x_3D_knot)
     # mesh_2D_original = np.meshgrid(x_2D_origin, y_2D_origin, indexing='ij')
 
-    values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True)
+    values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
+                          angle_size=(2, 2, 2, 1))
     # values = hopf_standard_16(mesh_3D_knot, braid_func=braid, plot=True)
 
     field = field_knot_from_weights(
@@ -1072,9 +1075,9 @@ if __name__ == "__main__":
     )
     plot_field_both(field[:, :, res_z_3D_knot // 2])
     #
-    # dots_bound = [
-    #     [0, 0, 0],
-    #     [res_x_3D_knot, res_y_3D_knot, res_z_3D_knot],
-    # ]
-    # dots_init_dict, dots_init = sing.get_singularities(np.angle(field), axesAll=True, returnDict=True)
-    # pl.plotDots(dots_init, dots_bound, color='black', show=True, size=10)
+    dots_bound = [
+        [0, 0, 0],
+        [res_x_3D_knot, res_y_3D_knot, res_z_3D_knot],
+    ]
+    dots_init_dict, dots_init = sing.get_singularities(np.angle(field), axesAll=True, returnDict=True)
+    pl.plotDots(dots_init, dots_bound, color='black', show=True, size=10)
