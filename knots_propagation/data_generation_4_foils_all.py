@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 from functions.all_knots_functions import *
 import os
@@ -9,14 +10,13 @@ from tqdm import trange
 import itertools
 
 foils = list(itertools.product(range(3), repeat=4))
+# print(foils.index((2, 1, 2, 1)))
+# foils = foils[70:]
+# print(foils)
+# exit()
 
-# Display the generated combinations
-# for combo in foils:
-#     print(combo)
-
-# foils = [[2, 2, 2, 1]]
-SAMPLES = 1
-indx_plus = 0
+SAMPLES = 500
+indx_plus = 500
 
 plot = 0
 plot_3d = 0
@@ -28,8 +28,8 @@ seed = None  # does work with more than 1 phase screen
 no_last_plane = True
 # folder = 'data_no_centers_135_13'
 # folder = 'data_basis_delete'
-folder = 'data_no_centers_32114'
-folder = 'data_4_foils_weak'
+save_field = 0
+folder = 'data_4foils_strong_500_x2'
 
 spectrum_save = 1
 no_turb = 0
@@ -57,8 +57,8 @@ screens_num2 = 1
 multiplier2 = [1] * screens_num2
 
 # turbulence
-# Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
-Cn2 = 3.21e-14
+Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
+# Cn2 = 3.21e-14
 # # # # # Cn2 = 3.21e-15
 # Cn2 = 3.21e-40
 # https://www.mdpi.com/2076-3417/11/22/10548
@@ -172,7 +172,7 @@ for foil in foils:
                        res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
                        res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
                        ]
-        if 1:
+        if save_field:
 
             filename = f'../{folder}\\fields\\data_{knot}_{indx + indx_plus}.npy'  # l rows, p columns
 
@@ -239,7 +239,9 @@ for foil in foils:
             plot_field_both(field_3d_crop[:, :, res_z // 2], extend=extend_crop3d)
 
         dots_init_dict, dots_init = sing.get_singularities(np.angle(field_3d_crop), axesAll=False, returnDict=True)
-
+        if dots_init.size == 0:
+            dots_init = np.array([[0, 0, 0]])
+        dots_init = np.atleast_2d(dots_init)
         dots_cut_non_unique = cut_circle_dots(dots_init, crop_3d // 2, crop_3d // 2, crop_3d // 2)
 
         # check if there is no same points
