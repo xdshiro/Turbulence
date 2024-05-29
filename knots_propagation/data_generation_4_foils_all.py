@@ -29,7 +29,7 @@ no_last_plane = True
 # folder = 'data_no_centers_135_13'
 # folder = 'data_basis_delete'
 save_field = 0
-folder = 'data_4foils_strong_500_x2'
+folder = 'data_4foils_weak_500_x2'
 
 spectrum_save = 1
 no_turb = 0
@@ -57,8 +57,8 @@ screens_num2 = 1
 multiplier2 = [1] * screens_num2
 
 # turbulence
-Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
-# Cn2 = 3.21e-14
+# Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
+Cn2 = 3.21e-14
 # # # # # Cn2 = 3.21e-15
 # Cn2 = 3.21e-40
 # https://www.mdpi.com/2076-3417/11/22/10548
