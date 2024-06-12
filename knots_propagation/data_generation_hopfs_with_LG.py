@@ -104,6 +104,7 @@ if print_values:
     print(f'Rayleigh Range (Zr) = {zR} (m)')
 psh_par = (r0, res_xy_2D_origin, pxl_scale, L0, l0)
 psh_par_0 = (r0 * 1e100, res_xy_2D_origin, pxl_scale, L0, l0 * 1e100)
+
 if no_turb:
     psh_par = psh_par_0
 
