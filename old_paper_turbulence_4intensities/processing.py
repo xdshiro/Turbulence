@@ -29,7 +29,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 			fig = plt.figure(figsize=(8, 8))
 			ax = fig.add_subplot(111, projection='3d')
 			# Color by z-coordinate and set size larger
-			scatter = ax.scatter(dots_cut[:, 0], dots_cut[:, 1], dots_cut[:, 2], c=dots_cut[:, 2], cmap='viridis', s=50)
+			scatter = ax.scatter(dots_cut[:, 0], dots_cut[:, 1], dots_cut[:, 2], c=dots_cut[:, 2], cmap='viridis', s=90)
 			fig.colorbar(scatter, ax=ax, label='Z coordinate')
 			ax.set_title(f'File: {file_name}')
 			ax.set_xlabel('X')
@@ -59,5 +59,8 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 	ratings_df.to_csv(output_csv, index=False)
 	print(f'Final ratings saved to {output_csv}')
 
+
+input_folder='processed_dots_4_diff_1'
+
 # Example usage:
-review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv')
+review_and_rate_dots(input_folder=input_folder, output_csv=f'ratings_{input_folder}.csv')
