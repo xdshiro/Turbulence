@@ -16,9 +16,10 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 		ratings = existing_ratings_df.values.tolist()
 	else:
 		existing_files = []
-	
+
 	# Iterate over all files in the input folder
 	for file_name in os.listdir(input_folder):
+
 		if file_name.endswith('.npy') and file_name not in existing_files:
 			file_path = os.path.join(input_folder, file_name)
 			
@@ -60,7 +61,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 	print(f'Final ratings saved to {output_csv}')
 
 
-input_folder='processed_dots_4_diff_1'
+input_folder = 'processed_dots_4int_095_150'
 
 # Example usage:
 review_and_rate_dots(input_folder=input_folder, output_csv=f'ratings_{input_folder}.csv')
