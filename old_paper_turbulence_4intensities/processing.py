@@ -32,6 +32,10 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 			# Color by z-coordinate and set size larger
 			scatter = ax.scatter(dots_cut[:, 0], dots_cut[:, 1], dots_cut[:, 2], c=dots_cut[:, 2], cmap='viridis', s=90)
 			fig.colorbar(scatter, ax=ax, label='Z coordinate')
+			ax.view_init(elev=90, azim=-90)
+			# Set the limits for x and y axes
+			ax.set_xlim(20, 120)
+			ax.set_ylim(20, 120)
 			ax.set_title(f'File: {file_name}')
 			ax.set_xlabel('X')
 			ax.set_ylabel('Y')
@@ -61,7 +65,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 	print(f'Final ratings saved to {output_csv}')
 
 
-input_folder = 'processed_dots_4int_095_150'
+input_folder = 'processed_dots_4int_095_300'
 
 # Example usage:
 review_and_rate_dots(input_folder=input_folder, output_csv=f'ratings_{input_folder}.csv')
