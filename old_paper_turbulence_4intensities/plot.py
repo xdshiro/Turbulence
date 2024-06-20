@@ -9,8 +9,8 @@ proposed_experiment = [71, 32, 10, 6, 2, 0]
 mr_dennis_experiment = [42, 14, 1, 0, 0, 0]
 
 # New data for the slow camera assumption
-sr_values_new = [0.95, 0.9, 0.85]
-slow_camera_simulation = [55, 19.9, 7.4]
+sr_values_new = [0.95, 0.9, 0.85, 0.8]
+slow_camera_simulation = [56.2, 20.6, 7.41, 3.37]
 
 # Function to calculate confidence interval
 def confidence_interval(p, n, z=1.96):
@@ -62,6 +62,6 @@ plt.grid(True)
 
 # Reverse the x-axis
 plt.gca().invert_xaxis()
-
+plt.tight_layout()
 # Show the plot
 plt.show()

@@ -65,7 +65,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 	print(f'Final ratings saved to {output_csv}')
 
 
-input_folder = 'processed_dots_4int_085_300'
+input_folder = 'processed_dots_4int_080_300'
 
 # Example usage:
 review_and_rate_dots(input_folder=input_folder, output_csv=f'ratings_{input_folder}.csv')
