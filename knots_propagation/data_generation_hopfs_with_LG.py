@@ -18,9 +18,9 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-# folder = 'data_no_centers_135_13'
+folder = 'data_no_centers_135_13'
 # folder = 'data_basis_delete'
-folder = 'data_no_centers_32114'
+# folder = 'data_no_centers_32114'
 # folder = 'data_low_10'
 
 spectrum_save = 1
@@ -49,8 +49,8 @@ screens_num2 = 1
 multiplier2 = [1] * screens_num2
 
 # turbulence
-# Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
-Cn2 = 3.21e-14
+Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
+# Cn2 = 3.21e-14
 # # # # # Cn2 = 3.21e-15
 # Cn2 = 3.21e-40
 # https://www.mdpi.com/2076-3417/11/22/10548
@@ -122,9 +122,9 @@ knot_types = {
     '30oneX': hopf_30oneX,  # 11
     '15oneZ': hopf_15oneZ,
     'dennis': hopf_dennis,
-    'trefoil_standard_16': trefoil_standard_16,
+    'trefoil_standard_12': trefoil_standard_12,
     'trefoil_optimized': trefoil_optimized,
-    'fivefoil_standard': fivefoil_standard
+    'fivefoil_standard_08': fivefoil_standard_08
 
 }
 knots = [
@@ -141,7 +141,7 @@ knots = [
     '15oneZ', 'dennis'
 ]
 knots = [
-    'fivefoil_standard'
+    'fivefoil_standard_08', 'trefoil_standard_12'
 ]
 # knots = [
 #     '30oneX'

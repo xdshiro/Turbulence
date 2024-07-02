@@ -1,5 +1,28 @@
 """
-this module includes all the general functions used in another modules
+This module includes all the general functions used in other modules.
+
+The module provides various utility functions including vector calculations, mesh creation, interpolation,
+integration, and other general-purpose functions.
+
+Functions:
+    - rho: Calculates the magnitude of a vector.
+    - phi: Computes the angle phi in the plane.
+    - dots_move_center: Moves a set of dots to the center of the object.
+    - distance_between_points: Calculates the distance between two points in any dimension.
+    - create_mesh_XYZ: Creates a 3D mesh using np.meshgrid.
+    - create_mesh_XY_old: Creates a 2D mesh using np.meshgrid with old parameters.
+    - create_mesh_XY: Creates a 2D mesh using np.meshgrid with new parameters.
+    - interpolation_real: Interpolates any real 2D matrix into a function.
+    - interpolation_complex: Interpolates a complex 2D array of any data into a function.
+    - integral_of_function_1D: Integrates a function over a 1D range, handling complex values.
+    - arrays_from_mesh: Returns the tuple of x1Array, x2Array, etc., from a mesh.
+    - reading_file_mat: Reads a .mat file and converts one of its fields into a numpy array.
+    - dots3D_rescale: Rescales dots from indices to physical coordinates based on a mesh.
+    - random_list: Modifies values by adding a random component within a specified range.
+    - propagator_split_step_3D: Propagates a field in 3D using the split-step Fourier method.
+    - propagator_split_step_3D_linear: Linearly propagates a field in 3D using the split-step Fourier method.
+    - one_plane_propagator: Propagates a field from a single plane both forward and backward in z.
+    - cut_filter: Applies a circular or rectangular filter to a field.
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,9 +33,13 @@ import scipy.io as sio
 
 def rho(*r):
     """
-    return abs of the vector r
-    :param r: [x1, x2, x3...]
-    :return: |r|
+    Calculates the magnitude of a vector.
+
+    Parameters:
+        *r: Components of the vector [x1, x2, x3, ...].
+
+    Returns:
+        Magnitude of the vector |r|.
     """
     ans = 0
     for x in r:
@@ -22,14 +49,26 @@ def rho(*r):
 
 def phi(x, y):
     """
-    angle phi in the plane
+    Computes the angle phi in the plane.
+
+    Parameters:
+        x, y: Coordinates in the plane.
+
+    Returns:
+        Angle phi.
     """
     return np.angle(x + 1j * y)
 
 
 def dots_move_center(dots):
     """
-    moving dots to the center of the object
+    Moves a set of dots to the center of the object.
+
+    Parameters:
+        dots: Array of dot coordinates.
+
+    Returns:
+        Dots translated to the center.
     """
     center = np.sum(dots, axis=0) / len(dots)
     return dots - center
@@ -37,10 +76,14 @@ def dots_move_center(dots):
 
 def distance_between_points(point1, point2):
     """
-    distance between 2 points in any dimensions
-    :param point1: [x1, ...]
-    :param point2: [x2, ...]
-    :return: geometrical distance
+    Calculates the distance between two points in any dimension.
+
+    Parameters:
+        point1: Coordinates of the first point.
+        point2: Coordinates of the second point.
+
+    Returns:
+        Geometrical distance between the points.
     """
     deltas = np.array(point1) - np.array(point2)
     return rho(*deltas)
@@ -49,18 +92,17 @@ def distance_between_points(point1, point2):
 def create_mesh_XYZ(xMax, yMax, zMax, xRes=40, yRes=40, zRes=40,
                     xMin=None, yMin=None, zMin=None, indexing='ij', random=(None, None, None), **kwargs):
     """
-    creating the mesh using np.meshgrid
-    :param xMax: [xMin, xMax] are the boundaries for the meshgrid along x
-    :param yMax: [yMin, yMax] are the boundaries for the meshgrid along y
-    :param zMax: [zMin, zMax] are the boundaries for the meshgrid along z
-    :param xRes: resolution along x
-    :param yRes: resolution along y
-    :param zRes: resolution along z
-    :param xMin: xMin=xMax by default.
-    :param yMin: yMin=yMax by default.
-    :param zMin: zMin=zMax by default.
-    :param indexing: ij is the classic matrix (0,0) left top
-    :return: mesh
+    Creates a 3D mesh using np.meshgrid.
+
+    Parameters:
+        xMax, yMax, zMax: Maximum values for the meshgrid along x, y, and z.
+        xRes, yRes, zRes: Resolution along x, y, and z.
+        xMin, yMin, zMin: Minimum values for the meshgrid along x, y, and z.
+        indexing: 'ij' is the classic matrix (0,0) left top.
+        random: Tuple to apply randomness to the mesh points.
+
+    Returns:
+        3D meshgrid.
     """
     if xMin is None:
         xMin = -xMax
@@ -90,15 +132,16 @@ def create_mesh_XYZ(xMax, yMax, zMax, xRes=40, yRes=40, zRes=40,
 def create_mesh_XY_old(xMax, yMax, xRes=50, yRes=50,
                        xMin=None, yMin=None, indexing='ij', **kwargs):
     """
-    creating the mesh using np.meshgrid
-    :param xMax: [xMin, xMax] are the boundaries for the meshgrid along x
-    :param yMax: [yMin, yMax] are the boundaries for the meshgrid along y
-    :param xRes: resolution along x
-    :param yRes: resolution along y
-    :param xMin: xMin=xMax by default.
-    :param yMin: yMin=yMax by default.
-    :param indexing: ij is the classic matrix (0,0) left top
-    :return: mesh
+    Creates a 2D mesh using np.meshgrid with old parameters.
+
+    Parameters:
+        xMax, yMax: Maximum values for the meshgrid along x and y.
+        xRes, yRes: Resolution along x and y.
+        xMin, yMin: Minimum values for the meshgrid along x and y.
+        indexing: 'ij' is the classic matrix (0,0) left top.
+
+    Returns:
+        2D meshgrid.
     """
     if xMin is None:
         xMin = -xMax
@@ -112,13 +155,16 @@ def create_mesh_XY_old(xMax, yMax, xRes=50, yRes=50,
 def create_mesh_XY(xMinMax=None, yMinMax=None, xRes=50, yRes=50,
                    indexing='ij', **kwargs):
     """
-    creating the mesh using np.meshgrid
-    :param xMinMax: [xMin, xMax] are the boundaries for the meshgrid along x
-    :param yMinMax: [yMin, yMax] are the boundaries for the meshgrid along y
-    :param xRes: resolution along x
-    :param yRes: resolution along y
-    :param indexing: ij is the classic matrix (0,0) left top
-    :return: mesh
+    Creates a 2D mesh using np.meshgrid with new parameters.
+
+    Parameters:
+        xMinMax: Tuple [xMin, xMax] for the boundaries along x.
+        yMinMax: Tuple [yMin, yMax] for the boundaries along y.
+        xRes, yRes: Resolution along x and y.
+        indexing: 'ij' is the classic matrix (0,0) left top.
+
+    Returns:
+        2D meshgrid.
     """
     if xMinMax is None:
         xMinMax = (0 - xRes // 2, 0 + xRes // 2)
@@ -131,12 +177,16 @@ def create_mesh_XY(xMinMax=None, yMinMax=None, xRes=50, yRes=50,
 
 def interpolation_real(field, xArray=None, yArray=None, **kwargs):
     """
-    Interpolation of any real 2d matrix into the function
-    :param field: initial Real 2D array
-    :param xArray: x interval (range)
-    :param yArray: y interval (range)
-    :param kwargs: extra parameters for CloughTocher2DInterpolator
-    :return: CloughTocher2DInterpolator return
+    Interpolates any real 2D matrix into a function.
+
+    Parameters:
+        field: Initial real 2D array.
+        xArray: X interval (range).
+        yArray: Y interval (range).
+        kwargs: Extra parameters for CloughTocher2DInterpolator.
+
+    Returns:
+        CloughTocher2DInterpolator object.
     """
     xResolution, yResolution = np.shape(field)
     if xArray is None:
@@ -156,11 +206,17 @@ def interpolation_real(field, xArray=None, yArray=None, **kwargs):
 # function interpolate complex 2D array of any data_weak into the function(x, y)
 def interpolation_complex(field, xArray=None, yArray=None, mesh=None, fill_value=False):
     """
-    function interpolate complex 2D array of any data_weak into the function(x, y)
-    :param field: initial complex 2D array
-    :param xArray: x interval (range)
-    :param yArray: y interval (range)
-    :return: Real CloughTocher2DInterpolator, Imag CloughTocher2DInterpolator
+    Interpolates a complex 2D array of any data into a function.
+
+    Parameters:
+        field: Initial complex 2D array.
+        xArray: X interval (range).
+        yArray: Y interval (range).
+        mesh: Meshgrid.
+        fill_value: Fill value for interpolation.
+
+    Returns:
+        Function for interpolated field.
     """
     if mesh is not None:
         xArray, yArray = arrays_from_mesh(mesh)
@@ -178,12 +234,19 @@ def interpolation_complex(field, xArray=None, yArray=None, mesh=None, fill_value
 
 def integral_of_function_1D(integrandFunc, x1, x2, epsabs=1.e-5, maxp1=50, limit=50, **kwargs):
     """
-    scipy.integrate can only work with real numbers so this function splits the integrand to imaginary and real
-    parts and integrates the separately, then combine the answers together
-    :param integrandFunc: integrand
-    :param x1: lower limit
-    :param x2: upper limit
-    :return: integral value, (real error, imag error)
+    Integrates a function over a 1D range, handling complex values.
+
+    Parameters:
+        integrandFunc: Function to integrate.
+        x1: Lower limit of integration.
+        x2: Upper limit of integration.
+        epsabs: Absolute error tolerance.
+        maxp1: Maximum number of subintervals.
+        limit: Maximum number of evaluations.
+        kwargs: Extra parameters for scipy.integrate.quad.
+
+    Returns:
+        Integral value and error estimates.
     """
 
     def real_f(x):
@@ -199,9 +262,14 @@ def integral_of_function_1D(integrandFunc, x1, x2, epsabs=1.e-5, maxp1=50, limit
 
 def arrays_from_mesh(mesh, indexing='ij'):
     """
-    Functions returns the tuple of x1Array, x2Array... of the mesh
-    :param mesh: no-sparse mesh, for 3D: [3][Nx, Ny, Nz]
-    :return: for 3D: xArray, yArray, zArray
+    Returns the tuple of x1Array, x2Array, etc., from a mesh.
+
+    Parameters:
+        mesh: Meshgrid.
+        indexing: Indexing style ('ij' or 'xy').
+
+    Returns:
+        Tuple of arrays representing the mesh.
     """
     xList = []
     if indexing == 'ij':
@@ -230,10 +298,15 @@ def arrays_from_mesh(mesh, indexing='ij'):
 
 def reading_file_mat(fileName, fieldToRead="p_charges", printV=False):
     """
-    function read the mat file and conver 1 of its fields into numpy array
-    :param fileName:
-    :param fieldToRead: which field to conver (require the name)
-    :param printV: if you don't know the name, set it True
+    Reads a .mat file and converts one of its fields into a numpy array.
+
+    Parameters:
+        fileName: Name of the .mat file.
+        fieldToRead: Field to convert (requires the name).
+        printV: Flag to print the contents of the .mat file if the field name is unknown.
+
+    Returns:
+        Numpy array of the specified field.
     """
     matFile = sio.loadmat(fileName, appendmat=False)
     if fieldToRead not in matFile:
@@ -246,9 +319,14 @@ def reading_file_mat(fileName, fieldToRead="p_charges", printV=False):
 
 def dots3D_rescale(dots, mesh):
     """
-    rescale dots from [3, 5, 7] into [x[3], y[5], z[7]]
-    :param dots: [[nx,ny,nz]...]
-    :return: [[x,y,z]...]
+    Rescales dots from indices to physical coordinates based on a mesh.
+
+    Parameters:
+        dots: Array of dot indices.
+        mesh: Meshgrid.
+
+    Returns:
+        Array of rescaled dot coordinates.
     """
     xyz = arrays_from_mesh(mesh)
     dotsScaled = [[xyz[0][x], xyz[1][y], xyz[2][z]] for x, y, z in dots]
@@ -257,10 +335,15 @@ def dots3D_rescale(dots, mesh):
 
 def random_list(values, diapason, diapason_complex=None):
     """
-    Function returns values + random * diapason
-    :param values: we are changing this values
-    :param diapason: to a random value from [value - diap, value + diap]
-    :return: new modified values
+    Modifies values by adding a random component within a specified range.
+
+    Parameters:
+        values: Original values.
+        diapason: Range for random modification.
+        diapason_complex: Range for random modification of complex values.
+
+    Returns:
+        Modified values with random components.
     """
     import random
     if diapason_complex is not None:
@@ -275,6 +358,21 @@ def random_list(values, diapason, diapason_complex=None):
 
 
 def propagator_split_step_3D(E, dz=1, xArray=None, yArray=None, zSteps=1, n0=1, k0=1):
+    """
+    Propagates a field in 3D using the split-step Fourier method.
+
+    Parameters:
+        E: Initial field.
+        dz: Step size in z.
+        xArray: Array of x coordinates.
+        yArray: Array of y coordinates.
+        zSteps: Number of steps in z.
+        n0: Refractive index.
+        k0: Wave number.
+
+    Returns:
+        3D field after propagation.
+    """
     if xArray is None:
         xArray = np.array(range(np.shape(E)[0]))
     if yArray is None:
@@ -319,6 +417,21 @@ def propagator_split_step_3D(E, dz=1, xArray=None, yArray=None, zSteps=1, n0=1, 
 
 
 def propagator_split_step_3D_linear(E, dz=1, xArray=None, yArray=None, zSteps=1, n0=1, k0=1):
+    """
+    Linearly propagates a field in 3D using the split-step Fourier method.
+
+    Parameters:
+        E: Initial field.
+        dz: Step size in z.
+        xArray: Array of x coordinates.
+        yArray: Array of y coordinates.
+        zSteps: Number of steps in z.
+        n0: Refractive index.
+        k0: Wave number.
+
+    Returns:
+        3D field after linear propagation.
+    """
     if xArray is None:
         xArray = np.array(range(np.shape(E)[0]))
     if yArray is None:
@@ -350,7 +463,20 @@ def propagator_split_step_3D_linear(E, dz=1, xArray=None, yArray=None, zSteps=1,
     return fieldReturn
 
 
-def one_plane_propagator(fieldPlane, dz, stepsNumber, n0=1, k0=1):  # , shapeWrong=False
+def one_plane_propagator(fieldPlane, dz, stepsNumber, n0=1, k0=1):
+    """
+    Propagates a field from a single plane both forward and backward in z.
+
+    Parameters:
+        fieldPlane: Initial field plane.
+        dz: Step size in z.
+        stepsNumber: Number of steps in z.
+        n0: Refractive index.
+        k0: Wave number.
+
+    Returns:
+        3D field after propagation.
+    """
     # if shapeWrong is not False:
     #     if shapeWrong is True:
     #         print(f'using the middle plane in one_plane_propagator (shapeWrong = True)')
@@ -365,6 +491,18 @@ def one_plane_propagator(fieldPlane, dz, stepsNumber, n0=1, k0=1):  # , shapeWro
 
 
 def cut_filter(E, radiusPix=1, circle=True, phaseOnly=False):
+    """
+    Applies a circular or rectangular filter to a field.
+
+    Parameters:
+        E: Field to filter.
+        radiusPix: Radius of the filter in pixels.
+        circle: Flag for circular filter.
+        phaseOnly: Flag for phase-only filter.
+
+    Returns:
+        Filtered field.
+    """
     ans = np.copy(E)
     xCenter, yCenter = np.shape(ans)[0] // 2, np.shape(ans)[0] // 2
     if circle:

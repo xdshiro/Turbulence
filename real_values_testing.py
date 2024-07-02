@@ -16,18 +16,18 @@ l0 (float) – inner scale in metres
 """
 # %% Beam parameters
 lmbda = 633e-9
-L_prop = 150  # ! точно
+L_prop = 50  # ! точно
 width0 = 15e-3 / np.sqrt(2)  # !? может точно
 l, p = 0, 0
 # xy_lim_2D = (-8.0e-6, 8.0e-6)
 xy_lim_2D = np.array((-50.0e-3, 50.0e-3))
-res_xy_2D = 201
+res_xy_2D = 301
 
 # print(51 % 2)
 # ar = np.arange(-(51 - 1) / 2, (51 + 1) / 2)
 # print(ar, len(ar))
 # exit()
-
+# Rytov variance should be smaller than 1 for each segment
 beam_par = (l, p, width0, lmbda)
 k0 = 2 * np.pi / lmbda
 xy_2D = np.linspace(*xy_lim_2D, res_xy_2D)
@@ -69,18 +69,19 @@ print(f'SR={np.exp(-ryt)} (Rytov {ryt})')
 # exit()
 LG_21_2D = LG_simple(*mesh_2D, z=0, l=l, p=p, width=width0, k0=k0, x0=0, y0=0, z0=0)
 plot_field_both(LG_21_2D, extend=None)
-phase_screen = psh_wrap(psh_par)
+phase_screen = psh_wrap(psh_par, seed=1)
 # print((np.sum(np.abs(LG_21_2D * np.exp(1j * phase_screen)) ** 2) * pxl_scale ** 2) / (np.sum(np.abs(LG_21_2D) ** 2) * pxl_scale ** 2))
-plot_field_both(phase_screen, extend=None)
+plot_field(phase_screen, extend=None)
 # print(np.abs((np.sum(LG_21_2D * np.exp(1j * phase_screen)))) ** 2 / np.abs((np.sum(LG_21_2D))) ** 2)
 # print(1, np.abs((np.sum(np.exp(1j * phase_screen * k0) * pxl_scale ** 2))) ** 2 / D_window ** 2)
 # print(np.abs((np.sum(np.exp(1j * phase_screen) * pxl_scale ** 2))) ** 2)
 # print(1 - np.var(phase_screen), np.exp(-np.var(phase_screen)))
 # print(1 - np.var(phase_screen * lmbda / (2*np.pi)), np.exp(-np.var(phase_screen * lmbda / (2*np.pi))))
 # print(np.var(phase_screen))
-field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, 150, screens_num=1)
-
-
+field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, 150, screens_num=3)
+plot_field_both(field_prop)
+plt.show()
+SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=3, max_cut=False, pad_factor=8)
 def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_cut=False, seed=None):
     _, _, width0, lmbda = beam_par
     k0 = 2 * np.pi / lmbda
@@ -124,14 +125,14 @@ def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1,
             plot_field_both(E, extend=None)
     scin = (I_sqr_avg_tot / epochs) / (I_avg_tot / epochs) ** 2 - 1
     return scin
-
+exit()
 # print()
 # exit()
 scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=1000, screens_num=2 , max_cut=False, seed=None)
 print(scin[res_xy_2D // 2, res_xy_2D // 2])
 plot_field_both(scin, extend=None)
 exit()
-SR_gauss(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=3, max_cut=False)
+print(SR_gauss(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=3, max_cut=False))
 
 # exit()
 # LG_21_2D_z01 = LG_simple(*mesh_2D, z=L_prop, l=2, p=1, width=width0, k0=k0, x0=0, y0=0, z0=0)

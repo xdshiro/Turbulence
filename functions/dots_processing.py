@@ -1,3 +1,62 @@
+"""
+This script provides various functions for processing and visualizing singularity dots in 3D optical fields.
+It includes functions for building, loading, plotting, and filtering dots based on their neighborhood configurations.
+
+## Main Functions
+
+### buildSaveTrefoil
+1) Creates a mesh grid.
+2) Generates a beam with specified coefficients and modes.
+3) Detects singularity dots in the beam.
+4) Saves the detected dots to files.
+
+### loadDots
+Loads dots data from saved files.
+
+### plotDots
+Plots the array of dots in an interactive 3D visualization using Plotly.
+Parameters:
+- dots: array of dots.
+- dots_bound: used to get the box frames for the plot.
+- show: whether to display the plot in the browser.
+- color: color of the dots.
+- size: size of the dots.
+- width: width of the shell of the dots for better visualization.
+- fig: figure to combine with other plots.
+
+### plotDots_Hopf
+Similar to plotDots but includes options for plotting lines.
+
+### neighboursDots
+Finds all dots in a 3x3x3 cube around a given dot, returning their count and the dots themselves.
+
+### filter_ZeroNeighbours
+Filters out dots with zero neighbors.
+
+### filter_OneNeighbours
+Filters out dots with one neighbor.
+
+### filter_TwoNeighbours
+Filters out dots with two neighbors and checks the trajectory sharpness.
+
+### filter_ThreeNeighbours
+Filters out dots with three neighbors and checks the trajectory sharpness.
+
+### filter_PlaneThreeClusters
+Finds 3-cluster planes and returns an average dot.
+
+### filter_PlaneTwoClusters
+Finds 2-cluster planes and returns average dots.
+
+### globalFilterDots
+Applies all the filters to a dictionary of dots and returns the filtered dots and the remaining dots.
+
+### filtered_dots
+Wrapper for globalFilterDots that combines all filtered dots into one array.
+
+The `__main__` section provides examples and is mainly used for testing and processing specific dots data.
+"""
+
 import my_functions.functions_general as fg
 import my_functions.singularities as sing
 import my_functions.plotings as pl

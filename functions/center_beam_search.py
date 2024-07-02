@@ -1,15 +1,83 @@
 """
-Algorithm to find the beam center and beam tilt using the electrical field.
-Algorithm is based on the quasi-intrinsic-variance and OAM spectrum calculations.
-For references check the following papers:
-    1) Yi-Dong Liu,.. "Orbital angular momentum (OAM) spectrum correction in free space optical communication", OE, 2008
-        This paper describes the algorithm in details. My implementation is only slightly different.
-    2) https://doi.org/10.1103/PhysRevLett.96.113901
-        Here you can find more theory on the quasi-intrinsic-variance and intrinsic/extrinsic parts of OAM in general.
+This Python script provides algorithms to find the beam center and beam tilt using the electrical field.
+The algorithms are based on quasi-intrinsic-variance and Orbital Angular Momentum (OAM) spectrum calculations.
+For references, check the following papers:
+1) Yi-Dong Liu, et al., "Orbital angular momentum (OAM) spectrum correction in free space optical communication", OE, 2008.
+   This paper describes the algorithm in detail. The implementation here is slightly different.
+2) https://doi.org/10.1103/PhysRevLett.96.113901.
+   This paper provides more theory on the quasi-intrinsic-variance and intrinsic/extrinsic parts of OAM in general.
 
-The final function is called !beamFullCenter!. Read details there.
+The main function is called `beamFullCenter`, which computes the beam center and tilt. The script also includes several helper functions for field manipulation and analysis.
 
-"__main__" has some example and mainly used for testing.
+## Import Statements
+
+- External Libraries:
+  - numpy: For numerical operations.
+  - matplotlib.pyplot: For plotting.
+
+- Custom Modules:
+  - my_functions.functions_general: General utility functions.
+  - my_functions.singularities: Functions for handling singularities.
+  - my_functions.plotings: Functions for plotting.
+  - my_functions.beams_and_pulses: Functions related to beams and pulses.
+
+## Functions
+
+### LG_spectre_coeff
+Calculates a single coefficient of the LG spectrum for a given field.
+
+### displacement_lateral
+Shifts the field laterally by a specified radius-vector and angle.
+
+### displacement_deflection
+Tilts the field using specified angles eta and gamma.
+
+### removeTilt
+Removes the tilt from a field and returns the corrected field.
+
+### removeShift
+Removes the shift from a mesh and returns the new mesh.
+
+### LG_transition_matrix_real_space
+Calculates the transition matrix element for a given operator in real space.
+
+### shiftTiltCombined
+Combines both shift and tilt operations on a field.
+
+### variance_V_helper
+Helper function for calculating variance.
+
+### variance_single_transition_combined
+Calculates the final variance for combined shift and tilt operations.
+
+### LG_spectrum
+Calculates the LG spectrum of a given beam.
+
+### beamFullCenter
+Finds the beam center and tilt by minimizing variance.
+
+### find_width
+Finds the approximate beam waist.
+
+### beam_center_coordinates
+Finds the beam center coordinates considering both shift and tilt.
+
+### variance_single_transition
+Calculates variance for single shift or tilt operations.
+
+### variance_map_shift
+Generates a variance map for lateral displacement.
+
+### variance_map_tilt
+Generates a variance map for tilt displacement.
+
+### center_beam_finding
+Finds the center of the beam by minimizing variance for lateral displacement.
+
+### tilt_beam_finding
+Finds the tilt of the beam by minimizing variance for tilt displacement.
+
+The `__main__` section provides examples and is mainly used for testing.
 """
 
 import my_functions.functions_general as fg

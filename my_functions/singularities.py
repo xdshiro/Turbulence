@@ -1,5 +1,23 @@
 """
-This module has classes of different singularities and functions processing singularities
+This module has classes of different singularities and functions for processing singularities.
+
+The module provides various functions for finding, plotting, and manipulating singularities
+in optical fields. It also includes classes for handling 3D singularities and knots.
+
+Functions:
+    - plot_knot_dots: Plots 3D or 2D scatters from the field or dictionary with dots.
+    - plane_singularities_finder_9dots: Helper function to find singularities in a 2D plane using 9 dots.
+    - plane_singularities_finder_4dots: Helper function to find singularities in a 2D plane using 4 dots.
+    - fill_dict_as_matrix_helper: Helper function to fill a dictionary as a matrix.
+    - cut_non_oam: Finds singularities and returns a 3D array with values and non-values.
+    - get_singularities: Simplifies cut_non_oam by returning an array of singularities.
+    - W_energy: Calculates the total power in the Oxy plane.
+    - Jz_calc_no_conj: Calculates the z-component of the angular momentum without conjugation.
+    - integral_number2_OAMcoefficients_FengLiPaper: Calculates the weight of OAM at a radius using FengLi paper's method.
+    - integral_number3_OAMpower_FengLiPaper: Calculates the total power in the OAM with a specific charge.
+    - knot_build_pyknotid: Builds a normalized pyknotid knot.
+    - fill_dotsKnotList_mine: Fills a list of dots by removing charge sign and arranging them into a list.
+    - dots_dens_reduction: Reduces the density of singularity lines by removing extra dots.
 """
 # import functions_OAM_knots as fOAM
 # import functions_general as fg
@@ -31,13 +49,18 @@ Stop if the distance is too big. To find a hopf
 def plot_knot_dots(field, bigSingularity=False, axesAll=True,
                    size=plt.rcParams['lines.markersize'] ** 2, color=None, show=True):
     """
-    ploting the 3d scatters (or 2d) from the field or from the dict with dots
-    :param field: can be complex field or dictionary with dots to plot
-    :param bigSingularity: cut_non_oam
-    :param axesAll: cut_non_oam
-    :param size: dots size
-    :param color: dots color
-    :return:
+    Plots 3D or 2D scatters from the field or dictionary with dots.
+
+    Parameters:
+        field: Complex field or dictionary with dots to plot.
+        bigSingularity: Boolean to include big singularities.
+        axesAll: Boolean to include all axes.
+        size: Size of the dots.
+        color: Color of the dots.
+        show: Boolean to show the plot.
+
+    Returns:
+        Matplotlib axis object.
     """
     if isinstance(field, dict):
         dotsOnly = field
@@ -66,7 +89,17 @@ def plot_knot_dots(field, bigSingularity=False, axesAll=True,
 
 def plane_singularities_finder_9dots(E, circle, value, nonValue, bigSingularity):
     """
-    cut_non_oam helper. see cut_non_oam for more details
+    Helper function to find singularities in a 2D plane using 9 dots.
+
+    Parameters:
+        E: Complex field.
+        circle: Radius of the circle around singularities.
+        value: Value assigned to singularities.
+        nonValue: Value assigned to non-singularities.
+        bigSingularity: Boolean to include big singularities.
+
+    Returns:
+        Array with singularities and non-singularities.
     """
 
     def check_dot_oam_9dots_helper(E):
@@ -110,9 +143,18 @@ def plane_singularities_finder_9dots(E, circle, value, nonValue, bigSingularity)
 
 def plane_singularities_finder_4dots(E, circle, value, nonValue, bigSingularity):
     """
-    cut_non_oam helper. see cut_non_oam for more details
-    """
+    Helper function to find singularities in a 2D plane using 4 dots.
 
+    Parameters:
+        E: Complex field.
+        circle: Radius of the circle around singularities.
+        value: Value assigned to singularities.
+        nonValue: Value assigned to non-singularities.
+        bigSingularity: Boolean to include big singularities.
+
+    Returns:
+        Array with singularities and non-singularities.
+    """
     def check_dot_oam_4dots_helper(E):
         def arg(x):
             return np.angle(np.exp(1j * x))
@@ -144,7 +186,16 @@ def plane_singularities_finder_4dots(E, circle, value, nonValue, bigSingularity)
 
 def fill_dict_as_matrix_helper(E, dots=None, nonValue=0, check=False):
     """
-    cut_non_oam helper. see cut_non_oam for more details
+    Helper function to fill a dictionary as a matrix.
+
+    Parameters:
+        E: Complex field.
+        dots: Dictionary to fill.
+        nonValue: Value assigned to non-singularities.
+        check: Boolean to check existing values.
+
+    Returns:
+        Dictionary filled as a matrix.
     """
     if dots is None:
         dots = {}
@@ -174,16 +225,19 @@ def fill_dict_as_matrix_helper(E, dots=None, nonValue=0, check=False):
 def cut_non_oam(E, value=1, nonValue=0, bigSingularity=False, axesAll=False, circle=1,
                 singularities_finder=plane_singularities_finder_9dots):
     """
-    this function finds singularities
-    returns [3D Array, dots only]
-    :param E: complex field
-    :param value: all singularities will have these values +- values (depend on the sing sign)
-    :param nonValue: all non-singularities have this value
-    :param bigSingularity: singularities and all dots around it has "value"
-    :param axesAll: singularities are searched not only in Oxy, but in Oxz and Oyz
-    :param circle: if the singularity is found, the circle around it is automatically equaled to nonValue
-    :param singularities_finder: plane_singularities_finder_9dots or _4dots. 2nd one is faster
-    :return: [the whole 3d massive with values and nonValues, dict[x, y, z]=value]
+    Finds singularities and returns a 3D array with values and non-values.
+
+    Parameters:
+        E: Complex field.
+        value: Value assigned to singularities.
+        nonValue: Value assigned to non-singularities.
+        bigSingularity: Boolean to include big singularities.
+        axesAll: Boolean to include all axes.
+        circle: Radius of the circle around singularities.
+        singularities_finder: Function to find singularities (9 dots or 4 dots).
+
+    Returns:
+        Tuple of 3D array with values and non-values, and dictionary of dots.
     """
     shape = np.shape(E)
     if len(shape) == 2:
@@ -216,16 +270,20 @@ def cut_non_oam(E, value=1, nonValue=0, bigSingularity=False, axesAll=False, cir
 def get_singularities(E, value=1, nonValue=0, bigSingularity=False, axesAll=False, circle=1,
                       singularities_finder=plane_singularities_finder_4dots, returnDict=False):
     """
-    cut_non_oam simplifier. Just return the array of singularities
-    :param E: complex field
-    :param value: all singularities will have these values +- values (depend on the sing sign)
-    :param nonValue: all non-singularities have this value
-    :param bigSingularity: singularities and all dots around it has "value"
-    :param axesAll: singularities are searched not only in Oxy, but in Oxz and Oyz
-    :param circle: if the singularity is found, the circle around it is automatically equaled to nonValue
-    :param singularities_finder: plane_singularities_finder_9dots or _4dots. 2nd one is faster
-    :param returnDict: if we also to get not only numpy array but also dict with dots {(x,y,z):+-1}
-    :return: [the whole 3d massive with values and nonValues, dict[x, y, z]=value]
+    Simplifies cut_non_oam by returning an array of singularities.
+
+    Parameters:
+        E: Complex field.
+        value: Value assigned to singularities.
+        nonValue: Value assigned to non-singularities.
+        bigSingularity: Boolean to include big singularities.
+        axesAll: Boolean to include all axes.
+        circle: Radius of the circle around singularities.
+        singularities_finder: Function to find singularities (9 dots or 4 dots).
+        returnDict: Boolean to return dictionary of dots.
+
+    Returns:
+        Array of singularities, and dictionary if returnDict is True.
     """
     if isinstance(E, dict):
         dotsOnly = E
@@ -240,11 +298,15 @@ def get_singularities(E, value=1, nonValue=0, bigSingularity=False, axesAll=Fals
 
 def W_energy(EArray, xArray=None, yArray=None):
     """
-    total power in Oxy plane
-    :param EArray:
-    :param xArray:
-    :param yArray:
-    :return:
+    Calculates the total power in the Oxy plane.
+
+    Parameters:
+        EArray: Complex field array.
+        xArray: Array of x coordinates.
+        yArray: Array of y coordinates.
+
+    Returns:
+        Total power in the Oxy plane.
     """
     if xArray is None or yArray is None:
         shape = np.shape(EArray)
@@ -257,6 +319,17 @@ def W_energy(EArray, xArray=None, yArray=None):
 
 
 def Jz_calc_no_conj(EArray, xArray=None, yArray=None):
+    """
+    Calculates the z-component of the angular momentum without conjugation.
+
+    Parameters:
+        EArray: Complex field array.
+        xArray: Array of x coordinates.
+        yArray: Array of y coordinates.
+
+    Returns:
+        Z-component of the angular momentum.
+    """
     EArray = np.array(EArray)
     Er, Ei = np.real(EArray), np.imag(EArray)
     if xArray is None or yArray is None:
@@ -294,10 +367,15 @@ def Jz_calc_no_conj(EArray, xArray=None, yArray=None):
 
 def integral_number2_OAMcoefficients_FengLiPaper(fieldFunction, r, l):
     """
-    Implementation of the Integral (2) from the FengLi paper for calculating the weight of OAM in r
-    :param fieldFunction:
-    :param r: radius where you want to know OAM
-    :param l: exp(1j * j * phi)
+    Calculates the weight of OAM at a radius using FengLi paper's method.
+
+    Parameters:
+        fieldFunction: Function of the field.
+        r: Radius at which to calculate OAM.
+        l: OAM charge.
+
+    Returns:
+        Weight of OAM at the specified radius.
     """
 
     # function helps to get y value from x and r. Sign is used in 2 different parts of the CS.
@@ -321,12 +399,17 @@ def integral_number2_OAMcoefficients_FengLiPaper(fieldFunction, r, l):
 
 def integral_number3_OAMpower_FengLiPaper(fieldFunction, rMin, rMax, rResolution, l):
     """
-    Implementation of the Integral (3) from the FengLi paper
-    Calculating total power in the OAM with charge l
-    :param fieldFunction: function of the field
-    :param rMin, rMax: boundaries of the integral
-    :param l: OAM
-    :return: Pl
+    Calculates the total power in the OAM with a specific charge.
+
+    Parameters:
+        fieldFunction: Function of the field.
+        rMin: Minimum radius for integration.
+        rMax: Maximum radius for integration.
+        rResolution: Resolution for the radius.
+        l: OAM charge.
+
+    Returns:
+        Total power in the OAM with the specified charge.
     """
     rArray = np.linspace(rMin, rMax, rResolution)
     aRArray = np.zeros(rResolution, dtype=complex)
@@ -338,10 +421,15 @@ def integral_number3_OAMpower_FengLiPaper(fieldFunction, rMin, rMax, rResolution
 
 def knot_build_pyknotid(dotsKnotList, **kwargs):
     """
-    function build normilized pyknotid knot
-    :return: pyknotid spacecurve
-    """
+    Builds a normalized pyknotid knot.
 
+    Parameters:
+        dotsKnotList: List of dots forming the knot.
+        **kwargs: Additional parameters for the knot.
+
+    Returns:
+        Pyknotid space curve.
+    """
     zMid = (max(z for x, y, z in dotsKnotList) + min(z for x, y, z in dotsKnotList)) / 2
     xMid = (max(x for x, y, z in dotsKnotList) + min(x for x, y, z in dotsKnotList)) / 2
     yMid = (max(y for x, y, z in dotsKnotList) + min(y for x, y, z in dotsKnotList)) / 2
@@ -350,10 +438,14 @@ def knot_build_pyknotid(dotsKnotList, **kwargs):
 
 
 def fill_dotsKnotList_mine(dots):
-    """####################################################################################
-    fill in self.dotsList by removing charge sign and placing everything into the list [[x, y, z], [x, y, z]...]
-    haven't checked if it works
-    :return: None
+    """
+    Fills a list of dots by removing charge sign and arranging them into a list.
+
+    Parameters:
+        dots: Array of dot coordinates.
+
+    Returns:
+        List of dots arranged into a knot.
     """
 
     def min_dist(dot, dots):
@@ -417,13 +509,15 @@ def fill_dotsKnotList_mine(dots):
 
 def dots_dens_reduction(dots, checkValue, checkNumber=3):
     """
-    Function remove extra density from the singularity lines (these extra dots can be due to the
-    extra planes XZ and YZ
-    we remove the dot if there are to many close to it dots
-    :param dots: dots array [[x, y, z],...]
-    :param checkValue: distance between the dots to check
-    :param checkNumber: how many dots we check
-    :return: new dots array [[x, y, z],...]
+    Reduces the density of singularity lines by removing extra dots.
+
+    Parameters:
+        dots: Array of dot coordinates.
+        checkValue: Distance threshold for checking dot density.
+        checkNumber: Number of dots to check around each dot.
+
+    Returns:
+        Reduced array of dot coordinates.
     """
     dotsFinal = dots
     if checkValue == 0:

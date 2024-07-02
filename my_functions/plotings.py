@@ -1,5 +1,18 @@
 """
-Including all the ploting functions, 2D, 3D, dots
+This module includes all the plotting functions, including 2D, 3D, and dot plots.
+
+The module provides various functions for plotting and visualizing data in 2D and 3D,
+as well as functions for creating interactive plots using Plotly.
+
+Functions:
+    - plot_2D: Plots a 2D field using Matplotlib.
+    - plot_scatter_2D: Creates a 2D scatter plot using Matplotlib.
+    - plot_plane_go: Plots a cross-section XY plane in 3D using Plotly.
+    - plot_3D_dots_go: Plots 3D dots interactively in the browser using Plotly.
+    - plot_3D_density: Plots 3D density in the browser using Plotly.
+    - plot_scatter_3D: Plots 3D scatter points using Matplotlib.
+    - box_set_go: Sets up a 3D plot with box boundaries using Plotly.
+    - plotDots: Plots an array of dots interactively in the browser using Plotly.
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,6 +30,31 @@ def plot_2D(field, x=None, y=None, xname='', yname='', map='jet', vmin=None, vma
             axis_equal=False, xlim=None, ylim=None, ax=None, show=True, ijToXY=True, origin='lower',
             interpolation='bilinear',
             **kwargs) -> object:
+    """
+        Plots a 2D field using Matplotlib.
+
+        Parameters:
+            field: 2D array to plot.
+            x, y: Coordinates for the axes.
+            xname, yname: Labels for the x and y axes.
+            map: Colormap to use.
+            vmin, vmax: Minimum and maximum values for color scaling.
+            title: Title of the plot.
+            ticksFontSize: Font size for ticks.
+            xyLabelFontSize: Font size for axis labels.
+            grid: Boolean to show grid.
+            axis_equal: Boolean to set equal scaling for the axes.
+            xlim, ylim: Limits for the x and y axes.
+            ax: Matplotlib axis object.
+            show: Boolean to show the plot.
+            ijToXY: Boolean to transpose the field.
+            origin: Origin of the plot.
+            interpolation: Interpolation method for imshow.
+            **kwargs: Additional keyword arguments for imshow.
+
+        Returns:
+            Matplotlib axis object.
+        """
     fieldToPlot = field
     if ijToXY:
         origin = 'lower'
@@ -60,6 +98,26 @@ def plot_scatter_2D(x, y, xname='', yname='', title='',
                     axis_equal=False, xlim=None, ylim=None, ax=None, show=True,
                     size=plt.rcParams['lines.markersize'] ** 2, color=None,
                     **kwargs):
+    """
+    Creates a 2D scatter plot using Matplotlib.
+
+    Parameters:
+        x, y: Data for the x and y axes.
+        xname, yname: Labels for the x and y axes.
+        title: Title of the plot.
+        ticksFontSize: Font size for ticks.
+        xyLabelFontSize: Font size for axis labels.
+        axis_equal: Boolean to set equal scaling for the axes.
+        xlim, ylim: Limits for the x and y axes.
+        ax: Matplotlib axis object.
+        show: Boolean to show the plot.
+        size: Size of the scatter points.
+        color: Color of the scatter points.
+        **kwargs: Additional keyword arguments for scatter.
+
+    Returns:
+        Matplotlib axis object.
+    """
     if ax is None:
         if axis_equal:
             fig, ax = plt.subplots(figsize=(6, 6))
@@ -86,11 +144,19 @@ def plot_scatter_2D(x, y, xname='', yname='', title='',
 def plot_plane_go(z, mesh, fig=None, opacity=0.6, show=False,
                   colorscale=([0, '#aa9ce2'], [1, '#aa9ce2']), **kwargs):
     """
-    plotting the cross-section XY plane in 3d go figure
-    :param z: z coordinate of the plane
-     :param colorscale: need values for 0 and 1 (the same), or something like 'RdBu'
-    :param kwargs: for go.Surface
-    :return: fig
+    Plots a cross-section XY plane in 3D using Plotly.
+
+    Parameters:
+        z: Z coordinate of the plane.
+        mesh: Meshgrid for the coordinates.
+        fig: Plotly figure object.
+        opacity: Opacity of the plane.
+        show: Boolean to show the plot.
+        colorscale: Colorscale for the plane.
+        **kwargs: Additional keyword arguments for go.Surface.
+
+    Returns:
+        Plotly figure object.
     """
     xyz = fg.arrays_from_mesh(mesh)
 
@@ -105,10 +171,18 @@ def plot_plane_go(z, mesh, fig=None, opacity=0.6, show=False,
 
 def plot_3D_dots_go(dots, mode='markers', marker=None, fig=None, show=False, **kwargs):
     """
-    plotting dots in the interactive window in browser using plotly.graph_objects
-    :param dots: [[x,y,z],...]
-    :param show: True if you want to show it instantly
-    :return: fig
+    Plots 3D dots interactively in the browser using Plotly.
+
+    Parameters:
+        dots: Array of dot coordinates.
+        mode: Plotting mode (e.g., 'markers').
+        marker: Marker style.
+        fig: Plotly figure object.
+        show: Boolean to show the plot.
+        **kwargs: Additional keyword arguments for go.Scatter3d.
+
+    Returns:
+        Plotly figure object.
     """
     if marker is None:
         marker = {'size': 8, 'color': 'black'}
@@ -127,18 +201,24 @@ def plot_3D_density(E, resDecrease=(1, 1, 1), mesh=None,
                     opacity=0.5, colorscale='RdBu',
                     opacityscale=None, fig=None,  scaling=None, **kwargs):
     """
-    Function plots 3d density in the browser
-    :param E: anything in real number to plot
-    :param resDecrease: [a, b, c] steps in each direction
-    :param xMinMax: values along x [xMinMax[0], xMinMax[1]] (boundaries)
-    :param yMinMax: values along y [yMinMax[0], yMinMax[1]] (boundaries)
-    :param zMinMax: values along z [zMinMax[0], zMinMax[1]] (boundaries)
-    :param surface_count: numbers of layers to show. more layers - better resolution
-                          but harder to plot it. High number can lead to an error
-    :param opacity: needs to be small to see through all surfaces
-    :param opacityscale: custom opacity scale [...] (google)
-    :param kwargs: extra params for go.Figure
-    :return: nothing since it's in the browser (not ax or fig)
+    Plots 3D density in the browser using Plotly.
+
+    Parameters:
+        E: 3D array to plot.
+        resDecrease: Resolution decrease factors.
+        mesh: Meshgrid for the coordinates.
+        xMinMax, yMinMax, zMinMax: Boundaries for the x, y, and z axes.
+        surface_count: Number of layers to show.
+        show: Boolean to show the plot.
+        opacity: Opacity of the surfaces.
+        colorscale: Colorscale for the plot.
+        opacityscale: Custom opacity scale.
+        fig: Plotly figure object.
+        scaling: Scaling factors for the coordinates.
+        **kwargs: Additional keyword arguments for go.Volume.
+
+    Returns:
+        Plotly figure object.
     """
     if mesh is None:
         shape = np.array(np.shape(E))
@@ -186,13 +266,19 @@ def plot_3D_density(E, resDecrease=(1, 1, 1), mesh=None,
 def plot_scatter_3D(X, Y, Z, ax=None, size=plt.rcParams['lines.markersize'] ** 2, color=None,
                     viewAngles=(70, 0), show=True, **kwargs):
     """
-    ploting dots using plt.scatter
-    :param ax: if you want multiple plots in one ax
-    :param size: dots size. Use >100 for a better look
-    :param color: color of the dots. Default for a single plot is blue
-    :param viewAngles: (70, 0) (phi, theta)
-    :param kwargs: extra parameters for plt.scatter
-    :return: ax
+    Plots 3D scatter points using Matplotlib.
+
+    Parameters:
+        X, Y, Z: Coordinates of the scatter points.
+        ax: Matplotlib axis object.
+        size: Size of the scatter points.
+        color: Color of the scatter points.
+        viewAngles: Viewing angles for the plot.
+        show: Boolean to show the plot.
+        **kwargs: Additional keyword arguments for scatter.
+
+    Returns:
+        Matplotlib axis object.
     """
     if ax is None:
         fig = plt.figure()
@@ -207,14 +293,21 @@ def plot_scatter_3D(X, Y, Z, ax=None, size=plt.rcParams['lines.markersize'] ** 2
 def box_set_go(fig, xyzMinMax=(-1, 1, -1, 1, -1, 1), width=3, perBox=0, mesh=None, autoDots=None,
                return_boundaries=False, aspects=(2, 2, 2), lines=True):
     """
-    Function remove the standard layout and put the plot into the box of black lines
-    :param fig: which fig should be updated
-    :param xyzMinMax: boundaries for the box if there is no mesh
-    :param width: width of the lines for the box
-    :param perBox: percentage to make the box bigger
-    :param mesh: if the mesh is given, boundaries are getting automatically
-    :param autoDots: if autoDots == dots => finding the boundaries automatically from dots
-    :return: fig
+    Sets up a 3D plot with box boundaries using Plotly.
+
+    Parameters:
+        fig: Plotly figure object.
+        xyzMinMax: Boundaries for the x, y, and z axes.
+        width: Width of the box lines.
+        perBox: Percentage to make the box bigger.
+        mesh: Meshgrid for the coordinates.
+        autoDots: Dots to use for automatic boundary detection.
+        return_boundaries: Boolean to return the boundaries.
+        aspects: Aspect ratios for the axes.
+        lines: Boolean to draw lines.
+
+    Returns:
+        Plotly figure object, and boundaries if return_boundaries is True.
     """
     if autoDots is not None:
         dots = autoDots
@@ -303,18 +396,20 @@ def box_set_go(fig, xyzMinMax=(-1, 1, -1, 1, -1, 1), width=3, perBox=0, mesh=Non
 def plotDots(dots, dots_bound=None, show=True, color='black', size=15, width=185, fig=None,
              save=None):
     """
-    Function plots the array of dots in a beautiful and interactive way in your browser.
-    Plots both numpy array and dict
-    :param dots: array of dots
-    :param dots_bound: which dots to use to get the box frames. By default it uses the dots itself,
-        but if you want to make the frames the same with other plots, you can use other dots here, same
-        for all plots.
-    :param show: plotting in the browser. Can be turned off to add extra plots on top
-    :param color: color of the dots
-    :param size: size of the dots
-    :param width: width of the shell of the dots (for a better visualization)
-    :param fig: figure for the combination with other plots
-    :return: fig
+    Plots an array of dots interactively in the browser using Plotly.
+
+    Parameters:
+        dots: Array of dot coordinates.
+        dots_bound: Dots to use for boundary detection.
+        show: Boolean to show the plot.
+        color: Color of the dots.
+        size: Size of the dots.
+        width: Width of the dot borders.
+        fig: Plotly figure object.
+        save: Path to save the plot.
+
+    Returns:
+        Plotly figure object.
     """
     colorLine = 'white'
     # colorLine = 'black'

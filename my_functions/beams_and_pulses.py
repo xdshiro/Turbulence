@@ -1,22 +1,39 @@
 """
-This module includes different optical beam shapes
+This module includes different optical beam shapes.
+
+The module provides functions to generate and manipulate various optical beam configurations,
+including classic Laguerre-Gaussian beams, trefoil knot configurations, Hopf link configurations,
+and Milnor polynomials. Additionally, it allows for creating fields by combining multiple LG beams.
+
+Functions:
+    - LG_simple: Generates a classic Laguerre-Gaussian (LG) beam.
+    - trefoil: Constructs a field based on a trefoil knot configuration using a combination of LG beams.
+    - hopf: Constructs a field based on a Hopf link configuration using a combination of LG beams.
+    - milnor_Pol_u_v_any: Creates a Milnor polynomial of the form u^a - v^b.
+    - LG_combination: Creates a field by combining multiple LG beams according to specified coefficients and modes.
 """
 import numpy as np
 from scipy.special import assoc_laguerre
 import my_functions.functions_general as fg
 import math
+
 np.seterr(divide='ignore', invalid='ignore')
+
 
 def LG_simple(x, y, z=0, l=1, p=0, width=1, k0=1, x0=0, y0=0, z0=0):
     """
-    Classic LG beam
-    :param l: azimuthal index
-    :param p: radial index
-    :param width: beam waste
-    :param k0: wave number
-    :param x0: center of the beam in x
-    :param y0: center of the beam in y
-    :return: complex field
+    Generates a classic Laguerre-Gaussian (LG) beam.
+
+    Parameters:
+        x, y, z: Spatial coordinates.
+        l: Azimuthal index.
+        p: Radial index.
+        width: Beam waist.
+        k0: Wave number.
+        x0, y0, z0: Center of the beam in x, y, and z.
+
+    Returns:
+        Complex field representing the LG beam.
     """
 
     def laguerre_polynomial(x, l, p):
@@ -36,26 +53,25 @@ def LG_simple(x, y, z=0, l=1, p=0, width=1, k0=1, x0=0, y0=0, z0=0):
          * np.exp(-fg.rho(x, y) ** 2 / (2 * width ** 2 * (1 + 1j * z / zR)))
          * laguerre_polynomial(fg.rho(x, y) ** 2 / (width ** 2 * (1 + z ** 2 / zR ** 2)), np.abs(l), p)
          )
-    # E = (np.sqrt(2 * math.factorial(p) / (np.pi * math.factorial(np.abs(l) + p)))
-    #      * (fg.rho(x, y) * np.sqrt(2)) ** np.abs(l) * np.exp(1j * l * fg.phi(x, y))
-    #      / (width ** (np.abs(l) + 1) * (1 + 1j * z / zR) ** (np.abs(l) + 1))
-    #      * ((1 - 1j * z / zR) / (1 + 1j * z / zR)) ** p
-    #      * np.exp(-fg.rho(x, y) ** 2 / (width ** 2 * (1 + 1j * z / zR)))
-    #      * laguerre_polynomial(2 * fg.rho(x, y) ** 2 / (width ** 2 * (1 + z ** 2 / zR ** 2)), np.abs(l), p)
-    #      )
-    # zR = (k0 * width ** 2) / 2
-    # E = (np.sqrt(2 * math.factorial(p) / (np.pi * math.factorial(np.abs(l) + p)))
-    #      * (fg.rho(x, y) * np.sqrt(2)) ** np.abs(l) * np.exp(-1j * l * fg.phi(x, y))
-    #      / ((width * np.sqrt(1 + z ** 2 / zR ** 2)) ** (np.abs(l) + 1))
-    #               * np.exp(-fg.rho(x, y) ** 2 / (width ** 2 * (1 + z ** 2 / zR ** 2)))
-    #      * laguerre_polynomial(2 * fg.rho(x, y) ** 2 / (width ** 2 * (1 + z ** 2 / zR ** 2)), np.abs(l), p)
-    #      * np.exp(1j * (np.abs(l) + 2 * p + 1) * np.arctan(z / zR))
-    #      * np.exp(-1j * k0 * fg.rho(x, y) ** 2 * z / (z ** 2 + zR ** 2) / 2)
-    #      )
+
     return E
 
 
 def trefoil(*x, w, width=1, k0=1, aCoeff=None, coeffPrint=False, **kwargs):
+    """
+        Constructs a field based on a trefoil knot configuration using a combination of LG beams.
+
+        Parameters:
+            *x: Spatial coordinates.
+            w: Weight parameter.
+            width: Beam waist.
+            k0: Wave number.
+            aCoeff: Coefficients for the LG beam combination.
+            coeffPrint: Flag to print the coefficients.
+
+        Returns:
+            Complex field representing the trefoil knot configuration.
+        """
     H = 1.0
     if aCoeff is not None:
         aSumSqr = 0.1 * np.sqrt(sum([a ** 2 for a in aCoeff]))
@@ -84,6 +100,20 @@ def trefoil(*x, w, width=1, k0=1, aCoeff=None, coeffPrint=False, **kwargs):
 
 
 def hopf(*x, w, width=1, k0=1, aCoeff=None, coeffPrint=False, **kwargs):
+    """
+    Constructs a field based on a Hopf link configuration using a combination of LG beams.
+
+    Parameters:
+        *x: Spatial coordinates.
+        w: Weight parameter.
+        width: Beam waist.
+        k0: Wave number.
+        aCoeff: Coefficients for the LG beam combination.
+        coeffPrint: Flag to print the coefficients.
+
+    Returns:
+        Complex field representing the Hopf link configuration.
+    """
     if aCoeff is not None or aCoeff is False:
         aSumSqr = 0.1 * np.sqrt(sum([a ** 2 for a in aCoeff]))
         aCoeff /= aSumSqr
@@ -110,7 +140,18 @@ def hopf(*x, w, width=1, k0=1, aCoeff=None, coeffPrint=False, **kwargs):
 
 
 def milnor_Pol_u_v_any(mesh, uOrder, vOrder, H=1):
-    """This function create u^a-v^b Milnor polynomial"""
+    """
+    Creates a Milnor polynomial of the form u^a - v^b.
+
+    Parameters:
+        mesh: Tuple of x, y, z coordinates.
+        uOrder: Order of u.
+        vOrder: Order of v.
+        H: Constant parameter.
+
+    Returns:
+        Milnor polynomial field.
+    """
     x, y, z = mesh
     R = fg.rho(x, y)
     f = fg.phi(x, y)
@@ -121,11 +162,11 @@ def milnor_Pol_u_v_any(mesh, uOrder, vOrder, H=1):
 
 def LG_combination(*mesh, coefficients, modes, width=1, **kwargs):
     """
-    creating the field of any combination of LG beams
-    Sum(Cl1p1 * LG_simple(*mesh, l=l1, p=p1, **kwargs))
-    :param mesh: np.meshgrid
-    :param coefficients: [Cl1p1, Cl2p2...] ...
-    :param modes: [(l1,p1), (l2,p2) ...]
+    Creates a field by combining multiple LG beams according to specified coefficients and modes.
+    Parameters:
+        - *mesh: Spatial coordinates mesh.
+        - coefficients: List of coefficients for the LG beam combination.
+        - modes: List of tuples representing (l, p) modes.
     """
     field = 0
     if isinstance(width, int):
@@ -134,8 +175,10 @@ def LG_combination(*mesh, coefficients, modes, width=1, **kwargs):
         field += coefficient * LG_simple(*mesh, l=modes[num][0], p=modes[num][1], width=width[num], **kwargs)
     return field
 
+
 if __name__ == '__main__':
     import my_functions.plotings as pl
+
     xyzMesh = fg.create_mesh_XYZ(4, 4, 1, zMin=None)
     beam = milnor_Pol_u_v_any(xyzMesh, uOrder=2, vOrder=2, H=1)
     pl.plot_2D(np.abs(beam[:, :, 20]))

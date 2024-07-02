@@ -1,18 +1,75 @@
 """
-This script reads the field from mat file and produces all the necessary pre-processing procedures, and
+This script reads the field from a .mat file, performs necessary pre-processing procedures, and
 creates a 3D array of singularity dots.
 
-First main function is main_field_processing:
-    1) reading the field from matlab file
-    2) converting it into numpy array
-    3) normalizing
-    4) finding the beam waste
-    5) rescaling the field, using the interpolation, for faster next steps
-    6) finding the beam center
-    7) rescaling field to the scale we want for 3D calculations
-    8) removing the tilt and shift
+## Main Functions
 
-Second main function is !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+### main_field_processing
+1) Reads the field from a MATLAB file.
+2) Converts the field into a numpy array.
+3) Normalizes the field.
+4) Finds the beam waist.
+5) Rescales the field using interpolation for faster processing.
+6) Finds the beam center.
+7) Rescales the field to the desired scale for 3D calculations.
+8) Removes the tilt and shift.
+
+### main_dots_building
+1) Reads a 2D field and plots it.
+2) Performs double-sided propagation to generate a 3D field.
+3) Crops the 3D field for faster singularity calculation.
+4) Detects singularity dots in the 3D field using cross-sections.
+5) Crops the dots within a specified radius.
+6) Moves the dots to the corner to create a smaller 3D array.
+7) Applies dot simplification algorithms to reduce the number of dots.
+
+## Import Statements
+
+- External Libraries:
+  - os: For handling directory operations.
+  - math: For mathematical operations.
+  - numpy: For numerical operations.
+  - pandas: For data manipulation.
+  - scipy.io: For handling MATLAB files.
+  - matplotlib.pyplot: For plotting.
+
+- Custom Modules:
+  - my_functions.singularities: Functions for handling singularities.
+  - my_functions.functions_general: General utility functions.
+  - functions.dots_processing: Functions for processing dots.
+  - functions.center_beam_search: Functions for beam search.
+  - my_functions.beams_and_pulses: Functions related to beams and pulses.
+
+## Functions
+
+### read_field_2D_single
+Reads a 2D array from a MATLAB file and converts it into a numpy array.
+
+### normalization_field
+Normalizes the field for beam center finding.
+
+### plot_field
+Plots the intensity and phase of a field in a single plot.
+
+### plot_field_3D_multi_planes
+Plots the intensity and phase of a 3D field at different z-planes.
+
+### find_beam_waist
+Finds the approximate beam waist using a specified mesh.
+
+### field_interpolation
+Interpolates a field to a new resolution.
+
+### one_plane_propagator
+Performs double-sided propagation for generating a 3D field from a 2D field.
+
+### dots_rounded
+Rounds the coordinates of the dots for further processing.
+
+### files_list
+Generates a list of files with a specified extension in a directory.
+
+The `__main__` section provides examples and is mainly used for testing and processing specific directories and files.
 """
 
 import os

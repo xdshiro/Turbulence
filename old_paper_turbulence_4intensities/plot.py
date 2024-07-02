@@ -20,7 +20,7 @@ def confidence_interval(p, n, z=1.96):
     return ci * 100  # Convert back to percentage
 
 # Number of samples
-n_samples = 200
+n_samples = 300
 n_samples_new = 300
 
 # Calculate confidence intervals

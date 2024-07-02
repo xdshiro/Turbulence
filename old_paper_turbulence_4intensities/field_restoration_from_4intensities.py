@@ -238,7 +238,7 @@ plot = 3
 # U_f_resized = process_knot_fields(file_path='Uz_results_test10_25.mat', plot=True, reso=reso)
 
 input_folder = '4_diff_1'
-input_folders = ['4int_095_300', '4int_090_300', '4int_085_300']
+input_folders = ['4int_080_300']
 for input_folder in input_folders:
 	output_folder = 'processed_dots_'+input_folder
 	if not os.path.exists(output_folder):

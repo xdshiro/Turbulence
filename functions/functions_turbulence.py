@@ -1,3 +1,97 @@
+"""
+This Python script provides functions for simulating optical turbulence and its effects on laser beams,
+including generating phase screens, computing Strehl ratios, and propagating beams through turbulent media.
+The script utilizes various mathematical models and tools for accurate simulations.
+
+## Import Statements
+
+- External Libraries:
+  - numpy: For numerical operations.
+  - matplotlib.pyplot: For plotting.
+  - aotools: For generating phase screens and optical propagation.
+  - scipy.special: For special functions like Laguerre polynomials.
+
+- Custom Modules:
+  - my_functions.functions_general: General utility functions.
+
+## Functions
+
+### plot_field_both
+Plots the amplitude and phase of a complex field.
+
+### plot_field
+Plots the value (amplitude or phase) of a field.
+
+### LG_simple
+Generates a classic Laguerre-Gaussian (LG) beam.
+
+### r0_from_Cn2
+Calculates the Fried parameter (r0) from the refractive index structure constant (Cn2).
+
+### Cn2_from_r0
+Calculates the refractive index structure constant (Cn2) from the Fried parameter (r0).
+
+### SR_from_r0
+Calculates the Strehl ratio (SR) from the Fried parameter (r0).
+
+### SR_from_Cn2
+Calculates the Strehl ratio (SR) from the refractive index structure constant (Cn2).
+
+### rytov
+Calculates the Rytov variance from Cn2, wave number, and propagation distance.
+
+### screens_number
+Estimates the number of phase screens needed based on the Rytov variance.
+
+### arrays_from_mesh
+Returns the tuple of x, y, and z arrays from a meshgrid.
+
+### SR_gauss
+Calculates the Strehl ratio for a Gaussian beam propagating through turbulence.
+
+### SR_gauss_or
+Calculates the Strehl ratio for an LG beam propagating through turbulence with orbital angular momentum.
+
+### SR_gauss_old
+Calculates the Strehl ratio for an LG beam using an older method.
+
+### psh_wrap
+Generates a phase screen based on the given parameters.
+
+### propagation_ps_simple
+Propagates a beam through a simple phase screen.
+
+### propagation_ps
+Propagates a beam through multiple phase screens.
+
+### propagation_no_ps
+Propagates a beam without phase screens, used for beam expansion.
+
+### beam_expander
+Expands a beam through a given distance by propagating it forward and backward.
+
+### cut_circle_dots
+Filters points that are inside a given radius from a center.
+
+### rotation_matrix_x
+Generates a rotation matrix for rotating around the x-axis.
+
+### rotation_matrix_y
+Generates a rotation matrix for rotating around the y-axis.
+
+### rotation_matrix_z
+Generates a rotation matrix for rotating around the z-axis.
+
+### rotate_meshgrid
+Rotates a meshgrid by given angles around x, y, and z axes.
+
+### find_center_of_intensity
+Finds the center of intensity for a 2D array.
+
+The script is essential for researchers and engineers working on optical communication and laser beam propagation
+through turbulent media, providing a versatile toolkit for creating and analyzing complex optical fields.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from aotools.turbulence import phasescreen
@@ -162,7 +256,9 @@ def SR_gauss(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_
         current = np.abs(E[res_xy_2D // 2, res_xy_2D // 2]) ** 2
         # print(current, I0)
         if max_cut:
-            I_avg_tot += min(current, I0)
+            # I_avg_tot += min(current, I0)
+            # print(current, np.max(np.abs(E) ** 2), I0)
+            I_avg_tot += current / np.max(np.abs(E) ** 2) * I0
         else:
             I_avg_tot += current
         if i == 1:
@@ -174,7 +270,73 @@ def SR_gauss(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_
     return SR
 
 
+from scipy.fftpack import fft2, ifft2, fftshift, ifftshift
 
+def zero_pad(E, pad_factor=2):
+    N = E.shape[0]
+    padded_size = N * pad_factor
+    padded_E = np.zeros((padded_size, padded_size), dtype=complex)
+
+    start = (padded_size - N) // 2
+    padded_E[start:start + N, start:start + N] = E
+
+    return padded_E
+
+def SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_cut=False, pad_factor=2):
+    _, _, width0, lmbda = beam_par
+    k0 = 2 * np.pi / lmbda
+    r0, N, pxl_scale, L0, l0 = psh_par
+    xy_array, _ = arrays_from_mesh(mesh_2D)
+    res_xy_2D = len(xy_array)
+    xy_scale = xy_array[1] - xy_array[0]
+    assert N == len(xy_array), 'Resolution of the beam isn"t equal to the phase screen N'
+
+    LG_00 = LG_simple(*mesh_2D, z=0, l=0, p=0, width=width0, k0=k0, x0=0, y0=0, z0=0)
+
+    # Zero-pad the initial field
+    LG_00_padded = zero_pad(LG_00, pad_factor)
+    res_padded = LG_00_padded.shape[0]
+
+    # Compute the Fourier transform of the padded initial field and shift it to center
+    I0_fft = fftshift(fft2(LG_00_padded))
+    I0 = np.abs(I0_fft[res_padded // 2, res_padded // 2]) ** 2
+    center = (N * pad_factor) // 2
+    plot_field_both(I0_fft[center - N // 2: center + N // 2, center - N // 2: center + N // 2])
+    I_avg_tot = 0
+    # print(I0)
+    Cn2 = Cn2_from_r0(r0, k0, L_prop)
+    dL = L_prop / screens_num
+    r0d = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=dL)
+    psh_par_dL = r0d, N, pxl_scale, L0, l0
+    for i in range(epochs):
+        E = LG_00
+        for _ in range(screens_num):
+            phase_screen_i = psh_wrap(psh_par_dL)
+            E = opticalpropagation.angularSpectrum(
+                E * np.exp(1j * phase_screen_i), lmbda, pxl_scale, pxl_scale, dL
+            )
+
+        # Zero-pad the final field and compute the Fourier transform
+        E_padded = zero_pad(E, pad_factor)
+        # plot_field_both(E_padded)
+        E_fft = fftshift(fft2(E_padded))
+
+        if i < 3:
+            plot_field_both(E_fft[center - N // 2 : center + N // 2, center - N // 2 : center + N // 2])
+        current = np.abs(E_fft[res_padded // 2, res_padded // 2]) ** 2
+        # print(current)
+        if max_cut:
+            I_avg_tot += current / np.max(np.abs(E_fft) ** 2) * I0
+        else:
+            I_avg_tot += current
+
+        if i == 1:
+            plot_field_both(E, extend=None)
+
+    I_avg = I_avg_tot / epochs
+    SR = I_avg / I0
+    print(f'SR={SR}')
+    return SR
 
 def SR_gauss_or(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1):
     l, p, width0, lmbda = beam_par
