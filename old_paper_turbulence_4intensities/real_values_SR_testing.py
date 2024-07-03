@@ -6,7 +6,7 @@ from aotools import opticalpropagation
 from aotools.turbulence.phasescreen import ft_phase_screen as ps
 from aotools.turbulence.phasescreen import ft_sh_phase_screen as psh
 from functions.functions_turbulence import *
-
+from functions.all_knots_functions import *
 """
 r0 (float) – r0 parameter of scrn in metres
 N (int) – Size of phase scrn in pxls
@@ -15,13 +15,15 @@ L0 (float) – Size of outer-scale in metres
 l0 (float) – inner scale in metres
 """
 # %% Beam parameters
-lmbda = 633e-9
-L_prop = 300  # ! точно
-width0 = 15e-3 / np.sqrt(2)  # !? может точно
+lmbda = 532e-9
+L_prop = 150e-3
+L_prop = 150e-3
+width0 = 2e-3
+width_values = width0 / np.sqrt(2)
 l, p = 0, 0
 # xy_lim_2D = (-8.0e-6, 8.0e-6)
-xy_lim_2D = np.array((-50.0e-3, 50.0e-3))
-res_xy_2D = 301
+xy_lim_2D = np.array((-10.0e-3, 10.0e-3))
+res_xy_2D = 91
 
 # print(51 % 2)
 # ar = np.arange(-(51 - 1) / 2, (51 + 1) / 2)
@@ -47,16 +49,20 @@ print(f'dx={pxl_scale * 1e6: .2f}um, perfect={perfect_scale * 1e6: .2f}um,'
 Cn2 = 10e-1
 Cn2 = 5e-1
 Cn2 = 3.21e-14
+Cn2 = 3.21e-10
+# Cn2 = 3.21e-12
 # Cn2 = 2e-15 Greg Gbur
 # Cn2 = 1.35e-13
 r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=L_prop)
 
-print(f'r0 parameter: {r0}, 2w0/r0={2 * width0 / r0}')
+print(f'r0 parameter: {r0}, 2w0/r0={2 * width_values / r0}')
 
 L0 = 5
 L0 = 9
 l0 = 5e-3  # !!!!!!
+
 psh_par = (r0, res_xy_2D, pxl_scale, L0, l0)
+psh_par_0 = (r0 * 1e100, res_xy_2D, pxl_scale, L0, l0 * 1e100)
 
 # %%
 
@@ -88,6 +94,14 @@ plot_field(phase_screen, extend=None)
 field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, L_prop, screens_num=8)
 plot_field_both(field_prop)
 plt.show()
+field_3d = beam_expander(field_prop, beam_par, psh_par_0, distance_both=20, steps_one=20 // 2)
+dots_init_dict, dots_init = sing.get_singularities(np.angle(field_3d), axesAll=False, returnDict=True)
+dots_bound = [
+                [0, 0, 0],
+                [res_xy_2D, res_xy_2D, 20 + 1],
+            ]
+pl.plotDots(dots_init_dict, dots_bound, color='black', show=True, size=10)
+# dots_cut_non_unique = cut_circle_dots(dots_init, N // 2, crop_3d // 2, crop_3d // 2)
 SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=1, max_cut=False, pad_factor=4)
 def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_cut=False, seed=None):
     _, _, width0, lmbda = beam_par

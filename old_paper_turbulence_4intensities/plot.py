@@ -3,14 +3,14 @@ import numpy as np
 
 # Real Data
 sr_values = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
-proposed_simulation = [79, 39, 16, 7.5, 5.2, 2.5]
-mr_dennis_simulation = [41, 16, 5, 2, 0, 0]
-proposed_experiment = [71, 32, 10, 6, 2, 0]
-mr_dennis_experiment = [42, 14, 1, 0, 0, 0]
+proposed_simulation = [79, 39, 16, 7.5, 5.2, 2.5]  # values are not precise
+mr_dennis_simulation = [41, 16, 5, 2, 0, 0]  # values are not precise
+proposed_experiment = [71, 32, 10, 6, 2, 0]  # values are not precise
+mr_dennis_experiment = [42, 14, 1, 0, 0, 0]  # values are not precise
 
 # New data for the slow camera assumption
 sr_values_new = [0.95, 0.9, 0.85, 0.8]
-slow_camera_simulation = [56.2, 20.6, 7.41, 3.37]
+slow_camera_simulation = [56.2, 20.6, 7.41, 3.37]  # those are exact values
 
 # Function to calculate confidence interval
 def confidence_interval(p, n, z=1.96):
@@ -30,6 +30,8 @@ proposed_experiment_ci = [confidence_interval(p, n_samples) for p in proposed_ex
 mr_dennis_experiment_ci = [confidence_interval(p, n_samples) for p in mr_dennis_experiment]
 slow_camera_simulation_ci = [confidence_interval(p, n_samples_new) for p in slow_camera_simulation]
 
+print(f"slow camera intervals: {slow_camera_simulation_ci}")
+# slow camera intervals: [5.614365175155602, 4.576561527318663, 2.96405726611346, 2.0420500589358723]
 # Plot
 plt.figure(figsize=(8, 6))
 
