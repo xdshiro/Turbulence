@@ -282,7 +282,7 @@ def zero_pad(E, pad_factor=2):
 
     return padded_E
 
-def SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_cut=False, pad_factor=2):
+def SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_cut=False, pad_factor=2, show=False):
     _, _, width0, lmbda = beam_par
     k0 = 2 * np.pi / lmbda
     r0, N, pxl_scale, L0, l0 = psh_par
@@ -301,7 +301,8 @@ def SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num
     I0_fft = fftshift(fft2(LG_00_padded))
     I0 = np.abs(I0_fft[res_padded // 2, res_padded // 2]) ** 2
     center = (N * pad_factor) // 2
-    plot_field_both(I0_fft[center - N // 2: center + N // 2, center - N // 2: center + N // 2])
+    if show:
+        plot_field_both(I0_fft[center - N // 2: center + N // 2, center - N // 2: center + N // 2])
     I_avg_tot = 0
     # print(I0)
     Cn2 = Cn2_from_r0(r0, k0, L_prop)
@@ -321,8 +322,9 @@ def SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num
         # plot_field_both(E_padded)
         E_fft = fftshift(fft2(E_padded))
 
-        if i < 3:
-            plot_field_both(E_fft[center - N // 2 : center + N // 2, center - N // 2 : center + N // 2])
+        if show:
+            if i < 3:
+                plot_field_both(E_fft[center - N // 2 : center + N // 2, center - N // 2 : center + N // 2])
         current = np.abs(E_fft[res_padded // 2, res_padded // 2]) ** 2
         # print(current)
         if max_cut:
@@ -331,7 +333,8 @@ def SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num
             I_avg_tot += current
 
         if i == 1:
-            plot_field_both(E, extend=None)
+            if show:
+                plot_field_both(E, extend=None)
 
     I_avg = I_avg_tot / epochs
     SR = I_avg / I0

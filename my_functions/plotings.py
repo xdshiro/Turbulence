@@ -413,14 +413,14 @@ def plotDots(dots, dots_bound=None, show=True, color='black', size=15, width=185
     """
     colorLine = 'white'
     # colorLine = 'black'
-    print(dots)
+    # print(dots)
     if len(dots) == 0 or len(dots) == 1:
         dots = np.array([[0, 0, 0]])
     if isinstance(dots, dict):
         dots = np.array([dot for dot in dots])
     if isinstance(dots_bound, dict):
         dots_bound = np.array([dot for dot in dots_bound])
-    print(dots)
+    # print(dots)
     if dots_bound is None:
         dots_bound = dots
     if fig is None:

@@ -25,10 +25,6 @@ l, p = 0, 0
 xy_lim_2D = np.array((-10.0e-3, 10.0e-3))
 res_xy_2D = 91
 
-# print(51 % 2)
-# ar = np.arange(-(51 - 1) / 2, (51 + 1) / 2)
-# print(ar, len(ar))
-# exit()
 # Rytov variance should be smaller than 1 for each segment
 beam_par = (l, p, width0, lmbda)
 k0 = 2 * np.pi / lmbda
@@ -43,16 +39,12 @@ print(f'dx={pxl_scale * 1e6: .2f}um, perfect={perfect_scale * 1e6: .2f}um,'
 
 
 # %% turbulence parameters
-# Cn2_real_array = [1e-17, 1e-16, 1e-15, 1e-14, 1e-13]  # weak -> strong
-# 3.21 × 10−14
-# 1.35 × 10−13 m−2∕3
+
 Cn2 = 10e-1
 Cn2 = 5e-1
 Cn2 = 3.21e-14
 Cn2 = 3.21e-10
-# Cn2 = 3.21e-12
-# Cn2 = 2e-15 Greg Gbur
-# Cn2 = 1.35e-13
+
 r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=L_prop)
 
 print(f'r0 parameter: {r0}, 2w0/r0={2 * width_values / r0}')
@@ -71,8 +63,7 @@ print(f'Number of screen required: {screens_num}')
 
 ryt = rytov(Cn2, k0, L_prop)
 print(f'SR={np.exp(-ryt)} (Rytov {ryt})')
-# exit()
-# exit()
+
 LG_21_2D = LG_simple(*mesh_2D, z=0, l=l, p=p, width=width0, k0=k0, x0=0, y0=0, z0=0)
 l_save = [0, 0, 0, 0, 3]
 p_save = [0, 1, 2, 3, 0]
@@ -85,12 +76,7 @@ plot_field_both(LG_21_2D, extend=None)
 phase_screen = psh_wrap(psh_par, seed=1)
 # print((np.sum(np.abs(LG_21_2D * np.exp(1j * phase_screen)) ** 2) * pxl_scale ** 2) / (np.sum(np.abs(LG_21_2D) ** 2) * pxl_scale ** 2))
 plot_field(phase_screen, extend=None)
-# print(np.abs((np.sum(LG_21_2D * np.exp(1j * phase_screen)))) ** 2 / np.abs((np.sum(LG_21_2D))) ** 2)
-# print(1, np.abs((np.sum(np.exp(1j * phase_screen * k0) * pxl_scale ** 2))) ** 2 / D_window ** 2)
-# print(np.abs((np.sum(np.exp(1j * phase_screen) * pxl_scale ** 2))) ** 2)
-# print(1 - np.var(phase_screen), np.exp(-np.var(phase_screen)))
-# print(1 - np.var(phase_screen * lmbda / (2*np.pi)), np.exp(-np.var(phase_screen * lmbda / (2*np.pi))))
-# print(np.var(phase_screen))
+
 field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, L_prop, screens_num=8)
 plot_field_both(field_prop)
 plt.show()
