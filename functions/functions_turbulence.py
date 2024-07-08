@@ -99,6 +99,7 @@ from scipy.special import laguerre
 from aotools import opticalpropagation
 from aotools.turbulence.phasescreen import ft_phase_screen as ps
 from aotools.turbulence.phasescreen import ft_sh_phase_screen as psh
+# from aotools.turbulence.phasescreen import ft_phase_screen as psh
 import math
 from scipy.special import assoc_laguerre
 import my_functions.functions_general as fg

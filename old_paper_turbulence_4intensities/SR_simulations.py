@@ -35,7 +35,7 @@ def crop_field_3d(field_3d, crop_percentage):
 def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Cn2, l0, L0, screens_nums):
     # Beam parameters
     lmbda = 532e-9
-    width_values = width0 / np.sqrt(2)
+    width_values = width0
     l, p = 0, 0
 
     beam_par = (l, p, width0, lmbda)
@@ -86,20 +86,19 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Cn2, l0, L0, screens_nu
     #     [end_x, end_y, 40 + 1],  # Assuming z limit remains the same
     # ]
     # pl.plotDots(dots_init_dict, dots_bound, color='black', show=True, size=10)
-    SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=500, screens_num=screens_nums, max_cut=False, pad_factor=4)
+    SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=1000, screens_num=screens_nums, max_cut=False, pad_factor=4)
 
 
 # Define the sets of values you want to iterate over
-L_prop_values = [500]
-L_prop_values = [200]
-width0_values = [5e-3]
-xy_lim_2D_values = [(-40.0e-3, 40.0e-3)]
+L_prop_values = [150]
+width0_values = [5e-3 / np.sqrt(2)]
+xy_lim_2D_values = [(-30.0e-3, 30.0e-3)]
 res_xy_2D_values = [301]
-Cn2_values = [1e-13, 5e-14, 1e-14, 1e-15]
-Cn2_values = [5e-13, 1e-13, 5e-14, 1e-14]
-l0_values = [5e-3]
-L0_values = [10]
-screens_numss = [1, 2, 3, 5]
+Cn2_values = [5e-15, 1e-14, 5e-14, 1e-13]
+
+l0_values = [5e-3 * 1e-10]
+L0_values = [10 * 1e10]
+screens_numss = [3]
 
 # Ensure all lists are the same length by repeating the single-element lists
 max_len = max(len(L_prop_values), len(width0_values), len(xy_lim_2D_values), len(res_xy_2D_values), len(Cn2_values), len(l0_values), len(L0_values))

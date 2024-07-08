@@ -15,12 +15,12 @@ L0 (float) – Size of outer-scale in metres
 l0 (float) – inner scale in metres
 """
 # %% Beam parameters
-lmbda = 633e-9
-L_prop = 300  # ! точно
-width0 = 15e-3 / np.sqrt(2)  # !? может точно
+lmbda = 533e-9
+L_prop = 150  # ! точно
+width0 = 5e-3 / np.sqrt(2)  # !? может точно
 l, p = 0, 0
 # xy_lim_2D = (-8.0e-6, 8.0e-6)
-xy_lim_2D = np.array((-50.0e-3, 50.0e-3))
+xy_lim_2D = np.array((-30.0e-3, 30.0e-3))
 res_xy_2D = 301
 
 # print(51 % 2)
@@ -54,8 +54,8 @@ r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=L_prop)
 print(f'r0 parameter: {r0}, 2w0/r0={2 * width0 / r0}')
 
 L0 = 5
-L0 = 9
-l0 = 5e-3  # !!!!!!
+L0 = 9 * 1e10
+l0 = 5e-3 * 1e-10 # !!!!!!
 psh_par = (r0, res_xy_2D, pxl_scale, L0, l0)
 
 # %%
