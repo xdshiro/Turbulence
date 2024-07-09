@@ -189,6 +189,8 @@ def SR_from_Cn2(Cn2, k0, dz, D):
 def rytov(Cn2, k0, dz):
     return 1.23 * Cn2 * k0 ** (7 / 6) * dz ** (11 / 6)
 
+def Cn2_from_Rytov(R, k0, dz):
+    return R / (1.23 * k0 ** (7 / 6) * dz ** (11 / 6))
 
 def screens_number(Cn2, k0, dz):
     sigma_rytov = rytov(Cn2, k0, dz)

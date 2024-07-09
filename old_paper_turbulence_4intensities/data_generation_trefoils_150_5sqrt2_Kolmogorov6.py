@@ -18,7 +18,7 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'test_rytov_trefoil_150_5s2_0.02'
+folder = 'test_rytov_trefoil_150_5s2_0.2'
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
 # folder = 'data_low_10'
@@ -50,7 +50,7 @@ multiplier2 = [1] * screens_num2
 
 # turbulence
 Rytovs = [0.01, 0.02, 0.05, 0.1, 0.15, 0.2]
-Rytov = Rytovs[1]
+Rytov = Rytovs[6]
 
 k0 = 2 * np.pi / lmbda  # wave number
 Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)

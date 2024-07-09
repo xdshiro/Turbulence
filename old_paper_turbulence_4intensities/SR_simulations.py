@@ -32,7 +32,7 @@ def crop_field_3d(field_3d, crop_percentage):
     cropped_field = field_3d[start_x:end_x, start_y:end_y, :]
 
     return cropped_field, end_x - start_x, end_y - start_y
-def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Cn2, l0, L0, screens_nums):
+def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_nums):
     # Beam parameters
     lmbda = 532e-9
     width_values = width0
@@ -49,18 +49,19 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Cn2, l0, L0, screens_nu
           f' resolution required={math.ceil(D_window / perfect_scale + 1)}')
 
     # Turbulence parameters
+   
+    Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
     r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=L_prop)
     print(f'r0 parameter: {r0}, 2w0/r0={2 * width_values / r0}')
 
     psh_par = (r0, res_xy_2D, pxl_scale, L0, l0)
     psh_par_0 = (r0 * 1e100, res_xy_2D, pxl_scale, L0, l0 * 1e100)
-
     screens_num = screens_number(Cn2, k0, dz=L_prop)
     print(f'Number of screen required: {screens_num}')
 
     ryt = rytov(Cn2, k0, L_prop)
     print(f'SR={np.exp(-ryt)} (Rytov {ryt})')
-
+    print(f'Cn2 from Rytov {Cn2_from_Rytov(Rytov, k0, L_prop)}')
     LG_21_2D = LG_simple(*mesh_2D, z=0, l=l, p=p, width=width0, k0=k0, x0=0, y0=0, z0=0)
     l_save = [0, 0, 0, 0, 3]
     p_save = [0, 1, 2, 3, 0]
@@ -70,11 +71,13 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Cn2, l0, L0, screens_nu
         LG_21_2D += weight_save[i] * LG_simple(*mesh_2D, z=-L_prop, l=l_save[i], p=p_save[i],
                                                width=width0, k0=k0, x0=0, y0=0, z0=0)
     plot_field_both(LG_21_2D, extend=None)
-    phase_screen = psh_wrap(psh_par, seed=1)
+    # phase_screen = psh_wrap(psh_par, seed=1)
     # plot_field(phase_screen, extend=None)
+    # plot_field_both(np.exp(1j*phase_screen), extend=None)
 
     field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, L_prop, screens_num=screens_nums)
     plot_field_both(field_prop)
+    # print(phase_screen)
     plt.show()
 
     # field_3d = beam_expander(field_prop, beam_par, psh_par_0, distance_both=30, steps_one=40 // 2)
@@ -94,24 +97,26 @@ L_prop_values = [150]
 width0_values = [5e-3 / np.sqrt(2)]
 xy_lim_2D_values = [(-30.0e-3, 30.0e-3)]
 res_xy_2D_values = [301]
-Cn2_values = [5e-15, 1e-14, 5e-14, 1e-13]
-
+# Cn2_values = [5e-15, 1e-14, 5e-14, 1e-13]
+# Cn2_values = [1e-13]
+Rytov_values = [0.01, 0.02, 0.05, 0.1, 0.15, 0.2]
 l0_values = [5e-3 * 1e-10]
 L0_values = [10 * 1e10]
 screens_numss = [3]
 
 # Ensure all lists are the same length by repeating the single-element lists
-max_len = max(len(L_prop_values), len(width0_values), len(xy_lim_2D_values), len(res_xy_2D_values), len(Cn2_values), len(l0_values), len(L0_values))
+max_len = max(len(L_prop_values), len(width0_values), len(xy_lim_2D_values),
+              len(res_xy_2D_values), len(Rytov_values), len(l0_values), len(L0_values))
 
 
 L_prop_values = L_prop_values if len(L_prop_values) > 1 else L_prop_values * max_len
 width0_values = width0_values if len(width0_values) > 1 else width0_values * max_len
 xy_lim_2D_values = xy_lim_2D_values if len(xy_lim_2D_values) > 1 else xy_lim_2D_values * max_len
 res_xy_2D_values = res_xy_2D_values if len(res_xy_2D_values) > 1 else res_xy_2D_values * max_len
-Cn2_values = Cn2_values if len(Cn2_values) > 1 else Cn2_values * max_len
+Rytov_values = Rytov_values if len(Rytov_values) > 1 else Rytov_values * max_len
 l0_values = l0_values if len(l0_values) > 1 else l0_values * max_len
 L0_values = L0_values if len(L0_values) > 1 else L0_values * max_len
-parameter_sets = list(zip(L_prop_values, width0_values, xy_lim_2D_values, res_xy_2D_values, Cn2_values, l0_values, L0_values))
+parameter_sets = list(zip(L_prop_values, width0_values, xy_lim_2D_values, res_xy_2D_values, Rytov_values, l0_values, L0_values))
 
 # Run simulations for each combination of values
 

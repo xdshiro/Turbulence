@@ -7,7 +7,7 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 200
+SAMPLES = 100
 indx_plus = 0
 
 plot = 0
@@ -18,7 +18,7 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'test_trefoil_150_5s2_1e-13'
+folder = 'test_rytov_trefoil_150_5s2_0.1'
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
 # folder = 'data_low_10'
@@ -49,10 +49,11 @@ screens_num2 = 1
 multiplier2 = [1] * screens_num2
 
 # turbulence
-Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
-Cn2 = 3.21e-14
-Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
-Cn2 = Cn2s[3]
+Rytovs = [0.01, 0.02, 0.05, 0.1, 0.15, 0.2]
+Rytov = Rytovs[4]
+
+k0 = 2 * np.pi / lmbda  # wave number
+Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
 # # # # # Cn2 = 3.21e-15
 # Cn2 = 3.21e-40
 # https://www.mdpi.com/2076-3417/11/22/10548
