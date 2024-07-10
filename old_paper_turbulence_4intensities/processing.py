@@ -32,6 +32,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 				points_list = data_array[2:]
 				Nx, Ny, Nz = data_array[1]
 				knots.append(points_list)
+		
 		for dots_cut in knots:
 			# Plot the dots in 3D with color gradient and larger size
 			fig = plt.figure(figsize=(8, 8))
@@ -79,7 +80,8 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 				fig = plt.figure(figsize=(8, 8))
 				ax = fig.add_subplot(111, projection='3d')
 				# Color by z-coordinate and set size larger
-				scatter = ax.scatter(dots_cut[:, 0], dots_cut[:, 1], dots_cut[:, 2], c=dots_cut[:, 2], cmap='viridis', s=90)
+				scatter = ax.scatter(dots_cut[:, 0], dots_cut[:, 1], dots_cut[:, 2], c=dots_cut[:, 2]
+				                     , cmap='viridis', s=60)
 				fig.colorbar(scatter, ax=ax, label='Z coordinate')
 				ax.view_init(elev=70, azim=-90)
 				# Set the limits for x and y axes
@@ -114,8 +116,8 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 	print(f'Final ratings saved to {output_csv}')
 
 
-input_folder = '../test2_trefoil_150_5s2_5e-15/data_trefoil_optimized.csv'
-output_csv = f'data_trefoil_optimized.csv'
+input_folder = '../test_rytov_trefoil_150_5s2_0.15/data_trefoil_optimized.csv'
+output_csv = f'data_trefoil_optimized_rytov_015.csv'
 files_csv = True
 # Example usage:
 review_and_rate_dots(input_folder=input_folder, output_csv=output_csv, file_csv=True)
