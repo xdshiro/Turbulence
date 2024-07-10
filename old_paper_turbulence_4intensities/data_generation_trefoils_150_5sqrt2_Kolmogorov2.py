@@ -7,7 +7,7 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 100
+SAMPLES = 50
 indx_plus = 0
 
 plot = 0
@@ -18,12 +18,12 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'test_rytov_trefoil_150_5s2_0.02'
+folder = 'test_rytov_hopf_150_5s2_0.02'
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
 # folder = 'data_low_10'
 
-spectrum_save = 1
+spectrum_save = 0
 no_turb = 0
 
 # meshes and boundaries for getting a knot
@@ -38,10 +38,10 @@ width0 = 5e-3 / np.sqrt(2)  # beam width
 xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
 res_xy_2D_origin = 300  # resolution
 
-res_z = 64  # resolution of the knot is res_z+1
+res_z = 100  # resolution of the knot is res_z+1
 crop = 185  # for the knot propagation
 crop_3d = 100  # for the knot
-new_resolution = (64, 64)  # resolution of the knot to save
+new_resolution = (100, 100)  # resolution of the knot to save
 
 screens_num1 = 3
 multiplier1 = [1] * screens_num1
@@ -123,7 +123,7 @@ knots = [
     '30oneX'
 ]
 knots = [
-    'trefoil_optimized'
+    'optimized'
 ]
 # knots = [
 #     '30oneX'
