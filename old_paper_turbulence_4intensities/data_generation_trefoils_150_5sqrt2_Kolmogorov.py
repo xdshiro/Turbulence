@@ -10,15 +10,15 @@ from tqdm import trange
 SAMPLES = 50
 indx_plus = 0
 
-plot = 1
-plot_3d = 1
+plot = 0
+plot_3d = 0
 print_coeff = 0
 
 print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'test_rytov_hopf_150_5s2_0.01_delete'
+folder = 'test_rytov_hopf_150_5s2_0.01'
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
 # folder = 'data_low_10'
