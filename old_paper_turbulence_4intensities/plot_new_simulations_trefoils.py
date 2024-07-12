@@ -19,7 +19,7 @@ def confidence_interval(p, n, z=1.96):
 
 # Number of samples
 n_samples = 300
-n_samples_new = 50
+n_samples_new = 75
 
 # Calculate confidence intervals
 proposed_simulation_new_ci = [confidence_interval(p, n_samples_new) for p in proposed_simulation_new]

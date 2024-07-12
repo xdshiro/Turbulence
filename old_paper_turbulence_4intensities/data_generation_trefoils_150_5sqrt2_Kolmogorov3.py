@@ -7,7 +7,7 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 50
+SAMPLES = 100
 indx_plus = 0
 
 plot = 0
@@ -18,12 +18,12 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'test_rytov_hopf_150_5s2_0.05'
+folder = 'rytov_trefoil_100_5s2_0.05'
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
 # folder = 'data_low_10'
 
-spectrum_save = 0
+spectrum_save = 1
 no_turb = 0
 
 # meshes and boundaries for getting a knot
@@ -123,7 +123,7 @@ knots = [
     '30oneX'
 ]
 knots = [
-    'optimized'
+    'trefoil_optimized'
 ]
 # knots = [
 #     '30oneX'
