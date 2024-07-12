@@ -7,7 +7,7 @@ sr_values = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
 Rytov = [0.01, 0.02, 0.05, 0.1, 0.15]
 Cn2 = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
 proposed_simulation_new = [94, 82, 100-34*2, 100-41*2, 100-48*2]  # values are not precise
-proposed_simulation = [57, 30.5, 17, 10, 3, 1]  # values are not precise
+proposed_simulation = [57, 30.5, 17, 9.5, 3, 1.5]  # values are not precise
 
 
 # Function to calculate confidence interval
