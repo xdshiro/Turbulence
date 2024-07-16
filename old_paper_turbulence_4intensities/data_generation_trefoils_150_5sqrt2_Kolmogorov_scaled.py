@@ -6,6 +6,7 @@ import pickle
 import csv
 import json
 from tqdm import trange
+scale_factor = 100/1.96
 
 SAMPLES = 100
 indx_plus = 0
@@ -18,7 +19,7 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'rytov_trefoil_633_50_5s2_0.01'
+folder = 'rytov_trefoil_633_100_5s2_0.025_3ps_scaledto196'
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
 # folder = 'data_low_10'
@@ -32,10 +33,10 @@ res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 
 # beam
 lmbda = 633e-9  # wavelength
-L_prop = 50  # propagation distance
-knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
-width0 = 5e-3 / np.sqrt(2)  # beam width
-xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
+L_prop = 100 / scale_factor  # propagation distance
+knot_length = 100 / scale_factor  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+width0 = 5e-3 / np.sqrt(2) / np.sqrt(scale_factor)  # beam width
+xy_lim_2D_origin = (-30.0e-3 / np.sqrt(scale_factor), 30.0e-3 / np.sqrt(scale_factor))  # window size to start with
 res_xy_2D_origin = 300  # resolution
 
 res_z = 100  # resolution of the knot is res_z+1
@@ -53,7 +54,7 @@ multiplier2 = [1] * screens_num2
 # Cn2 = 3.21e-14
 # Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
 # Cn2 = Cn2s[0]
-Rytovs = [0.75]
+Rytovs = [0.025]
 Rytov = Rytovs[0]
 
 k0 = 2 * np.pi / lmbda  # wave number

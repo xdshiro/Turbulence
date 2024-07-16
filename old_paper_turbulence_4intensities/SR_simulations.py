@@ -92,7 +92,7 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Cn2, l0, L0, screens_nu
 
 
 # Define the sets of values you want to iterate over
-L_prop_values = [150]
+L_prop_values = [100]
 width0_values = [1.5e-3 / np.sqrt(2)]
 xy_lim_2D_values = [(-60.0e-3, 60.0e-3)]
 res_xy_2D_values = [301]

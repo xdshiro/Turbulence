@@ -18,7 +18,7 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'rytov_trefoil_100_5s2_0.01'
+folder = 'rytov_trefoil_633_100_5s2_0.025_1ps'
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
 # folder = 'data_low_10'
@@ -31,8 +31,8 @@ x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2
 res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 
 # beam
-lmbda = 532e-9  # wavelength
-L_prop = 150  # propagation distance
+lmbda = 633e-9  # wavelength
+L_prop = 100  # propagation distance
 knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
 width0 = 5e-3 / np.sqrt(2)  # beam width
 xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
@@ -43,7 +43,7 @@ crop = 185  # for the knot propagation
 crop_3d = 100  # for the knot
 new_resolution = (100, 100)  # resolution of the knot to save
 
-screens_num1 = 3
+screens_num1 = 1
 multiplier1 = [1] * screens_num1
 screens_num2 = 1
 multiplier2 = [1] * screens_num2
@@ -53,7 +53,7 @@ multiplier2 = [1] * screens_num2
 # Cn2 = 3.21e-14
 # Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
 # Cn2 = Cn2s[0]
-Rytovs = [0.01, 0.02, 0.05, 0.1, 0.15, 0.2]
+Rytovs = [0.025]
 Rytov = Rytovs[0]
 
 k0 = 2 * np.pi / lmbda  # wave number
