@@ -18,7 +18,7 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'rytov_trefoil_633_100_5s2_0.025_1ps'
+folder = 'rytov_trefoil_633_100_5s2_0.075_20ps'
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
 # folder = 'data_low_10'
@@ -43,7 +43,7 @@ crop = 185  # for the knot propagation
 crop_3d = 100  # for the knot
 new_resolution = (100, 100)  # resolution of the knot to save
 
-screens_num1 = 1
+screens_num1 = 20
 multiplier1 = [1] * screens_num1
 screens_num2 = 1
 multiplier2 = [1] * screens_num2
@@ -53,7 +53,7 @@ multiplier2 = [1] * screens_num2
 # Cn2 = 3.21e-14
 # Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
 # Cn2 = Cn2s[0]
-Rytovs = [0.025]
+Rytovs = [0.075]
 Rytov = Rytovs[0]
 
 k0 = 2 * np.pi / lmbda  # wave number

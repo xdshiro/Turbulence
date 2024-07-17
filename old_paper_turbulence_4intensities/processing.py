@@ -10,7 +10,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 						 file_csv=False):
 	# Initialize a list to store the ratings
 	ratings = []
-	
+	i = 0
 	# Load existing ratings if the file already exists
 	if os.path.exists(output_csv):
 		existing_ratings_df = pd.read_csv(output_csv)
@@ -22,6 +22,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 		filename = input_folder
 		knots = []
 		with open(filename, 'r') as file:
+
 			reader = csv.reader(file)
 
 			for row in reader:
@@ -34,6 +35,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 				knots.append(points_list)
 		
 		for dots_cut in knots:
+			i += 1
 			# Plot the dots in 3D with color gradient and larger size
 			fig = plt.figure(figsize=(8, 8))
 			ax = fig.add_subplot(111, projection='3d')
@@ -51,7 +53,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 			plt.show()
 
 			# Ask for user input
-			rating = input('Rate the plot ("=" for good, "-" for avg, "0" for bad): ')
+			rating = input(f'({i}) Rate the plot ("=" for good, "-" for avg, "0" for bad): ')
 
 			# Ensure the rating is valid
 			while rating not in ["=", "-", "0"]:
@@ -71,6 +73,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 		for file_name in os.listdir(input_folder):
 
 			if file_name.endswith('.npy') and file_name not in existing_files:
+				i += 1
 				file_path = os.path.join(input_folder, file_name)
 
 				# Load the dots data
@@ -94,7 +97,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 				plt.show()
 
 				# Ask for user input
-				rating = input('Rate the plot ("=" for good, "-" for avg, "0" for bad): ')
+				rating = input(f'({i}) Rate the plot ("=" for good, "-" for avg, "0" for bad): ')
 
 				# Ensure the rating is valid
 				while rating not in ["=", "-", "0"]:
@@ -116,8 +119,8 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 	print(f'Final ratings saved to {output_csv}')
 
 
-input_folder = '../rytov_trefoil_633_100_5s2_0.075_5ps/data_trefoil_optimized.csv'
-output_csv = f'data_trefoil_optimized_rytov_0.075_100m_5ps.csv'
+input_folder = '../rytov_trefoil_633_100_5s2_0.075_20ps/data_trefoil_optimized.csv'
+output_csv = f'data_trefoil_optimized_rytov_0.075_100m_20ps.csv'
 files_csv = True
 # Example usage:
 review_and_rate_dots(input_folder=input_folder, output_csv=output_csv, file_csv=True)
