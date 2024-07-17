@@ -89,7 +89,7 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     #     [end_x, end_y, 40 + 1],  # Assuming z limit remains the same
     # ]
     # pl.plotDots(dots_init_dict, dots_bound, color='black', show=True, size=10)
-    SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=screens_nums, max_cut=False, pad_factor=4)
+    SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, max_cut=False, pad_factor=4)
     # scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=3, seed=None)
     # print(scin[res_xy_2D // 2, res_xy_2D // 2])
     # plot_field_both(scin, extend=None)
@@ -98,15 +98,16 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
 # Define the sets of values you want to iterate over
 L_prop_values = [100]
 width0_values = [5e-3 / np.sqrt(2)]
+width0_values = [2e-3 / np.sqrt(2)]
 xy_lim_2D_values = [(-30.0e-3, 30.0e-3)]
 res_xy_2D_values = [201]
 # Cn2_values = [5e-15, 1e-14, 5e-14, 1e-13]
 # Cn2_values = [1e-13]
 Rytov_values = [0.075, 0.03, 0.05, 0.75, 0.1, 0.15]
-Rytov_values = [0.05]
+Rytov_values = [0.075]
 l0_values = [5e-3 * 1e-10]
 L0_values = [10 * 1e10]
-screens_numss = [5]
+screens_numss = [1,2,3,4,5,10]
 
 # Ensure all lists are the same length by repeating the single-element lists
 max_len = max(len(L_prop_values), len(width0_values), len(xy_lim_2D_values),
