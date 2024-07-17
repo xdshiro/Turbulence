@@ -89,9 +89,10 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     #     [end_x, end_y, 40 + 1],  # Assuming z limit remains the same
     # ]
     # pl.plotDots(dots_init_dict, dots_bound, color='black', show=True, size=10)
-    SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, max_cut=False, pad_factor=4)
-    # scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=3, seed=None)
-    # print(scin[res_xy_2D // 2, res_xy_2D // 2])
+    # SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, max_cut=False, pad_factor=4)
+    scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, seed=None)
+    scin_middle = scin[res_xy_2D // 2, res_xy_2D // 2]
+    print(f'SCIN={scin_middle}, PS={screens_nums}')
     # plot_field_both(scin, extend=None)
 
 
