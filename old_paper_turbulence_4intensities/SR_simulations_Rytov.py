@@ -92,7 +92,13 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     # SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, max_cut=False, pad_factor=4)
     scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, seed=None)
     scin_middle = scin[res_xy_2D // 2, res_xy_2D // 2]
+    scin_f = scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, seed=None)
+    scin_f_middle = scin_f[res_xy_2D // 2, res_xy_2D // 2]
+    scin_rev = scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, seed=None)
+    scin_rev_middle = scin_rev[res_xy_2D // 2, res_xy_2D // 2]
     print(f'SCIN={scin_middle}, PS={screens_nums}')
+    print(f'SCIN={scin_f_middle}')
+    print(f'SCIN={scin_rev_middle}')
     # plot_field_both(scin, extend=None)
 
 
