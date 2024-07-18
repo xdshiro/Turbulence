@@ -498,7 +498,7 @@ def scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=100, scree
     r0, N, pxl_scale, L0, l0 = psh_par
     xy_array, _ = arrays_from_mesh(mesh_2D)
 
-    LG_00 = LG_simple(*mesh_2D, z=0, l=-L_prop, p=0, width=width0, k0=k0, x0=0, y0=0, z0=0)
+    LG_00 = LG_simple(*mesh_2D, z=-L_prop, l=0, p=0, width=width0, k0=k0, x0=0, y0=0, z0=0)
 
     I_avg_tot = 0
     I_sqr_avg_tot = 0
