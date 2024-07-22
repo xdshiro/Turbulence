@@ -49,7 +49,7 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
           f' resolution required={math.ceil(D_window / perfect_scale + 1)}')
 
     # Turbulence parameters
-   
+
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
     r0 = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=L_prop)
     print(f'r0 parameter: {r0}, 2w0/r0={2 * width_values / r0}')
@@ -70,15 +70,15 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     for i in range(5):
         LG_21_2D += weight_save[i] * LG_simple(*mesh_2D, z=-L_prop, l=l_save[i], p=p_save[i],
                                                width=width0, k0=k0, x0=0, y0=0, z0=0)
-    plot_field_both(LG_21_2D, extend=None)
+    # plot_field_both(LG_21_2D, extend=None)
     # phase_screen = psh_wrap(psh_par, seed=1)
     # plot_field(phase_screen, extend=None)
     # plot_field_both(np.exp(1j*phase_screen), extend=None)
 
     field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, L_prop, screens_num=screens_nums)
-    plot_field_both(field_prop)
+    # plot_field_both(field_prop)
     # print(phase_screen)
-    plt.show()
+    # plt.show()
 
     # field_3d = beam_expander(field_prop, beam_par, psh_par_0, distance_both=30, steps_one=40 // 2)
     # cropped_field_3d, end_x, end_y = crop_field_3d(field_3d, 40)
@@ -89,29 +89,32 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     #     [end_x, end_y, 40 + 1],  # Assuming z limit remains the same
     # ]
     # pl.plotDots(dots_init_dict, dots_bound, color='black', show=True, size=10)
-    # SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, max_cut=False, pad_factor=4)
-    # scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, seed=None)
-    # scin_middle = scin[res_xy_2D // 2, res_xy_2D // 2]
-    scin_f = scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, seed=None)
-    scin_f_middle = scin_f[res_xy_2D // 2, res_xy_2D // 2]
-    scin_rev = scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=10, screens_num=screens_nums, seed=None)
+    SR = SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=10000, screens_num=screens_nums, max_cut=False, pad_factor=4)
+    scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=10000, screens_num=screens_nums, seed=None)
+    scin_middle = scin[res_xy_2D // 2, res_xy_2D // 2]
+    # scin_f = scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, seed=None)
+    # scin_f_middle = scin_f[res_xy_2D // 2, res_xy_2D // 2]
+    scin_rev = scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=10000, screens_num=screens_nums, seed=None)
     scin_rev_middle = scin_rev[res_xy_2D // 2, res_xy_2D // 2]
-    # print(f'SCIN={scin_middle}, PS={screens_nums}')
-    print(f'SCIN={scin_f_middle}')
+    print(f'SCIN={scin_middle}, PS={screens_nums}')
+    # print(f'SCIN={scin_f_middle}')
     print(f'SCIN={scin_rev_middle}')
     # plot_field_both(scin, extend=None)
+
+    with open('simulation_results_0025.txt', 'a') as f:
+        f.write(f'{SR}, {scin_middle}, {scin_rev_middle}\n')
 
 
 # Define the sets of values you want to iterate over
 L_prop_values = [100]
 width0_values = [5e-3 / np.sqrt(2)]
-width0_values = [2e-3 / np.sqrt(2)]
+width0_values = [5e-3 / np.sqrt(2)]
 xy_lim_2D_values = [(-30.0e-3, 30.0e-3)]
 res_xy_2D_values = [201]
 # Cn2_values = [5e-15, 1e-14, 5e-14, 1e-13]
 # Cn2_values = [1e-13]
 Rytov_values = [0.075, 0.03, 0.05, 0.75, 0.1, 0.15]
-Rytov_values = [0.075]
+Rytov_values = [0.025]
 l0_values = [5e-3 * 1e-10]
 L0_values = [10 * 1e10]
 screens_numss = [1,2,3,4,5,10]

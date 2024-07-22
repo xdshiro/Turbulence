@@ -18,7 +18,7 @@ def confidence_interval(p, n, z=1.96):
     return ci * 100  # Convert back to percentage
 
 # Number of samples
-n_samples = 100
+n_samples = 2000
 
 # Calculate confidence intervals
 proposed_simulation_ci1 = [confidence_interval(p, n_samples) for p in proposed_simulation_ps1]
