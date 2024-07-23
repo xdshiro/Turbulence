@@ -480,7 +480,7 @@ def scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screen
         # Zero-pad the final field and compute the Fourier transform
         E_padded = zero_pad(E, pad_factor)
         E_fft = fftshift(fft2(E_padded))
-        current = np.abs(E_fft[res_padded // 2, res_padded // 2]) ** 2
+        current = np.abs(E_fft) ** 2
 
         I_avg_tot += current
         I_sqr_avg_tot += current ** 2
