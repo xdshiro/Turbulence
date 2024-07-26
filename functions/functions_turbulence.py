@@ -511,6 +511,7 @@ def scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=100, scree
 
     for i in range(epochs):
         E = LG_00
+        # plot_field_both(E)
         for _ in range(screens_num):
             if seed is not None:
                 phase_screen_i = psh_wrap(psh_par_dL, seed=seed+i)
@@ -519,6 +520,7 @@ def scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=100, scree
             E = opticalpropagation.angularSpectrum(
                 E * np.exp(1j * phase_screen_i), lmbda, pxl_scale, pxl_scale, dL
             )
+        # plot_field_both(E)
         current = np.abs(E) ** 2
         I_avg_tot += current
         I_sqr_avg_tot += current ** 2

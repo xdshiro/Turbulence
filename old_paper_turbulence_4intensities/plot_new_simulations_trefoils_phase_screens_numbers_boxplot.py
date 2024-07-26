@@ -4,8 +4,8 @@ import numpy as np
 # Real Data
 Rytov = [0.05, 0.075]
 proposed_simulation_ps1 = [20, 5.5]
-proposed_simulation_ps3 = [26, 13.5]
-proposed_simulation_ps5 = [37.5, 20.5]
+proposed_simulation_ps3 = [26, 14.5]
+proposed_simulation_ps5 = [37.5, 19.5]
 proposed_simulation_ps20 = [34, 17.5]
 
 # Function to calculate confidence interval
@@ -16,7 +16,7 @@ def confidence_interval(p, n, z=1.96):
     return ci * 100  # Convert back to percentage
 
 # Number of samples
-n_samples = 100
+n_samples = 150
 
 # Calculate confidence intervals
 proposed_simulation_ci1 = [confidence_interval(p, n_samples) for p in proposed_simulation_ps1]

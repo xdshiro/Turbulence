@@ -6,8 +6,8 @@ import numpy as np
 Rytov = [0.05, 0.075]
 # Cn2 = [4.7e-15, 9.3e-15, 2.3e-14, 4.7e-14, 9.3e-14]
 proposed_simulation_ps1 = [20, 5.5]  # values are not precise
-proposed_simulation_ps3 = [26, 13.5]  # values are not precise
-proposed_simulation_ps5 = [37.5, 20.5]  # values are not precise.
+proposed_simulation_ps3 = [26, 14.5]
+proposed_simulation_ps5 = [37.5, 19.5]
 proposed_simulation_ps20 = [34, 17.5]  # values are not precise
 
 # Function to calculate confidence interval
@@ -18,7 +18,7 @@ def confidence_interval(p, n, z=1.96):
     return ci * 100  # Convert back to percentage
 
 # Number of samples
-n_samples = 2000
+n_samples = 150
 
 # Calculate confidence intervals
 proposed_simulation_ci1 = [confidence_interval(p, n_samples) for p in proposed_simulation_ps1]
@@ -28,28 +28,28 @@ proposed_simulation_ci20 = [confidence_interval(p, n_samples) for p in proposed_
 
 plt.figure(figsize=(8, 6))
 
-plt.plot(Rytov, proposed_simulation_ps1, 'ro-', label='Proposed Method (Simulation_ps1)')
+plt.plot(Rytov, proposed_simulation_ps1, 'ro-', label='Proposed Method (Simulation_ps1)', lw=3)
 plt.fill_between(Rytov, np.array(proposed_simulation_ps1) - proposed_simulation_ci1,
                  np.array(proposed_simulation_ps1) + proposed_simulation_ci1, color='red', alpha=0.2)
 
-plt.plot(Rytov, proposed_simulation_ps3, 'bo-', label='Proposed Method (Simulation_ps3)')
+plt.plot(Rytov, proposed_simulation_ps3, 'bo-', label='Proposed Method (Simulation_ps3)', lw=3)
 plt.fill_between(Rytov, np.array(proposed_simulation_ps3) - proposed_simulation_ci3,
                  np.array(proposed_simulation_ps3) + proposed_simulation_ci3, color='blue', alpha=0.2)
 
-plt.plot(Rytov, proposed_simulation_ps5, 'go-', label='Proposed Method (Simulation_ps5)')
+plt.plot(Rytov, proposed_simulation_ps5, 'go-', label='Proposed Method (Simulation_ps5)', lw=3)
 plt.fill_between(Rytov, np.array(proposed_simulation_ps5) - proposed_simulation_ci5,
                  np.array(proposed_simulation_ps5) + proposed_simulation_ci5, color='green', alpha=0.2)
 
-plt.plot(Rytov, proposed_simulation_ps20, 'yo-', label='Proposed Method (Simulation_ps20)')
+plt.plot(Rytov, proposed_simulation_ps20, 'yo-', label='Proposed Method (Simulation_ps20)', lw=3)
 plt.fill_between(Rytov, np.array(proposed_simulation_ps20) - proposed_simulation_ci20,
                  np.array(proposed_simulation_ps20) + proposed_simulation_ci20, color='yellow', alpha=0.2)
 
-plt.xlabel('SR')
+plt.xlabel('R')
 plt.ylabel('Recovered Knots (%)')
-plt.title('Recovered Optimized Trefoils vs SR')
+plt.title('Recovered Optimized Trefoils vs Rytov Variance')
 plt.legend()
 plt.grid(True)
-plt.ylim(0, 100)
+plt.ylim(0, 60)
 # Reverse the x-axis
 # plt.gca().invert_xaxis()
 plt.tight_layout()
