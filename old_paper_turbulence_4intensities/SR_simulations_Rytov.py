@@ -92,27 +92,27 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     # SR = SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=10000, screens_num=screens_nums, max_cut=False, pad_factor=4)
     # scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=10000, screens_num=screens_nums, seed=None)
     # scin_middle = scin[res_xy_2D // 2, res_xy_2D // 2]
-    scin_f = scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, seed=None)
+    scin_f = scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=500, screens_num=screens_nums, seed=None)
     scin_f_middle = scin_f[res_xy_2D // 2, res_xy_2D // 2]
-    scin_rev = scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, seed=None)
+    scin_rev = scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=500, screens_num=screens_nums, seed=None)
     scin_rev_middle = scin_rev[res_xy_2D // 2, res_xy_2D // 2]
     # print(f'SCIN={scin_middle}, PS={screens_nums}')
     print(f'SCIN={scin_f_middle}')
     print(f'SCIN={scin_rev_middle}')
     # plot_field_both(scin, extend=None)
 
-    with open('simulation_results_0075_plane.txt', 'a') as f:
+    with open('simulation_results_0075_plane_10.txt', 'a') as f:
         # f.write(f'{SR}, {scin_middle}, {scin_rev_middle}\n')
         f.write(f'{scin_rev_middle}\n')
 
 
 # Define the sets of values you want to iterate over
-L_prop_values = [100]
+L_prop_values = [10]
 width0_values = [5e-3 / np.sqrt(2)]
 width0_values = [5e-3 / np.sqrt(2) * 10]
 xy_lim_2D_values = [(-30.0e-3, 30.0e-3)]
 xy_lim_2D_values = [(-30.0e-3 * 5, 30.0e-3 * 5)]
-res_xy_2D_values = [201]
+res_xy_2D_values = [401]
 # Cn2_values = [5e-15, 1e-14, 5e-14, 1e-13]
 # Cn2_values = [1e-13]
 Rytov_values = [0.075, 0.03, 0.05, 0.75, 0.1, 0.15]
