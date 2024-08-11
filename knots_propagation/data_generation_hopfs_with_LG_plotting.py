@@ -8,8 +8,8 @@ import json
 from tqdm import trange
 
 plot_all = 1
-plot_final = 0
-plot_3d = 0
+plot_final = 1
+plot_3d = 1
 plot_spectrum = 1
 print_coeff = 1
 print_values = 0
@@ -19,7 +19,7 @@ no_last_plane = True
 save = 0
 
 spectrum_save = 1
-no_turb = 1
+no_turb = 0
 
 # meshes and boundaries for getting a knot
 x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2.0)
@@ -38,14 +38,14 @@ crop = 185  # for the knot propagation
 crop_3d = 110  # for the knot
 new_resolution = (64, 64)  # resolution of the knot to save
 
-screens_num1 = 1
+screens_num1 = 4
 multiplier1 = [1] * screens_num1
 screens_num2 = 1
 multiplier2 = [1] * screens_num2
 
 # turbulence
-# Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
-Cn2 = 3.21e-14
+Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
+# Cn2 = 3.21e-14
 # Cn2 = 3.21e-40
 # https://www.mdpi.com/2076-3417/11/22/10548
 L0 = 9  # outer scale

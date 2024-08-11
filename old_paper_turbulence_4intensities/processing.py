@@ -119,8 +119,8 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 	print(f'Final ratings saved to {output_csv}')
 
 
-input_folder = '../rytov_trefoil_633_100_5s2_0.025_3ps/data_trefoil_optimized.csv'
-output_csv = f'data_trefoil_optimized_rytov_0.025_100m_3ps.csv'
+input_folder = '../test_delete/data_trefoil_standard_11.csv'
+output_csv = f'test_delete_results.csv'
 files_csv = True
 # Example usage:
 review_and_rate_dots(input_folder=input_folder, output_csv=output_csv, file_csv=True)
