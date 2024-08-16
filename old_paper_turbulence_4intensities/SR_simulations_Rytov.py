@@ -32,7 +32,7 @@ def crop_field_3d(field_3d, crop_percentage):
     cropped_field = field_3d[start_x:end_x, start_y:end_y, :]
 
     return cropped_field, end_x - start_x, end_y - start_y
-def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_nums):
+def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_nums, knot_length):
     # Beam parameters
     lmbda = 633e-9
     width_values = width0
@@ -68,15 +68,17 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     weight_save = [1.29, -3.95, 7.49, -3.28, -3.98]
     LG_21_2D = 0
     for i in range(5):
-        LG_21_2D += weight_save[i] * LG_simple(*mesh_2D, z=-L_prop, l=l_save[i], p=p_save[i],
+        LG_21_2D += weight_save[i] * LG_simple(*mesh_2D, z=-L_prop - knot_length, l=l_save[i], p=p_save[i],
                                                width=width0, k0=k0, x0=0, y0=0, z0=0)
-    # plot_field_both(LG_21_2D, extend=None)
+    plot_field_both(LG_21_2D, extend=None)
     # phase_screen = psh_wrap(psh_par, seed=1)
     # plot_field(phase_screen, extend=None)
     # plot_field_both(np.exp(1j*phase_screen), extend=None)
 
     field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, L_prop, screens_num=screens_nums)
-    # plot_field_both(field_prop)
+    plot_field_both(field_prop)
+    field_prop_center = propagation_ps(field_prop, beam_par, psh_par, knot_length, screens_num=screens_nums)
+    plot_field_both(field_prop_center)
     # print(phase_screen)
     # plt.show()
 
@@ -89,7 +91,7 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     #     [end_x, end_y, 40 + 1],  # Assuming z limit remains the same
     # ]
     # pl.plotDots(dots_init_dict, dots_bound, color='black', show=True, size=10)
-    SR = SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, max_cut=False, pad_factor=4)
+    SR = SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=screens_nums, max_cut=False, pad_factor=4)
     # scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=10000, screens_num=screens_nums, seed=None)
     # scin_middle = scin[res_xy_2D // 2, res_xy_2D // 2]
     # scin_f = scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=500, screens_num=screens_nums, seed=None)
@@ -108,17 +110,18 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
 
 
 # Define the sets of values you want to iterate over
-L_prop_values = [100]
+L_prop_values = [270]
+knot_length = 100
 width0_values = [5e-3 / np.sqrt(2)]
 # width0_values = [5e-3 / np.sqrt(2) * 10]
-xy_lim_2D_values = [(-30.0e-3, 30.0e-3)]
+xy_lim_2D_values = [(-40.0e-3, 40.0e-3)]
 # xy_lim_2D_values = [(-30.0e-3 * 5, 30.0e-3 * 5)]
 res_xy_2D_values = [301]
 
 # Cn2_values = [5e-15, 1e-14, 5e-14, 1e-13]
 # Cn2_values = [1e-13]
 Rytov_values = [0.075, 0.03, 0.05, 0.75, 0.1, 0.15]
-Rytov_values = [0.025]
+Rytov_values = [0.15]
 l0_values = [5e-3 * 1e-10]
 L0_values = [10 * 1e10]
 # screens_numss = [1,2,3,4,5,10]
@@ -145,4 +148,4 @@ for params in parameter_sets:
     for screens_nums in screens_numss:
         print(f'Simulation parameters: {params}, screens={screens_nums}')
 
-        run_simulation(*params, screens_nums=screens_nums)
+        run_simulation(*params, screens_nums=screens_nums, knot_length=knot_length)
