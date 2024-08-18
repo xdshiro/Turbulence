@@ -8,8 +8,24 @@ from aotools.turbulence.phasescreen import ft_sh_phase_screen as psh
 from functions.functions_turbulence import *
 from functions.all_knots_functions import *
 import math
-
-
+# z_test = -135
+# lmbda = 520e-9
+# print((6e-3) ** 4 - 4 * (135 * 520e-9 / np.pi) ** 2)
+# exit()
+# for w_0 in np.linspace(4.6e-3, 4.8e-3, 1000):
+#     print(6e-3 - w_0 * np.sqrt(1 + (z_test / (np.pi * w_0 ** 2 / lmbda)) ** 2), w_0)
+# w_l = 6e-3
+#
+# z_lambda = (z_test * lmbda / np.pi) ** 2
+# # print(w_l ** 4, 4 * z_lambda)
+# w02_1 = (w_l ** 2 - np.sqrt(w_l ** 4 - 4 * z_lambda)) / 2
+# w02_2 = (w_l ** 2 + np.sqrt(w_l ** 4 - 4 * z_lambda)) / 2
+# # print(w02_1, w02_2)
+# # w_0 = lambda z: w_l / np.sqrt(1 + (z / zR) ** 2)
+# # zR = np.pi * w_0(z_test) ** 2 / 520e-9
+# # w = lambda z: w_0(z) * np.sqrt(1 + (z / zR) ** 2)
+#
+# exit()
 def crop_field_3d(field_3d, crop_percentage):
     # Get the shape of the field_3d
     x_size, y_size, z_size = field_3d.shape
@@ -92,8 +108,11 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     # ]
     # pl.plotDots(dots_init_dict, dots_bound, color='black', show=True, size=10)
     SR = SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=screens_nums, max_cut=False, pad_factor=4)
-    # scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=10000, screens_num=screens_nums, seed=None)
-    # scin_middle = scin[res_xy_2D // 2, res_xy_2D // 2]
+    scin = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=200, screens_num=screens_nums, seed=None)
+    scin_middle = scin[res_xy_2D // 2, res_xy_2D // 2]
+    scin_middle2 = np.average(scin[res_xy_2D // 2 - 3:res_xy_2D // 2 + 4,
+                                 res_xy_2D // 2 - 3:res_xy_2D // 2 + 4])
+    print(f'SCIN={scin_middle}, SCIN2={scin_middle2}, PS={screens_nums}')
     # scin_f = scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=500, screens_num=screens_nums, seed=None)
     # scin_f_middle = scin_f[res_xy_2D // 2, res_xy_2D // 2]
     # scin_rev = scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=1500, screens_num=screens_nums, seed=None)
@@ -121,7 +140,7 @@ res_xy_2D_values = [301]
 # Cn2_values = [5e-15, 1e-14, 5e-14, 1e-13]
 # Cn2_values = [1e-13]
 Rytov_values = [0.075, 0.03, 0.05, 0.75, 0.1, 0.15]
-Rytov_values = [0.15]
+Rytov_values = [0.05, 0.1, 0.2]
 l0_values = [5e-3 * 1e-10]
 L0_values = [10 * 1e10]
 # screens_numss = [1,2,3,4,5,10]
