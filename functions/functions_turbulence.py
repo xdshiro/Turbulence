@@ -419,7 +419,7 @@ def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1,
     r0d = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=dL)
     psh_par_dL = r0d, N, pxl_scale, L0, l0
     # E = beam_2D
-
+    currents = []
     for i in range(epochs):
         E = LG_00
         for _ in range(screens_num):
@@ -431,11 +431,12 @@ def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1,
                 E * np.exp(1j * phase_screen_i), lmbda, pxl_scale, pxl_scale, dL
             )
         current = np.abs(E) ** 2
+        currents.append(current[len(xy_array) // 2, len(xy_array) // 2])
         I_avg_tot += current
         I_sqr_avg_tot += current ** 2
 
     scin = (I_sqr_avg_tot / epochs) / (I_avg_tot / epochs) ** 2 - 1
-    return scin
+    return scin, currents
 
 
 def scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, pad_factor=2, seed=None):
