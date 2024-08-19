@@ -18,7 +18,7 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'standard_over_w_Rytov_0025_(SR95)'
+folder = 'standard_over_w_Rytov_005_(SR90...)'
 
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
@@ -37,7 +37,7 @@ L_prop = 270  # propagation distance
 knot_length = 212.58897655870774 / 2  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
 center_plane = 1
 width0 = 6e-3 / np.sqrt(2)  # beam width
-xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
+xy_lim_2D_origin = (-35.0e-3, 35.0e-3)  # window size to start with
 res_xy_2D_origin = 300  # resolution
 
 res_z = 100  # resolution of the knot is res_z+1
