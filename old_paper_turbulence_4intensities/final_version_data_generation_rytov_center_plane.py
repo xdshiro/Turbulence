@@ -33,10 +33,10 @@ res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 
 # beam
 lmbda = 532e-9  # wavelength
-L_prop = 100  # propagation distance
-knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+L_prop = 270  # propagation distance
+knot_length = 212.58897655870774 / 2  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
 center_plane = 1
-width0 = 5e-3 / np.sqrt(2)  # beam width
+width0 = 6e-3 / np.sqrt(2)  # beam width
 xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
 res_xy_2D_origin = 300  # resolution
 
@@ -45,7 +45,7 @@ crop = 185  # for the knot propagation
 crop_3d = 100  # for the knot
 new_resolution = (100, 100)  # resolution of the knot to save
 
-screens_num1 = 5
+screens_num1 = 3
 multiplier1 = [1] * screens_num1
 screens_num2 = 1
 multiplier2 = [1] * screens_num2
@@ -55,7 +55,7 @@ multiplier2 = [1] * screens_num2
 # Cn2 = 3.21e-14
 # Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
 # Cn2 = Cn2s[0]
-Rytovs = [0.025]
+Rytovs = [0.05]
 Rytov = Rytovs[0]
 
 k0 = 2 * np.pi / lmbda  # wave number
