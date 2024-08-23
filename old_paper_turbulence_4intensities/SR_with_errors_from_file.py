@@ -2,24 +2,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the arrays from the new file
-file_path = './arrays_SR_2.npy'
+file_path = './arrays_SR.npy'
 arrays = np.load(file_path)
-print(arrays)
 # Rytov values (same as before)
 Rytov_values = [0.025, 0.05, 0.1, 0.15, 0.2]
 
 # Function to calculate SR value
 def calculate_sr(array):
-	print(array)
 	avg_intensity = np.mean(array)
-	sr_value = avg_intensity   # / 44730879774
+	sr_value = avg_intensity / 44730879774
 	return sr_value
 
 # Function to calculate the error in the SR value
 def calculate_sr_error(array):
 	N = len(array)
 	sigma_avg_I = np.std(array) / np.sqrt(N)
-	sr_error = sigma_avg_I  # / 44730879774
+	sr_error = sigma_avg_I / 44730879774
 	return sr_error
 
 # Calculate SR values and their errors for each array
