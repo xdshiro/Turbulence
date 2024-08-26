@@ -7,9 +7,9 @@ stab_0025s = [0, 10, 3, 8, 4, 1]
 import matplotlib.pyplot as plt
 
 # Data
-stability_rytov005_final = [0, 2, 15, 17, 9, 1]
-stability_rytov0025_final = [1, 8, 25, 34, 23, 4]
-w_values = [1.05, 1.1, 1.15, 1.2, 1.3, 1.5]  # Assuming these are the values for parameter w
+stability_rytov005_final = [0, 0, 2, 15, 17, 9, 1]
+stability_rytov0025_final = [0, 1, 8, 25, 34, 23, 4]
+w_values = [1, 1.05, 1.1, 1.15, 1.2, 1.3, 1.5]  # Assuming these are the values for parameter w
 
 # Plotting
 plt.figure(figsize=(10, 6))

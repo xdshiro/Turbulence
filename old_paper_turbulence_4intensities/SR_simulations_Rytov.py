@@ -107,13 +107,14 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     #     [end_x, end_y, 40 + 1],  # Assuming z limit remains the same
     # ]
     # pl.plotDots(dots_init_dict, dots_bound, color='black', show=True, size=10)
-    SR = SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=5, screens_num=screens_nums, max_cut=False, pad_factor=4)
-    scin, currents = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=5, screens_num=screens_nums, seed=None)
+    SR, currents_SR = SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=2000, screens_num=screens_nums, max_cut=False, pad_factor=4)
+    scin, currents = scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=2, screens_num=screens_nums, seed=None)
     scin_middle = scin[res_xy_2D // 2, res_xy_2D // 2]
     scin_middle2 = np.average(scin[res_xy_2D // 2 - 3:res_xy_2D // 2 + 4,
                                  res_xy_2D // 2 - 3:res_xy_2D // 2 + 4])
     print(f'SCIN={scin_middle}, SCIN2={scin_middle2}, SR={SR}')
-    return currents
+    # print(currents_SR)
+    return currents, currents_SR
     # scin_f = scintillation_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=500, screens_num=screens_nums, seed=None)
     # scin_f_middle = scin_f[res_xy_2D // 2, res_xy_2D // 2]
     # scin_rev = scintillation_reversed(mesh_2D, L_prop, beam_par, psh_par, epochs=1500, screens_num=screens_nums, seed=None)
@@ -134,7 +135,7 @@ L_prop_values = [270]
 knot_length = 100
 width0_values = [6e-3 / np.sqrt(2)]
 # width0_values = [5e-3 / np.sqrt(2) * 10]
-xy_lim_2D_values = [(-40.0e-3, 40.0e-3)]
+xy_lim_2D_values = [(-35.0e-3, 35.0e-3)]
 # xy_lim_2D_values = [(-30.0e-3 * 5, 30.0e-3 * 5)]
 res_xy_2D_values = [301]
 
@@ -142,6 +143,7 @@ res_xy_2D_values = [301]
 # Cn2_values = [1e-13]
 Rytov_values = [0.075, 0.03, 0.05, 0.75, 0.1, 0.15]
 Rytov_values = [0.025, 0.05, 0.1, 0.15, 0.2]
+Rytov_values = [0.05]
 l0_values = [5e-3 * 1e-10]
 L0_values = [10 * 1e10]
 # screens_numss = [1,2,3,4,5,10]
@@ -161,16 +163,21 @@ Rytov_values = Rytov_values if len(Rytov_values) > 1 else Rytov_values * max_len
 l0_values = l0_values if len(l0_values) > 1 else l0_values * max_len
 L0_values = L0_values if len(L0_values) > 1 else L0_values * max_len
 parameter_sets = list(zip(L_prop_values, width0_values, xy_lim_2D_values, res_xy_2D_values, Rytov_values, l0_values, L0_values))
-
-# loaded_currents_list = np.load('arrays.npy', allow_pickle=True)
-# print(loaded_currents_list)
+#
+# loaded_currents_scin_list = np.load('./arrays_scin.npy')
+# print(loaded_currents_scin_list)
+# loaded_currents_SR_list = np.load('arrays_SR.npy')
+# print(loaded_currents_SR_list)
 # exit()
 currents_list = []
+currents_SR_list = []
 for params in parameter_sets:
     for screens_nums in screens_numss:
         print(f'Simulation parameters: {params}, screens={screens_nums}')
         
-        currents = run_simulation(*params, screens_nums=screens_nums, knot_length=knot_length)
+        currents, currents_SR = run_simulation(*params, screens_nums=screens_nums, knot_length=knot_length)
         currents_list.append(currents)
+        currents_SR_list.append(currents_SR)
 # print(currents_list)
-np.save('arrays.npy', np.array(currents_list))
+np.save('arrays_scin.npy', np.array(currents_list))
+np.save('arrays_SR.npy', np.array(currents_SR_list))

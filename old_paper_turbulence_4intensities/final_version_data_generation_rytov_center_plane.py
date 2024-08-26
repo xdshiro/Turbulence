@@ -18,7 +18,7 @@ print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
-folder = 'standard_over_w_Rytov_005_(SR90...)'
+folder = 'optimizied_vs_rytov'
 
 # folder = 'data_basis_delete'
 # folder = 'data_no_centers_32114'
@@ -55,7 +55,7 @@ multiplier2 = [1] * screens_num2
 # Cn2 = 3.21e-14
 # Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
 # Cn2 = Cn2s[0]
-Rytovs = [0.05]
+Rytovs = [0.025]
 Rytov = Rytovs[0]
 
 k0 = 2 * np.pi / lmbda  # wave number
@@ -125,8 +125,9 @@ knot_types = {
     'trefoil_standard_11': trefoil_standard_11,
     'trefoil_standard_115': trefoil_standard_115,
     'trefoil_standard_12': trefoil_standard_12,
+    'trefoil_standard_125': trefoil_standard_12,
     'trefoil_standard_13': trefoil_standard_13,
-
+    'trefoil_standard_15': trefoil_standard_15,
 }
 knots = [
     'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
@@ -139,6 +140,9 @@ knots = [
     'trefoil_standard_115',
     'trefoil_standard_12',
     'trefoil_standard_13',
+]
+knots = [
+    'trefoil_standard_125',
 ]
 # knots = [
 #     '30oneX'

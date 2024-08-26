@@ -312,6 +312,7 @@ def SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num
     dL = L_prop / screens_num
     r0d = r0_from_Cn2(Cn2=Cn2, k0=k0, dz=dL)
     psh_par_dL = r0d, N, pxl_scale, L0, l0
+    currents = []
     for i in range(epochs):
         E = LG_00
         for _ in range(screens_num):
@@ -334,7 +335,7 @@ def SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num
             I_avg_tot += current / np.max(np.abs(E_fft) ** 2) * I0
         else:
             I_avg_tot += current
-
+        currents.append(current)
         if i == 1:
             if show:
                 plot_field_both(E, extend=None)
@@ -342,7 +343,7 @@ def SR_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num
     I_avg = I_avg_tot / epochs
     SR = I_avg / I0
     print(f'SR={SR}')
-    return SR
+    return SR, currents
 def SR_reversed_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, max_cut=False, pad_factor=2, show=False):
     _, _, width0, lmbda = beam_par
     k0 = 2 * np.pi / lmbda
