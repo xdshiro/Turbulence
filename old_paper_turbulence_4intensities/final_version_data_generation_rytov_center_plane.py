@@ -10,8 +10,8 @@ from tqdm import trange
 SAMPLES = 100
 indx_plus = 0
 
-plot = 1
-plot_3d = 1
+plot = 0
+plot_3d = 0
 print_coeff = 0
 
 print_values = 0
@@ -34,16 +34,17 @@ res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 # beam
 lmbda = 532e-9  # wavelength
 L_prop = 270  # propagation distance
-knot_length = 212.58897655870774 / 2 * 1.5  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
-center_plane = 1
+knot_length = 212.58897655870774 / 2 * 1.4  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+center_plane = 0.3
 width0 = 6e-3 / np.sqrt(2)  # beam width
 xy_lim_2D_origin = (-35.0e-3, 35.0e-3)  # window size to start with
-res_xy_2D_origin = 300  # resolution
+scale = 1.5
+res_xy_2D_origin = int(scale * 300) # resolution
 
-res_z = 100  # resolution of the knot is res_z+1
-crop = 185  # for the knot propagation
-crop_3d = 100  # for the knot
-new_resolution = (100, 100)  # resolution of the knot to save
+res_z = int(scale * 100)  # resolution of the knot is res_z+1
+crop = int(scale * 185)  # for the knot propagation
+crop_3d = int(scale * 100)  # for the knot
+new_resolution = (int(scale * 100), int(scale * 100))  # resolution of the knot to save
 
 screens_num1 = 3
 multiplier1 = [1] * screens_num1
@@ -55,9 +56,9 @@ multiplier2 = [1] * screens_num2
 # Cn2 = 3.21e-14
 # Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
 # Cn2 = Cn2s[0]
-Rytovs = [0.025, 0.05, 0.1, 0.15, 0.2]
+Rytovs = [0.05, 0.1, 0.15, 0.2, 0.025]
 for Rytov in Rytovs:
-    folder = f'optimized_trefoil_vs_rytov_{Rytov}_100_v1'
+    folder = f'standard12_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
     # # # # # Cn2 = 3.21e-15
@@ -69,7 +70,7 @@ for Rytov in Rytovs:
     # propagation parameters
     z0 = knot_length * (1 - center_plane) + L_prop  # the source position
     prop1 = L_prop  # z0-prop1 - detector position
-    prop2 = knot_length * 1  # z0-prop1-pro2 - knot center (assumed)
+    prop2 = knot_length * (1 - center_plane)  # z0-prop1-pro2 - knot center (assumed)
     
     # extra values (physical)
     
@@ -142,7 +143,7 @@ for Rytov in Rytovs:
         'trefoil_standard_13',
     ]
     knots = [
-        'trefoil_optimized',
+        'trefoil_standard_12',
     ]
     # knots = [
     #     '30oneX'
@@ -183,7 +184,7 @@ for Rytov in Rytovs:
             )
             if plot:
                 plot_field_both(field_after_turb, extend=extend)
-            if center_plane:
+            if center_plane == 1:
                 field_center = field_after_turb
             else:
                 field_center = propagation_ps(
