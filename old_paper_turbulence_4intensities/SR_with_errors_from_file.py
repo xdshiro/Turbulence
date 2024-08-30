@@ -31,7 +31,7 @@ for i, array in enumerate(arrays):
 # Extracting SR values and errors from the results
 sr_values = [result[0] for result in sr_results_with_error]
 sr_errors = [result[1] for result in sr_results_with_error]
-
+print(sr_values, sr_errors)
 # Plotting SR values vs. Rytov values
 plt.errorbar(Rytov_values, sr_values, yerr=sr_errors, fmt='o', capsize=5, label='SR Value')
 plt.xlabel('Rytov Values')
