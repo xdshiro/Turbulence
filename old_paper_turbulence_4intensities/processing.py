@@ -42,7 +42,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 			# Color by z-coordinate and set size larger
 			scatter = ax.scatter(dots_cut[:, 0], dots_cut[:, 1], dots_cut[:, 2], c=dots_cut[:, 2], cmap='viridis', s=90)
 			fig.colorbar(scatter, ax=ax, label='Z coordinate')
-			ax.view_init(elev=70, azim=-90)
+			ax.view_init(elev=85, azim=-90)
 			# Set the limits for x and y axes
 			ax.set_xlim(0, Nx)
 			ax.set_ylim(0, Ny)
@@ -86,7 +86,7 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 				scatter = ax.scatter(dots_cut[:, 0], dots_cut[:, 1], dots_cut[:, 2], c=dots_cut[:, 2]
 				                     , cmap='viridis', s=60)
 				fig.colorbar(scatter, ax=ax, label='Z coordinate')
-				ax.view_init(elev=70, azim=-90)
+				ax.view_init(elev=50, azim=-90)
 				# Set the limits for x and y axes
 				ax.set_xlim(20, 120)
 				ax.set_ylim(20, 120)
@@ -119,8 +119,13 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 	print(f'Final ratings saved to {output_csv}')
 
 
-input_folder = '../optimized_trefoil_vs_rytov_0.2_100_1.4zR_c03_v1/data_trefoil_optimized.csv'
-output_csv = f'optimized_trefoil_vs_rytov_0.2_100_1.4zR_c03_v1.csv'
+input_folder = '../optimized_trefoil_vs_rytov_0.025_100_1.4zR_c03_v1/data_trefoil_optimized.csv'
+output_csv = f'optimized_trefoil_vs_rytov_0.025_100_1.4zR_c03_v1.csv'
+
+input_folder = '../optimized_trefoil_vs_rytov_0.2_100_center_plane/data_trefoil_optimized.csv'
+output_csv = f'optimized_trefoil_vs_rytov_0.2_100_center_plane_v1.csv'
+# input_folder = '../standard_vs_WWW_trefoil_vs_rytov_0.05_100_1.4zR_c03_v1/data_trefoil_standard_12.csv'
+# output_csv = f'standard_vs_WWW_trefoil_vs_rytov_0.05_100_1.4zR_c03_v1.csv'
 files_csv = True
 # Example usage:
 review_and_rate_dots(input_folder=input_folder, output_csv=output_csv, file_csv=True)
