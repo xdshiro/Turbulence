@@ -124,8 +124,8 @@ output_csv = f'optimized_trefoil_vs_rytov_0.025_100_1.4zR_c03_v1.csv'
 
 input_folder = '../optimized_trefoil_vs_rytov_0.2_100_center_plane/data_trefoil_optimized.csv'
 output_csv = f'optimized_trefoil_vs_rytov_0.2_100_center_plane_v1.csv'
-# input_folder = '../standard_vs_WWW_trefoil_vs_rytov_0.05_100_1.4zR_c03_v1/data_trefoil_standard_12.csv'
-# output_csv = f'standard_vs_WWW_trefoil_vs_rytov_0.05_100_1.4zR_c03_v1.csv'
+input_folder = '../dennis_trefoil_vs_rytov_0.2_100_center_plane/data_trefoil_dennis.csv'
+output_csv = f'dennis_trefoil_vs_rytov_0.2_100_center_plane.csv'
 files_csv = True
 # Example usage:
 review_and_rate_dots(input_folder=input_folder, output_csv=output_csv, file_csv=True)

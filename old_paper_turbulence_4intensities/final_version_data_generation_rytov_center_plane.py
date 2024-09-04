@@ -61,7 +61,7 @@ Rytovs = [0.05, 0.1, 0.15, 0.2, 0.025]
 # Rytovs = [0.2, 0.15]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
-    folder = f'dennis_trefoil_vs_rytov_{Rytov}_100_center_plane'
+    folder = f'dennis_trefoil_vs_rytov_{Rytov}_100_center_plane_v2'
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
     # # # # # Cn2 = 3.21e-15
