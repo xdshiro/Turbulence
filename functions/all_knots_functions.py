@@ -1493,6 +1493,75 @@ def hopf_new0(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
     return weights_important
 
+
+def trefoil_dennis(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
+    l_save = [0, 0, 0, 0, 3]
+    p_save = [0, 1, 2, 3, 0]
+    weight_save = [1.51, -5.06, 7.23, -2.03, -3.97]
+    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+    return weights_important
+
+def trefoil_standard_12_phase_only(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
+    mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
+    mesh_3D_new2 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
+    xyz_array = [
+        (mesh_3D_new1[0], mesh_3D_new1[1], mesh_3D_new1[2]),
+        (mesh_3D_new2[0], mesh_3D_new2[1], mesh_3D_new2[2])
+    ]
+    # starting angle for each braid
+    angle_array = np.array([0, 1. * np.pi])
+    # powers in cos in sin
+    pow_cos_array = [1.5, 1.5]
+    pow_sin_array = [1.5, 1.5]
+    # conjugating the braid (in "Milnor" space)
+    conj_array = [0, 0]
+    # moving x+iy (same as in the paper)
+    theta_array = [0.0 * np.pi, 0 * np.pi]
+    # braid scaling
+    a_cos_array = [1, 1]
+    a_sin_array = [1, 1]
+
+    ans = 1
+    for i, xyz in enumerate(xyz_array):
+        if conj_array[i]:
+            ans *= np.conjugate(braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
+                                           a_cos_array[i], a_sin_array[i]))
+        else:
+            ans *= braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
+                              a_cos_array[i], a_sin_array[i])
+    R = np.sqrt(mesh_3D[0] ** 2 + mesh_3D[1] ** 2)
+    ans *= (1 + R ** 2) ** 3
+    w = 1.2
+    ans *= LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
+    ans_phase = np.angle(ans)
+    ans_amplitude = LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=1.8, k0=1, x0=0, y0=0, z0=0)
+    ans = ans_amplitude * np.exp(1j * ans_phase)
+    return ans
+    moments = {'p': (0, 6), 'l': (-6, 6)}
+
+    _, _, res_z_3D = np.shape(mesh_3D_new1[0])
+    x_2D = mesh_3D[0][:, :, 0]
+    y_2D = mesh_3D[1][:, :, 0]
+    if plot:
+        plot_field_both(ans[:, :, res_z_3D // 2])
+    values = cbs.LG_spectrum(
+        ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=True, width=w, k0=1,
+    )
+    l_save = []
+    p_save = []
+    weight_save = []
+    moment0 = moments['l'][0]
+    for l, p_array in enumerate(values):
+        for p, value in enumerate(p_array):
+            if abs(value) > modes_cutoff * abs(values).max():
+                l_save.append(l + moment0)
+                p_save.append(p)
+                weight_save.append(value)
+    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+    return weights_important
+
 def trefoil_standard_15(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
     mesh_3D_new2 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
@@ -2007,7 +2076,12 @@ if __name__ == "__main__":
 
     # values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
     #                       angle_size=(2, 2, 2, 1))
-    values = fivefoil_standard_1(mesh_3D_knot, braid_func=braid, plot=True)
+    values = trefoil_dennis(mesh_3D_knot, braid_func=braid, plot=True)
+    # field = trefoil_standard_12_phase_only(mesh_3D_knot, braid_func=braid, plot=True)
+    # beam_par = (0, 0, width0, 1)
+    # psh_par_0 = (1 * 1e100, res_x_3D_knot, (x_lim_3D_knot[1] - x_lim_3D_knot[0]) / res_x_3D_knot, 1, 1 * 1e100)
+    # field = beam_expander(field[:, :, res_z_3D_knot // 2], beam_par, psh_par_0, distance_both=5, steps_one=20)
+    # print(np.shape(field))
     # l = [0, 0]
     # p = [0, 2]
     # weights = [1, 1]
@@ -2018,6 +2092,8 @@ if __name__ == "__main__":
     # grad_x, grad_y = np.gradient(field[:, :, res_z_3D_knot // 2])
     # magnitude = np.sqrt(np.abs(grad_x) ** 2 + np.abs(grad_y) ** 2)
     plot_field_both(field[:, :, res_z_3D_knot // 2])
+    plot_field_both(field[:, :, res_z_3D_knot // 4])
+    plot_field_both(field[:, :, 0])
     # plot_field_both(magnitude)
     #
     dots_bound = [
