@@ -141,11 +141,13 @@ for Rytov in Rytovs:
         '30oneX'
     ]
     knots = [
-        'trefoil_standard_105',
-        'trefoil_standard_11',
-        'trefoil_standard_115',
+        # 'trefoil_standard_105',
+        # 'trefoil_standard_11',
+        # 'trefoil_standard_115',
         # 'trefoil_standard_12',
-        'trefoil_standard_13',
+        # 'trefoil_standard_13',
+        'trefoil_standard_125',
+        'trefoil_standard_15',
     ]
     # knots = [
     #     'trefoil_optimized',

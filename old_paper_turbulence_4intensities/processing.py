@@ -127,11 +127,12 @@ def review_and_rate_dots(input_folder='processed_dots', output_csv='ratings.csv'
 
 input_folder = '../optimized_trefoil_vs_rytov_0.2_100_center_plane_v3/data_trefoil_standard_12.csv'
 output_csv = f'optimized_trefoil_vs_rytov_0.2_100_center_plane_v3.csv'  # 025
-input_folder = '../standard_trefoil12_vs_rytov_0.2_100_center_plane_v3/data_trefoil_standard_12.csv'
-output_csv = f'standard_trefoil12_vs_rytov_0.2_100_center_plane_v3.csv'  # 025
 input_folder = '../optimized_trefoil_vs_rytov_0.2_100_center_plane_v3/data_trefoil_optimized.csv'
 output_csv = f'optimized_trefoil_vs_rytov_0.2_100_center_plane_v3.csv'  # 025
-
+input_folder = '../standard_trefoil12_vs_rytov_0.025_100_center_plane_v3/data_trefoil_standard_12.csv'
+output_csv = f'standard_trefoil12_vs_rytov_0.025_100_center_plane_v3.csv'  # 025
+input_folder = '../standard_vsW_trefoil_vs_rytov_0.05_100_center_plane_v2/data_trefoil_standard_13.csv'
+output_csv = f'standard13_vsW_trefoil_vs_rytov_0.05_100_center_plane_v2.csv'  # 025
 files_csv = True
 
 # Example usage:
