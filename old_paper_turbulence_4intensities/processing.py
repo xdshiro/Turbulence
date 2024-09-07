@@ -131,8 +131,8 @@ input_folder = '../optimized_trefoil_vs_rytov_0.2_100_center_plane_v3/data_trefo
 output_csv = f'optimized_trefoil_vs_rytov_0.2_100_center_plane_v3.csv'  # 025
 input_folder = '../standard_trefoil12_vs_rytov_0.025_100_center_plane_v3/data_trefoil_standard_12.csv'
 output_csv = f'standard_trefoil12_vs_rytov_0.025_100_center_plane_v3.csv'  # 025
-input_folder = '../standard_vsW_trefoil_vs_rytov_0.05_100_center_plane_v3/data_trefoil_standard_105.csv'
-output_csv = f'standard105_vsW_trefoil_vs_rytov_0.05_100_center_plane_v3.csv'  # 025
+input_folder = '../standard_vsW_trefoil_vs_rytov_0.025_100_center_plane_v3/data_trefoil_standard_125.csv'
+output_csv = f'standard15_vsW_trefoil_vs_rytov_0.0225_100_center_plane_v3.csv'  # 025
 files_csv = True
 
 # Example usage:
