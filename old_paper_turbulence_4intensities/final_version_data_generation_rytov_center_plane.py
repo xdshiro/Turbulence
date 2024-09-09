@@ -58,10 +58,10 @@ multiplier2 = [1] * screens_num2
 # Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
 # Cn2 = Cn2s[0]
 Rytovs = [0.025, 0.05, 0.1, 0.15, 0.2]
-Rytovs = [0.025, 0.05]
+# Rytovs = [0.025, 0.05]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
-    folder = f'standard_vsW_trefoil_vs_rytov_{Rytov}_100_center_plane_v3'
+    folder = f'trefoil_optimized_math_5_trefoil_vs_rytov_{Rytov}_100_center_plane_v3'
     # folder = f'optimized_trefoil_vs_rytov_{Rytov}_100_center_plane_v2'
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
@@ -133,7 +133,8 @@ for Rytov in Rytovs:
         'trefoil_standard_125': trefoil_standard_12,
         'trefoil_standard_13': trefoil_standard_13,
         'trefoil_standard_15': trefoil_standard_15,
-        'trefoil_dennis': trefoil_dennis
+        'trefoil_dennis': trefoil_dennis,
+        'trefoil_optimized_math_5': trefoil_optimized_math_5
     }
     knots = [
         'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
@@ -146,12 +147,12 @@ for Rytov in Rytovs:
         # 'trefoil_standard_115',
         # 'trefoil_standard_12',
         # 'trefoil_standard_13',
-        'trefoil_standard_125',
-        'trefoil_standard_15',
+        # 'trefoil_standard_125',
+        # 'trefoil_standard_15',
     ]
-    # knots = [
-    #     'trefoil_optimized',
-    # ]
+    knots = [
+        'trefoil_optimized_math_5',
+    ]
     # knots = [
     #     '30oneX'
     # ]

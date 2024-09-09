@@ -1502,6 +1502,15 @@ def trefoil_dennis(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
     return weights_important
 
+
+def trefoil_optimized_math_5(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
+    l_save = [0, 0, 0, 0, 3]
+    p_save = [0, 1, 2, 3, 0]
+    weight_save = [1.20, -2.85, 7.48, -3.83, -4.38]
+    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+    return weights_important
+
 def trefoil_standard_12_phase_only(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
     mesh_3D_new2 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
@@ -2076,7 +2085,8 @@ if __name__ == "__main__":
 
     # values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
     #                       angle_size=(2, 2, 2, 1))
-    values = trefoil_dennis(mesh_3D_knot, braid_func=braid, plot=True)
+    values = trefoil_optimized_math_5(mesh_3D_knot, braid_func=braid, plot=True)
+    values = trefoil_optimized(mesh_3D_knot, braid_func=braid, plot=True)
     # field = trefoil_standard_12_phase_only(mesh_3D_knot, braid_func=braid, plot=True)
     # beam_par = (0, 0, width0, 1)
     # psh_par_0 = (1 * 1e100, res_x_3D_knot, (x_lim_3D_knot[1] - x_lim_3D_knot[0]) / res_x_3D_knot, 1, 1 * 1e100)
