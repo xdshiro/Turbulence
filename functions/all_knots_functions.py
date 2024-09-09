@@ -1503,6 +1503,14 @@ def trefoil_dennis(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     return weights_important
 
 
+def trefoil_optimized_math_many(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
+    l_save = [-3, -3, -3, 0, 0, 0, 0, 3, 3, 3, 3]
+    p_save = [0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3]
+    weight_save = [(0.00021092227580502785+7.920886118023887e-07j), (-0.0008067955939880228+3.607965773547045e-06j), (0.00012245355229622952+1.0489244513922499e-07j), (0.0011924249760862221+1.1372720865198612e-05j), (-0.002822503524696713+8.535015090975148e-06j), (0.0074027513552253985+5.475152609562587e-06j), (-0.0037869189890120283+8.990311302510444e-06j), (-0.0043335243263204586+8.720849197446247e-07j), (0.00013486021497321202+3.7649803780475746e-06j), (-0.0002255962470142481+3.4852313165379194e-07j), (-9.910118914013346e-05+1.5151969296215156e-08j)]
+    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+    return weights_important
+
 def trefoil_optimized_math_5(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     l_save = [0, 0, 0, 0, 3]
     p_save = [0, 1, 2, 3, 0]
@@ -2085,8 +2093,8 @@ if __name__ == "__main__":
 
     # values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
     #                       angle_size=(2, 2, 2, 1))
-    values = trefoil_optimized_math_5(mesh_3D_knot, braid_func=braid, plot=True)
-    values = trefoil_optimized(mesh_3D_knot, braid_func=braid, plot=True)
+    values = trefoil_optimized_math_many(mesh_3D_knot, braid_func=braid, plot=True)
+    # values = trefoil_optimized(mesh_3D_knot, braid_func=braid, plot=True)
     # field = trefoil_standard_12_phase_only(mesh_3D_knot, braid_func=braid, plot=True)
     # beam_par = (0, 0, width0, 1)
     # psh_par_0 = (1 * 1e100, res_x_3D_knot, (x_lim_3D_knot[1] - x_lim_3D_knot[0]) / res_x_3D_knot, 1, 1 * 1e100)

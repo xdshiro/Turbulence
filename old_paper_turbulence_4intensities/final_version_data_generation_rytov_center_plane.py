@@ -134,7 +134,8 @@ for Rytov in Rytovs:
         'trefoil_standard_13': trefoil_standard_13,
         'trefoil_standard_15': trefoil_standard_15,
         'trefoil_dennis': trefoil_dennis,
-        'trefoil_optimized_math_5': trefoil_optimized_math_5
+        'trefoil_optimized_math_5': trefoil_optimized_math_5,
+        'trefoil_optimized_math_many': trefoil_optimized_math_many
     }
     knots = [
         'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
@@ -151,7 +152,8 @@ for Rytov in Rytovs:
         # 'trefoil_standard_15',
     ]
     knots = [
-        'trefoil_optimized_math_5',
+        # 'trefoil_optimized_math_5',
+        'trefoil_optimized_math_many',
     ]
     # knots = [
     #     '30oneX'
