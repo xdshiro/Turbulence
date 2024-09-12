@@ -1511,6 +1511,14 @@ def trefoil_optimized_math_many(mesh_3D, braid_func=braid, modes_cutoff=0.01, pl
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
     return weights_important
 
+def trefoil_optimized_math_many_095(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
+    l_save = [-3, -3, -3, 0, 0, 0, 0, 3, 3, 3, 3]
+    p_save = [0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3]
+    weight_save = [(0.0003480344230302087-2.24808914259125e-08j), (-0.0008202669878716706+3.440862545658389e-06j), (0.00010265094423308904+2.31922738071223e-07j), (0.0011967299943849222+7.739735031831317e-06j), (-0.0038439481283424996+6.262024157567451e-06j), (0.007992793393037656+2.6957311985005077e-06j), (-0.0038705109086829936+6.2293722796143055e-06j), (-0.0038065491189479697+2.3047912587806214e-08j), (0.00020229977021637684+3.5303977611434e-06j), (-0.00019990398151559197+3.711187821973153e-07j), (-8.519625649010964e-05+1.3228967779423537e-08j)]
+    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+    return weights_important
+
 def trefoil_optimized_math_5(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     l_save = [0, 0, 0, 0, 3]
     p_save = [0, 1, 2, 3, 0]
