@@ -61,7 +61,7 @@ Generates a Hopf link with 30-fold symmetry focusing on the X-axis rotation.
 Generates a Hopf link with 15-fold symmetry focusing on the Z-axis rotation.
 
 ### hopf_dennis(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False)
-Returns precomputed optimized weights for a specific Dennis-type Hopf link configuration.
+Returns precomputed optimized weights for a specific Forbes-type Hopf link configuration.
 
 ### lobe_remove(mesh, angle1, angle2, rot_x, rot_y, rot_z)
 Removes a lobe from the mesh grid within specified angle ranges and rotations.
@@ -2101,7 +2101,7 @@ if __name__ == "__main__":
 
     # values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
     #                       angle_size=(2, 2, 2, 1))
-    values = trefoil_optimized_math_many(mesh_3D_knot, braid_func=braid, plot=True)
+    values = trefoil_optimized_math_many_095(mesh_3D_knot, braid_func=braid, plot=True)
     # values = trefoil_optimized(mesh_3D_knot, braid_func=braid, plot=True)
     # field = trefoil_standard_12_phase_only(mesh_3D_knot, braid_func=braid, plot=True)
     # beam_par = (0, 0, width0, 1)

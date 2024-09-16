@@ -12,14 +12,14 @@ stability_optimized_center = np.array([92 + 97 + 93, 61 + 66 + 62, 27 + 37 + 35,
 stability_optimized_center_delta = np.array([6 + 1 + 3, 10 + 8 + 8, 9 + 9 + 6, 4 + 7 + 5, 5 + 4 + 3])
 stability_optimized = np.array([69, 40, 17, 4, 3])
 stability_optimized_delta = np.array([9, 12, 8, 3, 1])
-stability_standard_12 = np.array([32 + 25 + 39, 13 + 17 + 12, 4 + 7 + 4, 1 + 1 + 1, 0 + 0 + 1])
-stability_standard_12_delta = np.array([8 + 9 + 4, 7 + 3 + 4, 0 + 2 + 1, 0 + 3 + 2, 0 + 1 + 1])
+# stability_standard_12 = np.array([32 + 25 + 39, 13 + 17 + 12, 4 + 7 + 4, 1 + 1 + 1, 0 + 0 + 1])
+# stability_standard_12_delta = np.array([8 + 9 + 4, 7 + 3 + 4, 0 + 2 + 1, 0 + 3 + 2, 0 + 1 + 1])
 stability_standard_115 = np.array([43 * 3, 16 * 3, 4 + 7 + 4, 1 + 1 + 1, 0 + 0 + 1])
 stability_standard_115_delta = np.array([0 * 3, 0 * 3, 0 + 2 + 1, 0 + 3 + 2, 0 + 1 + 1])
 stability_dennis = np.array([75 + 71 + 80, 42 + 43 + 30, 8 + 8 + 13, 8 + 4 + 1, 1 + 2 + 3])
 stability_dennis_delta = np.array([4 + 7 + 2, 7 + 4 + 5, 3 + 5 + 5, 3 + 1 + 5, 0 + 1 + 2])
 SR_values = np.array([0.9394, 0.8846, 0.7929, 0.6974, 0.6396])
-
+many_math = np.array([0, 37])
 sr_values = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
 
 stability_optimized_center_final = (stability_optimized_center + stability_optimized_center_delta // 2) / 3
@@ -53,10 +53,10 @@ plt.figure(figsize=(10, 6))
 # plt.plot(Rytov_values, stability_dennis_final, marker='o', label='dennis')
 
 # Plot the central line for each dataset
-plt.plot(Rytov_values, stability_optimized_center_final, marker='s', label='center of the knot')
-# plt.plot(Rytov_values, stability_optimized_final, marker='s', label='start of the knot')
-plt.plot(Rytov_values, stability_standard_115_final, marker='x', label='standard_1.15')
-plt.plot(Rytov_values, stability_dennis_final, marker='o', label='dennis')
+plt.plot(Rytov_values, stability_optimized_center_final, color='green', marker='s', label='Our optimization')
+# plt.plot(Rytov_values, stability_optimized_final, color='orange', marker='s', label='start of the knot')
+plt.plot(Rytov_values, stability_standard_115_final, color='red', marker='x', label='Original math-based knot')
+plt.plot(Rytov_values, stability_dennis_final, color='blue', marker='o', label='Mark Dennis optimization')
 
 
 plt.fill_between(Rytov_values,
@@ -67,7 +67,7 @@ plt.fill_between(Rytov_values,
 # plt.fill_between(Rytov_values,
 #                  np.array(stability_optimized_final) - stability_optimized_ci,
 #                  np.array(stability_optimized_final) + stability_optimized_ci,
-#                  color='red', alpha=0.2)
+#                  color='orange', alpha=0.2)
 
 plt.fill_between(Rytov_values,
                  np.array(stability_standard_115_final) - stability_standard_115_ci,
@@ -77,7 +77,7 @@ plt.fill_between(Rytov_values,
 plt.fill_between(Rytov_values,
                  np.array(stability_dennis_final) - stability_dennis_ci,
                  np.array(stability_dennis_final) + stability_dennis_ci,
-                 color='orange', alpha=0.2)
+                 color='blue', alpha=0.2)
 
 # Titles and labels
 plt.title('Stability of Optical Trefoil vs Rytov', fontsize=16)

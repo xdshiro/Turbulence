@@ -39,7 +39,7 @@ plt.plot(sr_values, proposed_simulation, 'ro-', label='Proposed Method (Simulati
 plt.fill_between(sr_values, np.array(proposed_simulation) - proposed_simulation_ci,
                  np.array(proposed_simulation) + proposed_simulation_ci, color='red', alpha=0.2)
 
-plt.plot(sr_values, mr_dennis_simulation, 'bo-', label='M.R. Dennis et al. (Simulation)')
+plt.plot(sr_values, mr_dennis_simulation, 'bo-', label='M.R. Forbes et al. (Simulation)')
 plt.fill_between(sr_values, np.array(mr_dennis_simulation) - mr_dennis_simulation_ci,
                  np.array(mr_dennis_simulation) + mr_dennis_simulation_ci, color='blue', alpha=0.2)
 
@@ -47,7 +47,7 @@ plt.plot(sr_values, proposed_experiment, 'o--', color='orange', label='Proposed 
 plt.fill_between(sr_values, np.array(proposed_experiment) - proposed_experiment_ci,
                  np.array(proposed_experiment) + proposed_experiment_ci, color='orange', alpha=0.2)
 
-plt.plot(sr_values, mr_dennis_experiment, 'o--', color='green', label='M.R. Dennis et al. (Experiment)')
+plt.plot(sr_values, mr_dennis_experiment, 'o--', color='green', label='M.R. Forbes et al. (Experiment)')
 plt.fill_between(sr_values, np.array(mr_dennis_experiment) - mr_dennis_experiment_ci,
                  np.array(mr_dennis_experiment) + mr_dennis_experiment_ci, color='green', alpha=0.2)
 

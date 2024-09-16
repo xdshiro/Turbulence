@@ -1,0 +1,83 @@
+Optical Turbulence Simulation Package
+Overview
+This package provides a comprehensive set of tools for simulating optical turbulence and its effects on laser beams, specifically focusing on generating and analyzing complex optical fields and singularities. The package includes functions for generating phase screens, computing Strehl ratios, propagating beams through turbulent media, and manipulating optical knots.
+
+Contents
+The package includes the following Python scripts:
+
+all_knots_functions.py
+beam_center_processing.py
+center_beam_search.py
+data_generation_old.py
+dots_processing.py
+functions_turbulence.py
+Descriptions
+1. all_knots_functions.py
+This script provides a set of functions for manipulating and analyzing optical knots. It includes various braid configurations and their corresponding topological structures. Key functions involve generating braid functions, applying them to produce specific knot configurations, and manipulating the resultant optical fields.
+
+2. beam_center_processing.py
+This script includes algorithms to find the beam center and beam tilt using the electrical field. It is based on quasi-intrinsic-variance and Orbital Angular Momentum (OAM) spectrum calculations. The main function beamFullCenter computes the beam center and tilt.
+
+3. center_beam_search.py
+Similar to beam_center_processing.py, this script focuses on algorithms for finding the beam center and tilt using electrical fields. It includes functions for field manipulation and variance calculations to determine the optimal beam center and tilt.
+
+4. data_generation_old.py
+This script reads the field from a .mat file, performs necessary pre-processing procedures, and creates a 3D array of singularity dots. It includes functions for reading and normalizing the field, finding the beam waist, rescaling the field, and detecting singularity dots.
+
+5. dots_processing.py
+This script provides various functions for processing and visualizing singularity dots in 3D optical fields. Functions include building, loading, plotting, and filtering dots based on their neighborhood configurations.
+
+6. functions_turbulence.py
+This script provides functions for simulating optical turbulence and its effects on laser beams. It includes generating phase screens, computing Strehl ratios, and propagating beams through turbulent media. It utilizes various mathematical models and tools for accurate simulations.
+
+Installation
+To use this package, ensure you have the required dependencies installed. You can install them using the following command:
+
+bash
+Copy code
+pip install numpy matplotlib scipy aotools
+Usage
+Example: Generating an Optical Knot
+python
+Copy code
+import numpy as np
+from all_knots_functions import hopf_standard_16, braid
+
+# Define the mesh grid
+mesh_3D = np.meshgrid(np.linspace(-1, 1, 100), np.linspace(-1, 1, 100), np.linspace(-1, 1, 100))
+
+# Generate the optical knot
+optical_knot = hopf_standard_16(mesh_3D, braid_func=braid, plot=True)
+Example: Finding Beam Center
+python
+Copy code
+import numpy as np
+from beam_center_processing import beamFullCenter
+
+# Load the field data (example)
+field = np.load('field_data.npy')
+
+# Find the beam center and tilt
+beam_center, tilt = beamFullCenter(field)
+print("Beam Center:", beam_center)
+print("Tilt:", tilt)
+Example: Propagating Beam through Turbulence
+python
+Copy code
+import numpy as np
+from functions_turbulence import propagation_ps
+
+# Define beam parameters and phase screen parameters
+beam_par = (0, 0, 1, 0.6328)  # l, p, width0, lambda
+psh_par = (0.1, 256, 0.01, 100, 0.01)  # r0, N, pixel_scale, L0, l0
+
+# Define initial field
+field = np.exp(-(np.linspace(-1, 1, 256)[:, None] ** 2 + np.linspace(-1, 1, 256)[None, :] ** 2))
+
+# Propagate the beam through turbulence
+propagated_field = propagation_ps(field, beam_par, psh_par, L_prop=100, screens_num=10)
+Documentation
+For detailed documentation on each script and its functions, refer to the docstrings within the respective Python files. The functions include descriptions of parameters, return values, and examples of usage.
+
+Contributing
+Contributions to this package are welcome. If you have any suggestions, bug reports, or feature requests, please open an issue or submit a pull request on the project's GitHub repository.
