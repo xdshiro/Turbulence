@@ -33,12 +33,12 @@ res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 
 # beam
 lmbda = 532e-9  # wavelength
-L_prop = 270  # propagation distance
+L_prop = 270 * 2  # propagation distance
 knot_length = 212.58897655870774 / 2 * 1.4  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
 center_plane = 0.3
 center_plane = 1
 ########################################################
-width0 = 6.5e-3 / np.sqrt(2)  # beam width
+width0 = 6.0e-3 / np.sqrt(2)  # beam width
 xy_lim_2D_origin = (-35.0e-3, 35.0e-3)  # window size to start with
 scale = 1.5
 res_xy_2D_origin = int(scale * 300) # resolution
@@ -59,10 +59,12 @@ multiplier2 = [1] * screens_num2
 # Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
 # Cn2 = Cn2s[0]
 Rytovs = [0.05]#, 0.2]
+Rytovs = [0.03, 0.052, 0.091]  # 135
+Rytovs = [0.086, 0.161, 0.28]  # 540
 # Rytovs = [0.025, 0.05]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
-    folder = f'optimized_w{width0*np.sqrt(2)}_{Rytov}_100_center_plane_v3'
+    folder = f'optimized_L{L_prop}_{Rytov}_100_center_plane_v1'
     # folder = f'optimized_trefoil_vs_rytov_{Rytov}_100_center_plane_v2'
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
