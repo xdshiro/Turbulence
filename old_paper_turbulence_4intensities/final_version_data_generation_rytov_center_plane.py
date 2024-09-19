@@ -39,7 +39,7 @@ center_plane = 0.3
 center_plane = 1
 ########################################################
 width0 = 6.0e-3 / np.sqrt(2)  # beam width
-xy_lim_2D_origin = (-35.0e-3, 35.0e-3)  # window size to start with
+xy_lim_2D_origin = (-45.0e-3, 45.0e-3)  # window size to start with
 scale = 1.5
 res_xy_2D_origin = int(scale * 300) # resolution
 
@@ -64,7 +64,7 @@ Rytovs = [0.086, 0.161, 0.28]  # 540
 # Rytovs = [0.025, 0.05]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
-    folder = f'optimized_L{L_prop}_{Rytov}_100_center_plane_v1'
+    folder = f'optimized_L{L_prop}_{Rytov}_100_center_plane_v3'
     # folder = f'optimized_trefoil_vs_rytov_{Rytov}_100_center_plane_v2'
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
