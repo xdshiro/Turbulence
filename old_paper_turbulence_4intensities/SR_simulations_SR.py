@@ -35,7 +35,7 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     # Beam parameters
     lmbda = 532e-9
     width_values = width0
-    l, p = 0, 0
+    l, p = 1, 1
 
     beam_par = (l, p, width0, lmbda)
     k0 = 2 * np.pi / lmbda
@@ -70,12 +70,12 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
     #     LG_21_2D += weight_save[i] * LG_simple(*mesh_2D, z=-L_prop - knot_length, l=l_save[i], p=p_save[i],
     #                                            width=width0, k0=k0, x0=0, y0=0, z0=0)
     plot_field_both(LG_21_2D, extend=None)
-    # phase_screen = psh_wrap(psh_par, seed=1)
-    # plot_field(phase_screen, extend=None)
-    # plot_field_both(np.exp(1j*phase_screen), extend=None)
-
-    # field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, L_prop, screens_num=screens_nums)
-    # plot_field_both(field_prop)
+    phase_screen = psh_wrap(psh_par, seed=1)
+    plot_field(phase_screen, extend=None)
+    plot_field_both(np.exp(1j*phase_screen), extend=None)
+    #
+    field_prop = propagation_ps(LG_21_2D, beam_par, psh_par, L_prop, screens_num=screens_nums)
+    plot_field_both(field_prop)
     # field_prop_center = propagation_ps(field_prop, beam_par, psh_par, knot_length, screens_num=screens_nums)
     # plot_field_both(field_prop_center)
     # print(phase_screen)
@@ -117,13 +117,13 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
 
 
 # Define the sets of values you want to iterate over
-L_prop_values = [540]
+L_prop_values = [135]
 knot_length = 100
 width0_values = [6e-3 / np.sqrt(2)]
 # width0_values = [5e-3 / np.sqrt(2) * 10]
-xy_lim_2D_values = [(-35.0e-3, 35.0e-3)]
+xy_lim_2D_values = [(-45.0e-3, 45.0e-3)]
 # xy_lim_2D_values = [(-30.0e-3 * 5, 30.0e-3 * 5)]
-res_xy_2D_values = [201]
+res_xy_2D_values = [301]
 
 # Cn2_values = [5e-15, 1e-14, 5e-14, 1e-13]
 # Cn2_values = [1e-13]
@@ -132,7 +132,7 @@ SR_values = [88, 80, 70]  # 135
 Rytov_values = [0.03, 0.052, 0.091]  # 135
 Rytov_values = [0.05, 0.1, 0.15]  # 270
 Rytov_values = [0.086, 0.161, 0.28]  # 540
-
+Rytov_values = [0.052]
 # [1.73, 3.13]
 # [2, 3]
 # [1.88, 3.29]
@@ -173,4 +173,4 @@ for params in parameter_sets:
         currents_SR_list.append(currents_SR)
 print(currents_list)
 # np.save('arrays_scin.npy', np.array(currents_list))
-np.save(f'arrays_SR_L{L_prop_values[0]}.npy', np.array(currents_SR_list))
+# np.save(f'arrays_SR_L{L_prop_values[0]}.npy', np.array(currents_SR_list))
