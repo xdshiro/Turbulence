@@ -13,7 +13,7 @@ from scipy.ndimage import center_of_mass, shift, zoom
 import numpy as np
 
 # Load the .mat file
-mat_data = scipy.io.loadmat('trefoil_noturb_3phtest.mat')
+mat_data = scipy.io.loadmat('trefoil_noturb_fullslm_test3.mat')
 print(mat_data.keys())
 
 # Extract the complex field from the loaded data
@@ -108,7 +108,7 @@ center_plane = 0.3
 center_plane = 1
 ########################################################
 width0 = 6.0e-3 / np.sqrt(2)  # beam width
-xy_lim_2D_origin = (-35.0e-3 * (X + pad)/X, 35.0e-3 * (X + pad)/X)  # window size to start with
+xy_lim_2D_origin = (-45.0e-3 * (X + pad)/X, 45.0e-3 * (X + pad)/X)  # window size to start with
 scale = 1.0
 res_xy_2D_origin = int(scale * 300) # resolution
 

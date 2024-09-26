@@ -7,10 +7,11 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 100
+SAMPLES = 2
 indx_plus = 0
 
 plot = 0
+plot_short = 0
 plot_3d = 0
 print_coeff = 0
 
@@ -34,12 +35,12 @@ res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 # beam
 lmbda = 532e-9  # wavelength
 L_prop = 270  # propagation distance
-knot_length = 212.58897655870774 / 2 * 1.4  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+knot_length = 212.58897655870774 / 2 * 1.5  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
 center_plane = 0.3
 center_plane = 1
 ########################################################
 width0 = 6.0e-3 / np.sqrt(2)  # beam width
-xy_lim_2D_origin = (-35.0e-3, 35.0e-3)  # window size to start with
+xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
 scale = 1
 res_xy_2D_origin = int(scale * 300) # resolution
 
@@ -47,6 +48,7 @@ res_z = int(scale * 100)  # resolution of the knot is res_z+1
 crop = int(scale * 185)  # for the knot propagation
 crop_3d = int(scale * 100)  # for the knot
 new_resolution = (int(scale * 100), int(scale * 100))  # resolution of the knot to save
+new_resolution = (64, 64)  # resolution of the knot to save
 
 screens_num1 = 3
 multiplier1 = [1] * screens_num1
@@ -58,13 +60,13 @@ multiplier2 = [1] * screens_num2
 # Cn2 = 3.21e-14
 # Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
 # Cn2 = Cn2s[0]
+Rytovs = [0.05]#, 0.2]
 Rytovs = [0.03, 0.052, 0.091]  # 135
-Rytovs = [0.086, 0.161, 0.28]  # 540
-Rytovs = [0.1]#, 0.2]
+Rytovs = [0.0000005]  # 540
 # Rytovs = [0.025, 0.05]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
-    folder = f'optimized_L{L_prop}_{Rytov}_10'
+    folder = f'HOPFS_L{L_prop}_{Rytov}_test_1s'
     # folder = f'optimized_trefoil_vs_rytov_{Rytov}_100_center_plane_v2'
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
@@ -124,44 +126,33 @@ for Rytov in Rytovs:
     
     if no_turb:
         psh_par = psh_par_0
-    
+
     knot_types = {
+        'standard_16': hopf_standard_16,  # 1
+        'standard_14': hopf_standard_14,  # 2
+        'standard_18': hopf_standard_18,  # 3
+        '30both': hopf_30both,  # 4
+        '30oneZ': hopf_30oneZ,  # 5
         'optimized': hopf_optimized,  # 6
+        'pm_03_z': hopf_pm_03_z,  # 7
+        '4foil': hopf_4foil,  # 8
+        '6foil': hopf_6foil,  # 9
+        'stand4foil': hopf_stand4foil,  # 10
+        '30oneX': hopf_30oneX,  # 11
+        '15oneZ': hopf_15oneZ,
         'dennis': hopf_dennis,
-        'trefoil_optimized': trefoil_optimized,
-        'trefoil_standard_105': trefoil_standard_105,
-        'trefoil_standard_11': trefoil_standard_11,
-        'trefoil_standard_115': trefoil_standard_115,
         'trefoil_standard_12': trefoil_standard_12,
-        'trefoil_standard_125': trefoil_standard_12,
-        'trefoil_standard_13': trefoil_standard_13,
-        'trefoil_standard_15': trefoil_standard_15,
-        'trefoil_dennis': trefoil_dennis,
-        'trefoil_optimized_math_5': trefoil_optimized_math_5,
-        'trefoil_optimized_math_many': trefoil_optimized_math_many,
-        'trefoil_optimized_math_many_095': trefoil_optimized_math_many,
+        'trefoil_optimized': trefoil_optimized,
+        'fivefoil_standard_08': fivefoil_standard_08
+    
     }
     knots = [
         'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
-        'optimized', 'pm_03_z', '4foil', '6foil', 'stand4foil',
-        '30oneX'
+        'optimized', 'pm_03_z', '30oneX', '15oneZ', 'dennis',
+        'trefoil_standard_12', 'trefoil_optimized'
     ]
     knots = [
-        # 'trefoil_standard_105',
-        # 'trefoil_standard_11',
-        # 'trefoil_standard_115',
-        # 'trefoil_standard_12',
-        # 'trefoil_standard_13',
-        # 'trefoil_standard_125',
-        # 'trefoil_standard_15',
-    ]
-    knots = [
-        # 'trefoil_optimized_math_5',
-        # 'trefoil_optimized_math_many',
-        'trefoil_optimized_math_many_095',
-    ]
-    knots = [
-        'trefoil_optimized'
+        'optimized', 'dennis', 'trefoil_optimized'
     ]
     folder_path = os.path.join("..", folder)
     if not os.path.exists(folder_path):
@@ -197,7 +188,7 @@ for Rytov in Rytovs:
             field_after_turb = propagation_ps(
                 field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
             )
-            if plot:
+            if plot and not plot_short:
                 plot_field_both(field_after_turb, extend=extend)
             if center_plane == 1:
                 field_center = field_after_turb
@@ -221,7 +212,7 @@ for Rytov in Rytovs:
                 filename = f'../{folder}\\fields\\data_{knot}_{indx + indx_plus}.npy'  # l rows, p columns
     
                 np.save(filename, field_z_crop)
-            if plot:
+            if plot and not plot_short:
                 plot_field_both(field_z_crop, extend=extend_crop)
     
             if spectrum_save:
@@ -273,7 +264,7 @@ for Rytov in Rytovs:
                             ]
             if no_last_plane:
                 field_3d_crop = field_3d_crop[:, :, :-1]
-            if plot_3d:
+            if plot_3d and not plot_short:
                 plot_field_both(field_3d_crop[:, :, res_z // 2], extend=extend_crop3d)
     
             dots_init_dict, dots_init = sing.get_singularities(np.angle(field_3d_crop), axesAll=False, returnDict=True)

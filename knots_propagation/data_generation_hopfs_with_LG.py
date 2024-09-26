@@ -7,11 +7,11 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 1000
+SAMPLES = 1
 indx_plus = 0
 
-plot = 0
-plot_3d = 0
+plot = 1
+plot_3d = 1
 print_coeff = 0
 
 print_values = 0
@@ -31,10 +31,10 @@ x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2
 res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 
 # beam
-lmbda = 633e-9  # wavelength
-L_prop = 100  # propagation distance
+lmbda = 532e-9  # wavelength
+L_prop = 270  # propagation distance
 knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
-width0 = 5e-3 / np.sqrt(2)  # beam width
+width0 = 6e-3 / np.sqrt(2)  # beam width
 xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
 res_xy_2D_origin = 300  # resolution
 
@@ -129,23 +129,10 @@ knot_types = {
 }
 knots = [
     'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
-    'optimized', 'pm_03_z', '4foil', '6foil', 'stand4foil',
-    '30oneX'
+    'optimized', 'pm_03_z', '30oneX', '15oneZ', 'dennis',
+    'trefoil_standard_12','trefoil_optimized'
 ]
-knots = [
-    'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
-    'optimized', 'pm_03_z',
-    '30oneX'
-]
-knots = [
-    '15oneZ', 'dennis'
-]
-knots = [
-    'fivefoil_standard_08', 'trefoil_standard_12'
-]
-# knots = [
-#     '30oneX'
-# ]
+
 folder_path = os.path.join("..", folder)
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)

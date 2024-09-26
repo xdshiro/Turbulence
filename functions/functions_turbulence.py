@@ -467,13 +467,13 @@ def SR_center_gauss_fourier(mesh_2D, L_prop, beam_par, psh_par, epochs=100, scre
 
 
 
-def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1, seed=None):
+def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, z=0, screens_num=1, seed=None):
     _, _, width0, lmbda = beam_par
     k0 = 2 * np.pi / lmbda
     r0, N, pxl_scale, L0, l0 = psh_par
     xy_array, _ = arrays_from_mesh(mesh_2D)
 
-    LG_00 = LG_simple(*mesh_2D, z=0, l=0, p=0, width=width0, k0=k0, x0=0, y0=0, z0=0)
+    LG_00 = LG_simple(*mesh_2D, z=z, l=0, p=0, width=width0, k0=k0, x0=0, y0=0, z0=0)
 
     I_avg_tot = 0
     I_sqr_avg_tot = 0
@@ -495,7 +495,8 @@ def scintillation(mesh_2D, L_prop, beam_par, psh_par, epochs=100, screens_num=1,
                 E * np.exp(1j * phase_screen_i), lmbda, pxl_scale, pxl_scale, dL
             )
         current = np.abs(E) ** 2
-        currents.append(current[len(xy_array) // 2, len(xy_array) // 2])
+        currents.append(current)
+        # currents.append(current[len(xy_array) // 2, len(xy_array) // 2])
         I_avg_tot += current
         I_sqr_avg_tot += current ** 2
 

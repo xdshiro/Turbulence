@@ -19,11 +19,6 @@ centering = 0
 seed = None  # does work with more than 1 phase screen
 no_last_plane = True
 
-
-# folder = 'data_basis_delete'
-# folder = 'data_no_centers_32114'
-# folder = 'data_low_10'
-
 spectrum_save = 1
 no_turb = 0
 
@@ -50,27 +45,17 @@ new_resolution = (int(scale * 100), int(scale * 100))  # resolution of the knot 
 
 screens_num1 = 3
 multiplier1 = [1] * screens_num1
-screens_num2 = 1
-multiplier2 = [1] * screens_num2
 
-# turbulence
-# Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
-# Cn2 = 3.21e-14
-# Cn2s = [5e-15, 1e-14, 5e-15, 1e-13]
-# Cn2 = Cn2s[0]
-Rytovs = [0.03, 0.052, 0.091]  # 135
-Rytovs = [0.086, 0.161, 0.28]  # 540
+
 Rytovs = [0.1]#, 0.2]
 # Rytovs = [0.025, 0.05]
 for Rytov in Rytovs:
-    # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
+
     folder = f'optimized_L{L_prop}_{Rytov}_10'
-    # folder = f'optimized_trefoil_vs_rytov_{Rytov}_100_center_plane_v2'
+
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
-    # # # # # Cn2 = 3.21e-15
-    # Cn2 = 3.21e-40
-    # https://www.mdpi.com/2076-3417/11/22/10548
+
     L0 = 9 * 1e10 # outer scale
     l0 = 5e-3 *1e-10 # inner scale
     
@@ -141,25 +126,7 @@ for Rytov in Rytovs:
         'trefoil_optimized_math_many': trefoil_optimized_math_many,
         'trefoil_optimized_math_many_095': trefoil_optimized_math_many,
     }
-    knots = [
-        'standard_14', 'standard_16', 'standard_18', '30both', '30oneZ',
-        'optimized', 'pm_03_z', '4foil', '6foil', 'stand4foil',
-        '30oneX'
-    ]
-    knots = [
-        # 'trefoil_standard_105',
-        # 'trefoil_standard_11',
-        # 'trefoil_standard_115',
-        # 'trefoil_standard_12',
-        # 'trefoil_standard_13',
-        # 'trefoil_standard_125',
-        # 'trefoil_standard_15',
-    ]
-    knots = [
-        # 'trefoil_optimized_math_5',
-        # 'trefoil_optimized_math_many',
-        'trefoil_optimized_math_many_095',
-    ]
+
     knots = [
         'trefoil_optimized'
     ]
@@ -193,66 +160,47 @@ for Rytov in Rytovs:
         if plot:
             plot_field_both(field_before_prop)
         for indx in trange(SAMPLES, desc="Progress"):
-            # propagating in the turbulence prop1
-            field_after_turb = propagation_ps(
-                field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
-            )
-            if plot:
-                plot_field_both(field_after_turb, extend=extend)
-            if center_plane == 1:
-                field_center = field_after_turb
-            else:
-                field_center = propagation_ps(
-                    field_after_turb, beam_par, psh_par_0, prop2, multiplier=multiplier2, screens_num=screens_num2,
-                    seed=seed
+            
+            
+            fields3 = []
+            for i in range(3):
+                # propagating in the turbulence prop1
+                field_after_turb = propagation_ps(
+                    field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
                 )
-            ###########################
-            field_center = field_center / np.sqrt(np.sum(np.abs(field_center) ** 2))
-            ###########################
-            if plot:
-                plot_field_both(field_center, extend=extend)
-    
-            field_z_crop = field_center[
-                           res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
-                           res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
-                           ]
-            if 1:
-    
-                filename = f'../{folder}\\fields\\data_{knot}_{indx + indx_plus}.npy'  # l rows, p columns
-    
-                np.save(filename, field_z_crop)
-            if plot:
-                plot_field_both(field_z_crop, extend=extend_crop)
-    
-            if spectrum_save:
-                if centering:
-                    x_cent_R_big, y_cent_R_big = find_center_of_intensity(field_center)
-                    x_cent_big, y_cent_big = x_cent_R_big, y_cent_R_big
-    
-                    x_cent_big_r = x_2D_origin[0] + (x_2D_origin[-1] - x_2D_origin[0]) / res_xy_2D_origin * round(x_cent_big)
-    
-                    y_cent_big_r = y_2D_origin[0] + (y_2D_origin[-1] - y_2D_origin[0]) / res_xy_2D_origin * round(y_cent_big)
+                if plot:
+                    plot_field_both(field_after_turb, extend=extend)
+                if center_plane == 1:
+                    field_center = field_after_turb
                 else:
-                    x_cent_big_r = 0
-                    y_cent_big_r = 0
-    
-                moments = {'p': (0, 6), 'l': (-6, 6)}
-                # mesh_2D =
-                spectrum = cbs.LG_spectrum(
-                    field_center, **moments, mesh=mesh_2D_original, plot=False, width=width0, k0=k0,
-                    functions=LG_simple, x0=x_cent_big_r, y0=y_cent_big_r
-                )
-    
-                if 1:
-                    filename = f'../{folder}\data_{knot}_spectr.csv'  # l rows, p columns
-                    spectrum_list = (
-                            [moments['l'][0], moments['l'][1], moments['p'][0], moments['p'][1]] + [indx + indx_plus] +
-                            [[x.real, x.imag] for x in spectrum.flatten()]
+                    field_center = propagation_ps(
+                        field_after_turb, beam_par, psh_par_0, prop2, multiplier=multiplier2, screens_num=screens_num2,
+                        seed=seed
                     )
-                    dots_json = json.dumps(spectrum_list)
-                    with open(filename, 'a', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow([dots_json])
+                ###########################
+                field_center = field_center / np.sqrt(np.sum(np.abs(field_center) ** 2))
+                ###########################
+                if plot:
+                    plot_field_both(field_center, extend=extend)
+        
+                field_z_crop = field_center[
+                               res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
+                               res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
+                               ]
+                if 1:
+        
+                    filename = f'../{folder}\\fields\\data_{knot}_{indx + indx_plus}.npy'  # l rows, p columns
+        
+                    np.save(filename, field_z_crop)
+                if plot:
+                    plot_field_both(field_z_crop, extend=extend_crop)
+                fields3.append(field_z_crop)
+            max_amp = max([max(abs(field_)) for field_ in fields3])
+            size_interf = np.shape(fields3[0])
+            print(max_amp)
+            for field_z_crop in fields3:
+                plot_field_both(field_z_crop + max_amp * np.exp())
+            exit()
             # plot_field_both(field_center)
             # exit()
             field_3d = beam_expander(field_z_crop, beam_par, psh_par_0, distance_both=knot_length, steps_one=res_z // 2)
