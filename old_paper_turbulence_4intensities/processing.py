@@ -133,8 +133,8 @@ input_folder = '../standard_trefoil12_vs_rytov_0.025_100_center_plane_v3/data_tr
 output_csv = f'standard_trefoil12_vs_rytov_0.025_100_center_plane_v3.csv'  # 025
 input_folder = '../standard_vsW_trefoil_vs_rytov_0.025_100_center_plane_v3/data_trefoil_standard_125.csv'
 output_csv = f'standard15_vsW_trefoil_vs_rytov_0.0225_100_center_plane_v3.csv'  # 025
-input_folder = '../optimized_L540_0.161_100_center_plane_v3/data_trefoil_optimized.csv'
-output_csv = f'optimized_L540.0.161_100_center_plane_v3.csv'  # 025
+input_folder = '../optimized_7modes_only2last_0.15_100/data_trefoil_optimized_new.csv'
+output_csv = f'optimized_7modes_only2last_0.15_100.csv'  # 025
 
 files_csv = True
 

@@ -6,14 +6,234 @@ import pickle
 import csv
 import json
 from tqdm import trange
+from scipy.ndimage import zoom
+import scipy.io
 
-SAMPLES = 100
+SAMPLES = 200
 indx_plus = 0
 
 plot = 0
 plot_3d = 0
 print_coeff = 0
 
+
+def process_knot_fields4(fields, X, reso=256, pad_factor=16, crop_factor=1, plot=True):
+    # Load the .mat file containing the absolute values
+    # Extract the variable containing the absolute values
+    # max_amp = max([np.max(np.abs(field_)) for field_ in fields3])
+    # size_interf = np.shape(fields3[0])
+    # print(max_amp)
+    phases = [0, np.pi/2, np.pi, 3*np.pi/2]
+    k_x = 1e7
+    # Convert the MATLAB cell array to a list of NumPy arrays
+    # absolute_fields_list = [abs(field + np.max(np.abs(field)) * np.exp(1j * phases[i] + 1j * X * k_x)) for i, field in enumerate(fields)]
+    # absolute_fields_list = [abs(field + np.max(np.abs(field)) * np.exp(1j * phases[i] + 1j * X * k_x)) for i, field in enumerate(fields)]
+    max_amp = max([np.max(np.abs(field_)) for field_ in fields])
+
+    # Convert the MATLAB cell array to a list of NumPy arrays
+    absolute_fields_list = [abs(field + max_amp * np.exp(1j * phases[i] + 1j * X * k_x)) ** 2 for i, field in
+                            enumerate(fields)]
+
+    # Access individual fields
+    I1 = absolute_fields_list[0]
+    I2 = absolute_fields_list[1]
+    I3 = absolute_fields_list[2]
+    I4 = absolute_fields_list[3]
+    # plot_field_both(fields3[0])
+    # plot_field_both(fields3[1])
+    # plot_field_both(fields3[2])
+    # plot_field_both(fields3[3])
+    plot_field_both(I1)
+    # plot_field_both(I2)
+    # plot_field_both(I3)
+    # plot_field_both(I4)
+    # Compute the phase and signal
+    phase = np.arctan2(I4 - I2, I1 - I3)
+    signal = (I1 - I3) ** 2 + (I4 - I2) ** 2
+    U_f = np.sqrt(signal) * np.exp(1j * phase)
+
+    # Upscale U_f to specified resolution
+    target_size = (reso, reso)
+    # U_f_real = np.real(U_f)
+    # U_f_imag = np.imag(U_f)
+    #
+    # U_f_real_resized = zoom(U_f_real, (target_size[0] / U_f.shape[0], target_size[1] / U_f.shape[1]), order=3)
+    # U_f_imag_resized = zoom(U_f_imag, (target_size[0] / U_f.shape[0], target_size[1] / U_f.shape[1]), order=3)
+    #
+    # U_f_resized = U_f_real_resized + 1j * U_f_imag_resized
+    U_f_resized = U_f
+
+    if plot:
+        plot_field_both(U_f_resized)
+
+    # Control pad size
+    pad_size = (int(U_f_resized.shape[0] * pad_factor), int(U_f_resized.shape[1] * pad_factor))
+    pad_width = ((pad_size[0] // 2, pad_size[0] // 2), (pad_size[1] // 2, pad_size[1] // 2))
+    U_f_padded = np.pad(U_f_resized, pad_width, mode='constant', constant_values=0)
+
+    # Take the 2D FFT
+    U_f_fft = np.fft.fftshift(np.fft.fft2(U_f_padded))
+
+    if plot:
+        plot_field_both(U_f_fft)
+
+    # Find the maximum value and its position
+    max_idx = np.unravel_index(np.argmax(np.abs(U_f_fft)), U_f_fft.shape)
+
+    # Define the size of the cropped region around the maximum value
+    crop_size = int(reso * crop_factor)
+    half_crop_size = crop_size // 2
+
+    # Crop the region around the maximum value
+    start_row = max(0, max_idx[0] - half_crop_size)
+    end_row = min(U_f_fft.shape[0], max_idx[0] + half_crop_size)
+    start_col = max(0, max_idx[1] - half_crop_size)
+    end_col = min(U_f_fft.shape[1], max_idx[1] + half_crop_size)
+
+    U_f_fft_cropped = U_f_fft[start_row:end_row, start_col:end_col]
+
+    if plot:
+        plot_field_both(U_f_fft)
+
+    # Pad the cropped FFT
+    pad_size2 = (int(U_f_fft_cropped.shape[0] * (pad_factor / crop_factor)),
+                 int(U_f_fft_cropped.shape[1] * (pad_factor / crop_factor)))
+    pad_width2 = ((pad_size2[0] // 2, pad_size2[0] // 2), (pad_size2[1] // 2, pad_size2[1] // 2))
+    U_f_fft_cropped_padded = np.pad(U_f_fft_cropped, pad_width2, mode='constant', constant_values=0)
+
+    # Compute the IFFT of the cropped field
+    U_f_ifft_cropped = np.fft.ifft2(np.fft.ifftshift(U_f_fft_cropped_padded))
+
+    if plot:
+        plot_field_both(U_f_ifft_cropped)
+
+    # Define the size of the cropped region for the IFFT result
+    ifft_crop_size = reso
+    half_ifft_crop_size = ifft_crop_size // 2
+    print(ifft_crop_size)
+    # Find the center of the IFFT result
+    ifft_center = (U_f_ifft_cropped.shape[0] // 2, U_f_ifft_cropped.shape[1] // 2)
+
+    # Crop the region around the center
+    start_row_ifft = max(0, ifft_center[0] - half_ifft_crop_size)
+    end_row_ifft = min(U_f_ifft_cropped.shape[0], ifft_center[0] + half_ifft_crop_size)
+    start_col_ifft = max(0, ifft_center[1] - half_ifft_crop_size)
+    end_col_ifft = min(U_f_ifft_cropped.shape[1], ifft_center[1] + half_ifft_crop_size)
+
+    U_f_ifft_cropped_final = U_f_ifft_cropped[start_row_ifft:end_row_ifft, start_col_ifft:end_col_ifft]
+
+    if plot:
+        plot_field_both(U_f_ifft_cropped_final)
+
+    return U_f_ifft_cropped_final
+def process_knot_fields3(fields, X, reso=256, pad_factor=16, crop_factor=1, plot=True):
+    # Load the .mat file containing the absolute values
+    # Extract the variable containing the absolute values
+
+
+    max_amp = max([np.max(np.abs(field_)) for field_ in fields])
+    # size_interf = np.shape(fields3[0])
+    # print(max_amp)
+    k_x = 4e3
+    # Convert the MATLAB cell array to a list of NumPy arrays
+    # phases = [ -2 * np.pi/3, 0, 2*np.pi/3]
+    phases = [ np.pi/4, 3*np.pi/4, 5*np.pi/4]
+    absolute_fields_list = [abs(field + max_amp * np.exp(1j * phases[i] + 1j * X * k_x)) ** 2 for i, field in enumerate(fields)]
+
+    # Access individual fields
+    I1 = absolute_fields_list[0]
+    I2 = absolute_fields_list[1]
+    I3 = absolute_fields_list[2]
+    # plot_field_both(fields[0])
+    # plot_field_both(fields[1])
+    # I4 = absolute_fields_list[3]
+    # plot_field_both(I1)
+    # plot_field_both(fields3[0])
+    # plot_field_both(I2)
+    # plot_field_both(I3)
+    # plot_field_both(I4)
+    # Compute the phase and signal
+    # phase = np.arctan2(np.sqrt(3) * (I1 - I3), (2 * I1 - I2 - I3))
+    # signal = np.sqrt(3 * (I1 - I3) ** 2 + (2 * I2 - I1 - I3) ** 2)
+    phase = np.arctan2((I3 - I2), (I1 - I2))
+    signal = np.sqrt((I3 - I2) ** 2 + (I1 - I2) ** 2)
+    U_f = signal * np.exp(1j * phase)
+
+    # Upscale U_f to specified resolution
+    target_size = (reso, reso)
+    # U_f_real = np.real(U_f)
+    # U_f_imag = np.imag(U_f)
+    #
+    # U_f_real_resized = zoom(U_f_real, (target_size[0] / U_f.shape[0], target_size[1] / U_f.shape[1]), order=3)
+    # U_f_imag_resized = zoom(U_f_imag, (target_size[0] / U_f.shape[0], target_size[1] / U_f.shape[1]), order=3)
+
+    # U_f_resized = U_f_real_resized + 1j * U_f_imag_resized
+    U_f_resized = U_f
+
+    if plot:
+        plot_field_both(U_f_resized)
+
+    # Control pad size
+    pad_size = (int(U_f_resized.shape[0] * pad_factor), int(U_f_resized.shape[1] * pad_factor))
+    pad_width = ((pad_size[0] // 2, pad_size[0] // 2), (pad_size[1] // 2, pad_size[1] // 2))
+    U_f_padded = np.pad(U_f_resized, pad_width, mode='constant', constant_values=0)
+
+    # Take the 2D FFT
+    U_f_fft = np.fft.fftshift(np.fft.fft2(U_f_padded))
+
+    if plot:
+        plot_field_both(U_f_fft)
+
+    # Find the maximum value and its position
+    max_idx = np.unravel_index(np.argmax(np.abs(U_f_fft)), U_f_fft.shape)
+
+    # Define the size of the cropped region around the maximum value
+    crop_size = int(reso * crop_factor)
+    half_crop_size = crop_size // 2
+
+    # Crop the region around the maximum value
+    start_row = max(0, max_idx[0] - half_crop_size)
+    end_row = min(U_f_fft.shape[0], max_idx[0] + half_crop_size)
+    start_col = max(0, max_idx[1] - half_crop_size)
+    end_col = min(U_f_fft.shape[1], max_idx[1] + half_crop_size)
+
+    U_f_fft_cropped = U_f_fft[start_row:end_row, start_col:end_col]
+
+    if plot:
+        plot_field_both(U_f_fft)
+
+    # Pad the cropped FFT
+    pad_size2 = (int(U_f_fft_cropped.shape[0] * (pad_factor / crop_factor)),
+                 int(U_f_fft_cropped.shape[1] * (pad_factor / crop_factor)))
+    pad_width2 = ((pad_size2[0] // 2, pad_size2[0] // 2), (pad_size2[1] // 2, pad_size2[1] // 2))
+    U_f_fft_cropped_padded = np.pad(U_f_fft_cropped, pad_width2, mode='constant', constant_values=0)
+
+    # Compute the IFFT of the cropped field
+    U_f_ifft_cropped = np.fft.ifft2(np.fft.ifftshift(U_f_fft_cropped_padded))
+
+    if plot:
+        plot_field_both(U_f_ifft_cropped)
+
+    # Define the size of the cropped region for the IFFT result
+    ifft_crop_size = reso
+    half_ifft_crop_size = ifft_crop_size // 2
+
+
+    # Find the center of the IFFT result
+    ifft_center = (U_f_ifft_cropped.shape[0] // 2, U_f_ifft_cropped.shape[1] // 2)
+
+    # Crop the region around the center
+    start_row_ifft = max(0, ifft_center[0] - half_ifft_crop_size)
+    end_row_ifft = min(U_f_ifft_cropped.shape[0], ifft_center[0] + half_ifft_crop_size)
+    start_col_ifft = max(0, ifft_center[1] - half_ifft_crop_size)
+    end_col_ifft = min(U_f_ifft_cropped.shape[1], ifft_center[1] + half_ifft_crop_size)
+
+    U_f_ifft_cropped_final = U_f_ifft_cropped[start_row_ifft:end_row_ifft, start_col_ifft:end_col_ifft]
+
+    if plot:
+        plot_field_both(U_f_ifft_cropped_final)
+
+    return U_f_ifft_cropped_final
 print_values = 0
 centering = 0
 seed = None  # does work with more than 1 phase screen
@@ -35,7 +255,7 @@ center_plane = 1
 ########################################################
 width0 = 6.0e-3 / np.sqrt(2)  # beam width
 xy_lim_2D_origin = (-35.0e-3, 35.0e-3)  # window size to start with
-scale = 1
+scale = 1.5
 res_xy_2D_origin = int(scale * 300) # resolution
 
 res_z = int(scale * 100)  # resolution of the knot is res_z+1
@@ -47,11 +267,11 @@ screens_num1 = 3
 multiplier1 = [1] * screens_num1
 
 
-Rytovs = [0.1]#, 0.2]
-# Rytovs = [0.025, 0.05]
+Rytovs = [0.00001]#, 0.2]
+Rytovs = [0.025, 0.05, 0.1, 0.15, 0.2]
 for Rytov in Rytovs:
 
-    folder = f'optimized_L{L_prop}_{Rytov}_10'
+    folder = f'optimized_L{L_prop}_{Rytov}_3int_200'
 
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
@@ -78,6 +298,10 @@ for Rytov in Rytovs:
     x_2D_origin = np.linspace(*xy_lim_2D_origin, res_xy_2D_origin)
     y_2D_origin = np.linspace(*xy_lim_2D_origin, res_xy_2D_origin)
     mesh_2D_original = np.meshgrid(x_2D_origin, y_2D_origin, indexing='ij')
+    X = mesh_2D_original[0][
+        res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
+        res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
+        ]
     # boundary_3D = [[0, 0, 0], [res_x_3D, res_y_3D, res_z_3D]]  # boundaries for 3d knot
     extend = [*xy_lim_2D_origin, *xy_lim_2D_origin]  # boundaries for 2d plot
     xy_lim_2D_crop = list(np.array(xy_lim_2D_origin) / res_xy_2D_origin * crop)
@@ -195,14 +419,35 @@ for Rytov in Rytovs:
                 if plot:
                     plot_field_both(field_z_crop, extend=extend_crop)
                 fields3.append(field_z_crop)
-            max_amp = max([max(abs(field_)) for field_ in fields3])
-            size_interf = np.shape(fields3[0])
-            print(max_amp)
-            for field_z_crop in fields3:
-                plot_field_both(field_z_crop + max_amp * np.exp())
-            exit()
+
+
+            # for field_z_crop in fields3:
+            #     plot_field_both(field_z_crop) # + max_amp * np.exp())
+            # fields3_test = [fields3[0], fields3[0],fields3[0],fields3[0],]
+            field_z_crop = process_knot_fields3(fields3[0:3], X, reso=np.shape(X)[0], plot=False)
+            # print(np.shape(X)[0])
+            # field_z_crop = process_knot_fields4(fields3[0:4], X, reso=np.shape(X)[0], plot=True)
+            # plot_field_both(fields3[0])
+            # plot_field_both(field_z_crop)
+
             # plot_field_both(field_center)
-            # exit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             field_3d = beam_expander(field_z_crop, beam_par, psh_par_0, distance_both=knot_length, steps_one=res_z // 2)
     
             if centering:

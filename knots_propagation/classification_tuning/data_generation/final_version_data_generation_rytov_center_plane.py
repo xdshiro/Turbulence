@@ -7,7 +7,7 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 2
+SAMPLES = 1000
 indx_plus = 0
 
 plot = 0
