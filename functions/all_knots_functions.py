@@ -2055,6 +2055,17 @@ def trefoil_optimized(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     return weights_important
 
 
+def trefoil_optimized_new(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
+    l_save = [0, 0, 0, 0, 3, 0, 0]
+    p_save = [0, 1, 2, 3, 0, 4, 5]
+    weight_save = [1.3, -3.96, 7.53, -3.34, -4.05]
+    weight_save = [1.29, -3.95, 7.49, -3.28, -3.98, -0.15, 0.04] #only 67
+    weight_save = [1.29, -3.95, 7.49, -3.28, -3.98, -1.22, 0.58] #only 67 step 0.5
+    
+    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+    return weights_important
+
 def field_combination_LG(l, p, weights, values=0, mesh=0, w_real=0, k0=1, x0=0, y0=0, z0=0):
     l_save = l
     p_save = p
@@ -2083,6 +2094,7 @@ if __name__ == "__main__":
     # x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-10.0, 10.0), (-10.0, 10.0), (-2.0, 2.0)
     # x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-5.0, 5.0), (-5.0, 5.0), (-2.0, 2.0)
     res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 90, 90, 40
+    res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 120, 120, 90
     # res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 100, 100, 100
     if res_z_3D_knot != 1:
         z_3D_knot = np.linspace(*z_lim_3D_knot, res_z_3D_knot)
@@ -2101,7 +2113,7 @@ if __name__ == "__main__":
 
     # values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
     #                       angle_size=(2, 2, 2, 1))
-    values = trefoil_optimized_math_many_095(mesh_3D_knot, braid_func=braid, plot=True)
+    values = trefoil_optimized_new(mesh_3D_knot, braid_func=braid, plot=True)
     # values = trefoil_optimized(mesh_3D_knot, braid_func=braid, plot=True)
     # field = trefoil_standard_12_phase_only(mesh_3D_knot, braid_func=braid, plot=True)
     # beam_par = (0, 0, width0, 1)
