@@ -2061,6 +2061,7 @@ def trefoil_optimized_new(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=Fal
     weight_save = [1.3, -3.96, 7.53, -3.34, -4.05]
     weight_save = [1.29, -3.95, 7.49, -3.28, -3.98, -0.15, 0.04] #only 67
     weight_save = [1.29, -3.95, 7.49, -3.28, -3.98, -1.22, 0.58] #only 67 step 0.5
+    weight_save = [1.35, -3.93, 7.48, -3.29, -4.02, -0.23, -0.47] #all step 0.5
     
     weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
