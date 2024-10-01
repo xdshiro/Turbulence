@@ -16,10 +16,10 @@ stability_optimized_center_3int = np.array([
 	(84 + 69) / 2, 85 / 2, 26 / 2, 5/2, 2/2
 ])
 stability_optimized_center_3int = np.array([
-	(84 + 69) / 2 -0.5, 85 / 2 -0.5, 26 / 2, 5/2 + 0.5, 2/2
+	87, 23
 ])
 stability_optimized_center_delta_3int = np.array([
-	(2 + 14) / 2, 14/2, 10/2, 4/2, 2/2
+	8, 16
 ])
 
 stability_optimized_center_final_3int = (stability_optimized_center_3int
@@ -31,14 +31,15 @@ stability_optimized_center_delta = np.array([6 + 1 + 3, 10 + 8 + 8, 9 + 9 + 6, 4
 #
 stability_optimized_center_final = (stability_optimized_center + stability_optimized_center_delta // 2) / 3
 
-
 print('optimized: ', stability_optimized_center_final_3int)
 
 Rytov_values = [0.025, 0.05, 0.1, 0.15, 0.2]  # Assuming these are the values for parameter w
+Rytov_values_short = [0.05, 0.15]  # Assuming these are the values for parameter w
 
 n_samples = 300
+n_samples_short = 200
 confidence_level = 0.95
-stability_optimized_center_ci_3int = confidence_interval(stability_optimized_center_final_3int, n_samples, confidence_level)
+stability_optimized_center_ci_3int = confidence_interval(stability_optimized_center_final_3int, n_samples_short, confidence_level)
 stability_optimized_center_ci = confidence_interval(stability_optimized_center_final, n_samples, confidence_level)
 
 # Plotting
@@ -50,10 +51,10 @@ plt.figure(figsize=(10, 6))
 # plt.plot(Rytov_values, stability_dennis_final, marker='o', label='dennis')
 
 # Plot the central line for each dataset
-plt.plot(Rytov_values, stability_optimized_center_final_3int, marker='s', label='3 uncorrelated measurements')
+plt.plot(Rytov_values_short, stability_optimized_center_final_3int, marker='s', label='3 uncorrelated measurements')
 plt.plot(Rytov_values, stability_optimized_center_final, marker='s', label='Instant measurement')
 
-plt.fill_between(Rytov_values,
+plt.fill_between(Rytov_values_short,
                  np.array(stability_optimized_center_final_3int) - stability_optimized_center_ci_3int,
                  np.array(stability_optimized_center_final_3int) + stability_optimized_center_ci_3int,
                  color='blue', alpha=0.2)
