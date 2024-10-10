@@ -7,7 +7,7 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 1000
+SAMPLES = 10
 indx_plus = 0
 
 plot = 0
@@ -35,7 +35,7 @@ res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 # beam
 lmbda = 532e-9  # wavelength
 L_prop = 270  # propagation distance
-knot_length = 212.58897655870774 / 2 * 1.5  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+knot_length = 212.58897655870774 / 2 * 1.4  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
 center_plane = 0.3
 center_plane = 1
 ########################################################
@@ -135,15 +135,15 @@ for Rytov in Rytovs:
         '30oneZ': hopf_30oneZ,  # 5
         'optimized': hopf_optimized,  # 6
         'pm_03_z': hopf_pm_03_z,  # 7
-        '4foil': hopf_4foil,  # 8
-        '6foil': hopf_6foil,  # 9
-        'stand4foil': hopf_stand4foil,  # 10
+        # '4foil': hopf_4foil,  # 8
+        # '6foil': hopf_6foil,  # 9
+        # 'stand4foil': hopf_stand4foil,  # 10
         '30oneX': hopf_30oneX,  # 11
         '15oneZ': hopf_15oneZ,
         'dennis': hopf_dennis,
         'trefoil_standard_12': trefoil_standard_12,
         'trefoil_optimized': trefoil_optimized,
-        'fivefoil_standard_08': fivefoil_standard_08
+        # 'fivefoil_standard_08': fivefoil_standard_08
     
     }
     knots = [
@@ -151,9 +151,9 @@ for Rytov in Rytovs:
         'optimized', 'pm_03_z', '30oneX', '15oneZ', 'dennis',
         'trefoil_standard_12', 'trefoil_optimized'
     ]
-    knots = [
-        'optimized', 'dennis', 'trefoil_optimized'
-    ]
+    # knots = [
+    #     'optimized', 'dennis', 'trefoil_optimized'
+    # ]
     folder_path = os.path.join("..", folder)
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)

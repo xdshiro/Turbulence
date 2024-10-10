@@ -16,11 +16,18 @@ stability_optimized_center_3int = np.array([
 	(84 + 69) / 2, 85 / 2, 26 / 2, 5/2, 2/2
 ])
 stability_optimized_center_3int = np.array([
-	87, 23
+	100, 92, 41, 21
 ])
 stability_optimized_center_delta_3int = np.array([
-	8, 16
+	0, 0, 0, 0
 ])
+
+# stability_optimized_center_3int = np.array([
+# 	70, 19
+# ])
+# stability_optimized_center_delta_3int = np.array([
+# 	11, 17
+# ])
 
 stability_optimized_center_final_3int = (stability_optimized_center_3int
                                     + stability_optimized_center_delta_3int // 2) / 1
@@ -28,16 +35,20 @@ stability_optimized_center_final_3int = (stability_optimized_center_3int
 stability_optimized_center = np.array([92 + 97 + 93, 61 + 66 + 62, 27 + 37 + 35, 17 + 18 + 22, 8 + 4 + 5])
 stability_optimized_center_delta = np.array([6 + 1 + 3, 10 + 8 + 8, 9 + 9 + 6, 4 + 7 + 5, 5 + 4 + 3])
 
+
+stability_optimized_center = np.array([92 + 97 + 93, 61 + 66 + 62, 17 + 18 + 22, 8 + 4 + 5])
+stability_optimized_center_delta = np.array([6 + 1 + 3, 10 + 8 + 8, 4 + 7 + 5, 5 + 4 + 3])
+
 #
 stability_optimized_center_final = (stability_optimized_center + stability_optimized_center_delta // 2) / 3
-
+print(stability_optimized_center_final)
 print('optimized: ', stability_optimized_center_final_3int)
 
-Rytov_values = [0.025, 0.05, 0.1, 0.15, 0.2]  # Assuming these are the values for parameter w
-Rytov_values_short = [0.05, 0.15]  # Assuming these are the values for parameter w
+Rytov_values = [0.025, 0.05, 0.15, 0.2]  # Assuming these are the values for parameter w
+Rytov_values_short = [0.025, 0.05, 0.15, 0.2]  # Assuming these are the values for parameter w
 
 n_samples = 300
-n_samples_short = 200
+n_samples_short = 150
 confidence_level = 0.95
 stability_optimized_center_ci_3int = confidence_interval(stability_optimized_center_final_3int, n_samples_short, confidence_level)
 stability_optimized_center_ci = confidence_interval(stability_optimized_center_final, n_samples, confidence_level)
@@ -51,8 +62,8 @@ plt.figure(figsize=(10, 6))
 # plt.plot(Rytov_values, stability_dennis_final, marker='o', label='dennis')
 
 # Plot the central line for each dataset
-plt.plot(Rytov_values_short, stability_optimized_center_final_3int, marker='s', label='3 uncorrelated measurements')
-plt.plot(Rytov_values, stability_optimized_center_final, marker='s', label='Instant measurement')
+plt.plot(Rytov_values_short, stability_optimized_center_final_3int, marker='s', label='New optimization')
+plt.plot(Rytov_values, stability_optimized_center_final, marker='s', label='Standard')
 
 plt.fill_between(Rytov_values_short,
                  np.array(stability_optimized_center_final_3int) - stability_optimized_center_ci_3int,
