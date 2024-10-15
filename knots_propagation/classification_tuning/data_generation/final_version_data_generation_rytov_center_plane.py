@@ -7,7 +7,7 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 10
+SAMPLES = 2
 indx_plus = 0
 
 plot = 0
@@ -44,7 +44,7 @@ xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
 scale = 1
 res_xy_2D_origin = int(scale * 300) # resolution
 
-res_z = int(scale * 100)  # resolution of the knot is res_z+1
+res_z = int(scale * 64)  # resolution of the knot is res_z+1
 crop = int(scale * 185)  # for the knot propagation
 crop_3d = int(scale * 100)  # for the knot
 new_resolution = (int(scale * 100), int(scale * 100))  # resolution of the knot to save
@@ -62,11 +62,11 @@ multiplier2 = [1] * screens_num2
 # Cn2 = Cn2s[0]
 Rytovs = [0.05]#, 0.2]
 Rytovs = [0.03, 0.052, 0.091]  # 135
-Rytovs = [0.0000005]  # 540
-# Rytovs = [0.025, 0.05]
+# Rytovs = [0.0000005]  # 540
+Rytovs = [0.15]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
-    folder = f'HOPFS_L{L_prop}_{Rytov}_test_1s'
+    folder = f'HOPFS_L{L_prop}_{Rytov}_{SAMPLES}_64x64x64_v1'
     # folder = f'optimized_trefoil_vs_rytov_{Rytov}_100_center_plane_v2'
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
@@ -160,16 +160,16 @@ for Rytov in Rytovs:
     folder_path = os.path.join("..", folder, "fields")
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
-    
+
     # getting the knot
     for knot in knots:
         print(knot)
-        if os.path.exists(f'../{folder}\{knot}.pkl'):
-            with open(f'../{folder}\{knot}.pkl', 'rb') as file:
+        if os.path.exists(f'../{folder}/{knot}.pkl'):
+            with open(f'../{folder}/{knot}.pkl', 'rb') as file:
                 values = pickle.load(file)
         else:
             values = knot_types[knot](mesh_3D_knot, braid_func=braid, plot=True)
-            with open(f'../{folder}\{knot}.pkl', 'wb') as file:
+            with open(f'../{folder}/{knot}.pkl', 'wb') as file:
                 pickle.dump(values, file)
         # printing values
         if print_coeff:
@@ -209,7 +209,7 @@ for Rytov in Rytovs:
                            ]
             if 1:
     
-                filename = f'../{folder}\\fields\\data_{knot}_{indx + indx_plus}.npy'  # l rows, p columns
+                filename = f'../{folder}/fields/data_{knot}_{indx + indx_plus}.npy'  # l rows, p columns
     
                 np.save(filename, field_z_crop)
             if plot and not plot_short:
@@ -235,7 +235,7 @@ for Rytov in Rytovs:
                 )
     
                 if 1:
-                    filename = f'../{folder}\data_{knot}_spectr.csv'  # l rows, p columns
+                    filename = f'../{folder}/data_{knot}_spectr.csv'  # l rows, p columns
                     spectrum_list = (
                             [moments['l'][0], moments['l'][1], moments['p'][0], moments['p'][1]] + [indx + indx_plus] +
                             [[x.real, x.imag] for x in spectrum.flatten()]
@@ -304,7 +304,7 @@ for Rytov in Rytovs:
                 knot_resolution = [new_resolution[0], new_resolution[0], res_z + 1]
             dots_cut_modified = np.vstack([[indx + indx_plus, 0, 0], knot_resolution, scaled_data])
             if 1:
-                filename = f'../{folder}\data_{knot}.csv'
+                filename = f'../{folder}/data_{knot}.csv'
                 dots_json = json.dumps(dots_cut_modified.tolist())
                 with open(filename, 'a', newline='') as file:
                     writer = csv.writer(file)

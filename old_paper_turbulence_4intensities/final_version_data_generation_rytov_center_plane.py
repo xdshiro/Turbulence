@@ -7,11 +7,11 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 1
+SAMPLES = 100
 indx_plus = 0
 
-plot = 1
-plot_3d = 1
+plot = 0
+plot_3d = 0
 print_coeff = 0
 
 print_values = 0
@@ -35,7 +35,6 @@ res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 lmbda = 532e-9  # wavelength
 L_prop = 270  # propagation distance
 knot_length = 212.58897655870774 / 2 * 1.4  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
-knot_length = 212.58897655870774 / 2 * 0.75  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
 center_plane = 0.3
 center_plane = 1
 ########################################################
@@ -61,12 +60,11 @@ multiplier1 = [1] * screens_num1
 # Cn2 = Cn2s[0]
 Rytovs = [0.03, 0.052, 0.091]  # 135
 Rytovs = [0.086, 0.161, 0.28]  # 540
-Rytovs = [1e-6]#, 0.2]
+Rytovs = [0.05, 0.15]#, 0.2]
 # Rytovs = [0.025, 0.05]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
     folder = f'optimized_7modes_all_{Rytov}_100'
-    folder = f'DELETE 100'
     # folder = f'optimized_trefoil_vs_rytov_{Rytov}_100_center_plane_v2'
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)

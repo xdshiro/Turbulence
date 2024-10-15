@@ -105,7 +105,7 @@ def field_propagator(field, k0, dz, dx, dy):
 
 
 width0 = 5e-3  # Beam width (related to the beam waist or size of the beam)
-l = 0  # Azimuthal index (the orbital angular momentum of the beam, 'l' defines the number of twists in the wavefront)
+l = 1  # Azimuthal index (the orbital angular momentum of the beam, 'l' defines the number of twists in the wavefront)
 p = 0  # Radial index (related to the number of rings in the intensity distribution of the beam)
 wavelength = 532e-9  # Wavelength of the beam in meters (532 nm corresponds to green light)
 k0 = 2 * np.pi / wavelength  # Wave number (related to the wavelength of the beam)
@@ -143,7 +143,8 @@ field = LG_simple(*mesh_3D, l=l, p=p, width=width0, k0=k0, x0=0, y0=0, z0=0)
 # Plotting the field at the middle plane along the z-axis.
 # The middle plane is taken by selecting the slice at res_z_3D // 2 (which is the middle of the z-resolution).
 # plot_field_both is a custom plotting function that plots the intensity and phase of the field.
-plot_field_both(field[:, :, 0])
+extend_xy = [x_lim_3D[0], x_lim_3D[1], y_lim_3D[0], y_lim_3D[1]]
+plot_field_both(field[:, :, 0], extend=extend_xy)
 
 # Plotting the field in the very last Z plane
 # This will show the intensity and phase of the field at the end of the propagation range.

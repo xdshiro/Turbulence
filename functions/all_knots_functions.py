@@ -2058,18 +2058,13 @@ def trefoil_optimized(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
 def trefoil_optimized_new(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     l_save = [0, 0, 0, 0, 3, 0, 0]
     p_save = [0, 1, 2, 3, 0, 4, 5]
-    weight_save = [1.3, -3.96, 7.53, -3.34, -4.05, 0, 0]
+    weight_save = [1.3, -3.96, 7.53, -3.34, -4.05]
+    weight_save = [1.29, -3.95, 7.49, -3.28, -3.98, -0.15, 0.04] #only 67
     weight_save = [1.29, -3.95, 7.49, -3.28, -3.98, -1.22, 0.58] #only 67 step 0.5
     weight_save = [1.35, -3.93, 7.48, -3.29, -4.02, -0.23, -0.47] #all step 0.5
-    weight_save = [1.05, -4.05, 7.48, -3.03, -4.03, -1.19, 0.0] #all but 7 step 0.5
     weight_save = [1.13, -4.02, 7.32, -3.48, -3.69, 0.0, -0.43] #all but 6 step 0.5
+    weight_save = [1.05, -4.05, 7.48, -3.03, -4.03, -1.19, 0.0] #all but 7 step 0.5
     
-    weight_save = [1.29, -3.95, 7.49, -3.28, -3.98, -1.1, 0.63] #all but 6 step 0.5
-    weight_save = [0.93, -3.62, 7.44, -3.52, -4.2, -1.09, 0.18] #all but 6 step 0.5
-    weight_save = [0.84, -3.64, 7.47, -3.61, -4.11, -1.21, 0.16] #all but 6 step 0.5
-    
-    weight_save = [1.31, -3.95, 7.49, -3.27, -4.01, -1.24, 0.51]  # best
-
     weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
     return weights_important
@@ -2122,9 +2117,6 @@ if __name__ == "__main__":
     # values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
     #                       angle_size=(2, 2, 2, 1))
     values = trefoil_optimized_new(mesh_3D_knot, braid_func=braid, plot=True)
-    # values = fivefoil_standard_08(mesh_3D_knot, braid_func=braid, plot=True)
-    # print(values)
-    # exit()
     # values = trefoil_optimized(mesh_3D_knot, braid_func=braid, plot=True)
     # field = trefoil_standard_12_phase_only(mesh_3D_knot, braid_func=braid, plot=True)
     # beam_par = (0, 0, width0, 1)

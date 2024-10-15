@@ -41,28 +41,29 @@ def confidence_interval(p, n, confidence_level=0.95):
 n_samples = 125
 confidence_level = 0.95
 
-
+SR_135 = [81, 75, 64]
+SR_135_delta = [3, 7, 8]
 # Data for L=135m
-file_path = './arrays_SR_L135.0.npy'
-SR_135, SR_135_delta = get_SR_and_Errors_from_file(file_path)
+# file_path = './arrays_SR_L135.0.npy'
+# SR_135, SR_135_delta = get_SR_and_Errors_from_file(file_path)
 Rytov_135 = [0.03, 0.052, 0.091]
 stability_135 = [89, 70, 46]
 stability_135_delta = [3, 4, 3]
 
 # Data for L=270m
-# SR_270 = [88, 80, 70]
-# SR_270_delta = [7, 7, 8]
-file_path = './arrays_SR_L270.npy'
-SR_270, SR_270_delta = get_SR_and_Errors_from_file(file_path)
+SR_270 = [88, 80, 70]
+SR_270_delta = [7, 7, 8]
+# file_path = './arrays_SR_L270.npy'
+# SR_270, SR_270_delta = get_SR_and_Errors_from_file(file_path)
 Rytov_270 = [0.05, 0.1, 0.15]
 stability_270 = [78, 48, 18]
 stability_270_delta = [4, 3, 3]
 
 # Data for L=540m
-# SR_540 = [89, 81, 69]
-# SR_540_delta = [7, 8, 7]
-file_path = './arrays_SR_L540.npy'
-SR_540, SR_540_delta = get_SR_and_Errors_from_file(file_path)
+SR_540 = [89, 81, 69]
+SR_540_delta = [7, 8, 7]
+# file_path = './arrays_SR_L540.npy'
+# SR_540, SR_540_delta = get_SR_and_Errors_from_file(file_path)
 Rytov_540 = [0.086, 0.161, 0.28]
 stability_540 = [32, 7, 0]
 stability_540_delta = [3, 3, 4]
