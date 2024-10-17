@@ -7,7 +7,7 @@ import csv
 import json
 from tqdm import trange
 
-SAMPLES = 2
+SAMPLES = 1
 indx_plus = 0
 
 plot = 0
@@ -63,7 +63,7 @@ multiplier2 = [1] * screens_num2
 Rytovs = [0.05]#, 0.2]
 Rytovs = [0.03, 0.052, 0.091]  # 135
 # Rytovs = [0.0000005]  # 540
-Rytovs = [0.15]
+Rytovs = [0.05]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
     folder = f'HOPFS_L{L_prop}_{Rytov}_{SAMPLES}_64x64x64_v1'

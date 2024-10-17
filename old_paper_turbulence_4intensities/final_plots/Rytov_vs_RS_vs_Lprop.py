@@ -41,9 +41,11 @@ def confidence_interval(p, n, confidence_level=0.95):
 n_samples = 125
 confidence_level = 0.95
 
-SR_135 = [81, 75, 64]
-SR_135_delta = [3, 7, 8]
+
 # Data for L=135m
+SR_135 = [ 0.88,0.803, 0.6875]
+SR_135_delta = [0, 0, 0]
+Cn_135 = [1.700687914941044e-14, 2.9478590525644766e-14, 5.1587533419878336e-14]
 # file_path = './arrays_SR_L135.0.npy'
 # SR_135, SR_135_delta = get_SR_and_Errors_from_file(file_path)
 Rytov_135 = [0.03, 0.052, 0.091]
@@ -51,8 +53,9 @@ stability_135 = [89, 70, 46]
 stability_135_delta = [3, 4, 3]
 
 # Data for L=270m
-SR_270 = [88, 80, 70]
-SR_270_delta = [7, 7, 8]
+SR_270 = [0.885, 0.7875, 0.705]
+SR_270_delta = [0, 0, 0]
+Cn_270 = [7.953990168915505e-15, 1.590798033783101e-14, 2.3861970506746513e-14]
 # file_path = './arrays_SR_L270.npy'
 # SR_270, SR_270_delta = get_SR_and_Errors_from_file(file_path)
 Rytov_270 = [0.05, 0.1, 0.15]
@@ -60,8 +63,9 @@ stability_270 = [78, 48, 18]
 stability_270_delta = [4, 3, 3]
 
 # Data for L=540m
-SR_540 = [89, 81, 69]
-SR_540_delta = [7, 8, 7]
+SR_540 = [0.889, 0.805, 0.695]
+SR_540_delta = [0, 0, 0]
+Cn_540 = [3.8390624018104106e-15, 7.187081938272979e-15, 1.2499272936126919e-14]
 # file_path = './arrays_SR_L540.npy'
 # SR_540, SR_540_delta = get_SR_and_Errors_from_file(file_path)
 Rytov_540 = [0.086, 0.161, 0.28]
@@ -146,15 +150,6 @@ plt.tight_layout()
 
 # Plot 4: Optical trefoil knot stability vs Rytov variance with error bars
 plt.figure(figsize=(10, 6))
-# plt.errorbar(Rytov_135, stability_135, yerr=stability_135_delta, fmt='-o', markersize=marker_size,
-#              capsize=error_bar_capsize,
-#              elinewidth=error_bar_width, linewidth=line_width, label='L = 135m')
-# plt.errorbar(Rytov_270, stability_270, yerr=stability_270_delta, fmt='-s', markersize=marker_size,
-#              capsize=error_bar_capsize,
-#              elinewidth=error_bar_width, linewidth=line_width, label='L = 270m')
-# plt.errorbar(Rytov_540, stability_540, yerr=stability_540_delta, fmt='-^', markersize=marker_size,
-#              capsize=error_bar_capsize,
-#              elinewidth=error_bar_width, linewidth=line_width, label='L = 540m')
 plt.fill_between(Rytov_135, np.array(stability_135) - stability_135_ci,
                  np.array(stability_135) + stability_135_ci, alpha=0.2, color='blue', label='L = 135m')
 plt.plot(Rytov_135, stability_135, '-o', color='blue', label='L = 135m', linewidth=2)
@@ -170,6 +165,30 @@ plt.plot(Rytov_540[:-1], stability_540[:-1], '-^', color='red', label='L = 540m'
 
 plt.title('Optical Trefoil Knot Stability vs Rytov Variance (with Errors)', fontsize=16)
 plt.xlabel('Rytov Variance', fontsize=14)
+plt.ylabel('Stability (%)', fontsize=14)
+plt.xticks(fontsize=12)
+plt.yticks(fontsize=12)
+plt.grid(True)
+plt.legend(fontsize=12)
+plt.tight_layout()
+
+# Plot 5: Optical trefoil knot stability vs Rytov variance with error bars
+plt.figure(figsize=(10, 6))
+plt.fill_between(Cn_135, np.array(stability_135) - stability_135_ci,
+                 np.array(stability_135) + stability_135_ci, alpha=0.2, color='blue', label='L = 135m')
+plt.plot(Cn_135, stability_135, '-o', color='blue', label='L = 135m', linewidth=2)
+
+plt.fill_between(Cn_270, np.array(stability_270) - stability_270_ci,
+                 np.array(stability_270) + stability_270_ci, alpha=0.2, color='green', label='L = 270m')
+plt.plot(Cn_270, stability_270, '-s', color='green', label='L = 270m', linewidth=2)
+
+plt.fill_between(Cn_540[:-1], np.array(stability_540[:-1]) - stability_540_ci[:-1],
+                 np.array(stability_540[:-1]) + stability_540_ci[:-1], alpha=0.2, color='red', label='L = 540m')
+plt.plot(Cn_540[:-1], stability_540[:-1], '-^', color='red', label='L = 540m', linewidth=2)
+
+
+plt.title('Optical Trefoil Knot Stability vs Cn^2 (with Errors)', fontsize=16)
+plt.xlabel('Cn^2', fontsize=14)
 plt.ylabel('Stability (%)', fontsize=14)
 plt.xticks(fontsize=12)
 plt.yticks(fontsize=12)

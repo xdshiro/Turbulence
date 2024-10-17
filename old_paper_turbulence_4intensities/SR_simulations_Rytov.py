@@ -133,7 +133,7 @@ def run_simulation(L_prop, width0, xy_lim_2D, res_xy_2D, Rytov, l0, L0, screens_
 
 
 # Define the sets of values you want to iterate over
-L_prop_values = [270]
+L_prop_values = [270 * 2]
 knot_length = 100
 width0_values = [6e-3 / np.sqrt(2)]
 # width0_values = [5e-3 / np.sqrt(2) * 10]
@@ -145,11 +145,12 @@ res_xy_2D_values = [201]
 # Cn2_values = [1e-13]
 Rytov_values = [0.075, 0.03, 0.05, 0.75, 0.1, 0.15]
 Rytov_values = [0.025, 0.05, 0.1, 0.15, 0.2]
+Rytov_values = [0.28]
 # Rytov_values = [0.05]
 l0_values = [5e-3 * 1e-10]
 L0_values = [10 * 1e10]
 # screens_numss = [1,2,3,4,5,10]
-screens_numss = [1]
+screens_numss = [3]
 # screens_numss = [10,2,3,4,5,10]
 
 # Ensure all lists are the same length by repeating the single-element lists
