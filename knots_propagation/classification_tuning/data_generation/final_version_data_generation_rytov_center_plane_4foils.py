@@ -67,6 +67,7 @@ Rytovs = [0.05]#, 0.2]
 Rytovs = [0.03, 0.052, 0.091]  # 135
 # Rytovs = [0.0000005]  # 540
 Rytovs = [0.05, 0.15, 0.25]
+Rytovs = [0.05, 0.15, 0.25]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
     folder = f'4foils_L{L_prop}_{Rytov}_{SAMPLES}_64x64x64_v1'
