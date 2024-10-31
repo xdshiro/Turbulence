@@ -51,41 +51,45 @@ class Classifier3D(nn.Module):
         return x
     
 class ClassifierFC_spec(nn.Module):
-    def __init__(self, input_size, hidden_sizes1, hidden_sizes2, hidden_sizes3, num_hidden, num_classes):
+    def __init__(self, input_size, hidden_sizes1, hidden_sizes2, hidden_sizes3, num_hidden, num_classes, dropout_rate=0):
         super(ClassifierFC_spec, self).__init__()
         layers = []
-        # Create input layer with batch normalization
+
+        # Input layer with batch normalization and dropout
         layers.append(nn.Linear(input_size, hidden_sizes1, bias=True))
-        layers.append(nn.BatchNorm1d(hidden_sizes1))  # Batch normalization
+        layers.append(nn.BatchNorm1d(hidden_sizes1))
         layers.append(nn.ReLU())
+        layers.append(nn.Dropout(p=dropout_rate))  # Dropout
 
-        # Add second layer with batch normalization
+        # Second layer with batch normalization and dropout
         layers.append(nn.Linear(hidden_sizes1, hidden_sizes2, bias=True))
-        layers.append(nn.BatchNorm1d(hidden_sizes2))  # Batch normalization
+        layers.append(nn.BatchNorm1d(hidden_sizes2))
         layers.append(nn.ReLU())
+        layers.append(nn.Dropout(p=dropout_rate))  # Dropout
 
-        # Create hidden layers with batch normalization
-        for i in range(0, num_hidden):
+        # Hidden layers with batch normalization and dropout
+        for i in range(num_hidden):
             layers.append(nn.Linear(hidden_sizes2, hidden_sizes2, bias=True))
-            layers.append(nn.BatchNorm1d(hidden_sizes2))  # Batch normalization
+            layers.append(nn.BatchNorm1d(hidden_sizes2))
             layers.append(nn.ReLU())
+            layers.append(nn.Dropout(p=dropout_rate))  # Dropout
 
-        # Create output layers with batch normalization
+        # Output layers with batch normalization and dropout
         layers.append(nn.Linear(hidden_sizes2, hidden_sizes3, bias=True))
-        layers.append(nn.BatchNorm1d(hidden_sizes3))  # Batch normalization
+        layers.append(nn.BatchNorm1d(hidden_sizes3))
         layers.append(nn.ReLU())
+        layers.append(nn.Dropout(p=dropout_rate))  # Dropout
 
+        # Final output layer (no dropout here)
         layers.append(nn.Linear(hidden_sizes3, num_classes))
 
-        # ModuleList of all layers
+        # Register all layers as a ModuleList
         self.layers = nn.ModuleList(layers)
 
     def forward(self, x):
         for layer in self.layers:
             x = layer(x)
-            # print(x.shape)
         return x
-    
     
 def conv_stage_2d(layer_configs):
     layers = []
