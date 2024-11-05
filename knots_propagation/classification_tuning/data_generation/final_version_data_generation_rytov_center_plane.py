@@ -63,10 +63,10 @@ multiplier2 = [1] * screens_num2
 Rytovs = [0.05]#, 0.2]
 Rytovs = [0.03, 0.052, 0.091]  # 135
 # Rytovs = [0.0000005]  # 540
-Rytovs = [0.05]
+Rytovs = [0.00000000000000000000000000000005]
 for Rytov in Rytovs:
     # folder = f'standard_vs_WWW_trefoil_vs_rytov_{Rytov}_100_1.4zR_c03_v1'
-    folder = f'HOPFS_L{L_prop}_{Rytov}_{SAMPLES}_64x64x64_v1'
+    folder = f'HOPFS_L{L_prop}_{Rytov}_{SAMPLES}_b'
     # folder = f'optimized_trefoil_vs_rytov_{Rytov}_100_center_plane_v2'
     k0 = 2 * np.pi / lmbda  # wave number
     Cn2 = Cn2_from_Rytov(Rytov, k0, L_prop)
@@ -176,7 +176,8 @@ for Rytov in Rytovs:
             values_print = np.real(values['weight']) / np.sqrt(np.sum(np.real(values['weight']) ** 2)) * 10
             values_print_formatted = [f'{val:.2f}' for val in values_print]
             print(f'vales l: {values["l"]}, p: {values["p"]}, weights: {values_print_formatted}')
-    
+        # print(np.square(np.abs(values['weight'])).sum())
+        # continue
         # building the knot from the coefficients
         field_before_prop = field_knot_from_weights(
             values, mesh_2D_original, width0, k0=k0, x0=0, y0=0, z0=z0
@@ -233,7 +234,10 @@ for Rytov in Rytovs:
                     field_center, **moments, mesh=mesh_2D_original, plot=False, width=width0, k0=k0,
                     functions=LG_simple, x0=x_cent_big_r, y0=y_cent_big_r
                 )
-    
+                # print(np.square(np.abs(spectrum)).sum())
+                # plt.imshow(np.abs(spectrum))
+                # plt.show()
+                # break
                 if 1:
                     filename = f'../{folder}/data_{knot}_spectr.csv'  # l rows, p columns
                     spectrum_list = (
