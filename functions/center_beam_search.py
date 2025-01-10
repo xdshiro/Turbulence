@@ -267,7 +267,7 @@ def variance_single_transition_combined(field, mesh, r, eta, eta2, gamma,
     return V
 
 def LG_spectrum(beam, l=(-3, 3), p=(0, 5), xM=(-1, 1), yM=(-1, 1), width=1., k0=1., mesh=None, plot=True,
-                functions=bp.LG_simple, **kwargs):
+                functions=bp.LG_simple, cmap='jet', **kwargs):
     """
 
     :param beam:
@@ -298,8 +298,9 @@ def LG_spectrum(beam, l=(-3, 3), p=(0, 5), xM=(-1, 1), yM=(-1, 1), width=1., k0=
     # print(modes)
     if plot:
         import matplotlib.pyplot as plt
-        pl.plot_2D(np.abs(spectrum), x=np.arange(l1 - 0.5, l2 + 1 + 0.5), y=np.arange(p1 - 0.5, p2 + 1 + 0.5),
-                   interpolation='none', grid=True, xname='l', yname='p', show=False)
+        spectrum_pl = spectrum / np.sqrt(np.sum(np.array(spectrum) ** 2)) * 100
+        pl.plot_2D(np.abs(spectrum_pl), x=np.arange(l1 - 0.5, l2 + 1 + 0.5), y=np.arange(p1 - 0.5, p2 + 1 + 0.5),
+                   interpolation='none', grid=True, xname='l', yname='p', map=cmap, show=False)
         plt.yticks(np.arange(p1, p2 + 1))
         plt.xticks(np.arange(l1, l2 + 1))
         plt.show()

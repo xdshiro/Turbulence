@@ -105,13 +105,15 @@ from scipy.special import assoc_laguerre
 import my_functions.functions_general as fg
 
 
-def plot_field_both(E, extend=None):
+def plot_field_both(E, extend=None, phase_phi=None, cmap_amplitude='magma'):
     fig, ax = plt.subplots(1, 2, figsize=(13, 6))
-    im0 = ax[0].imshow(np.abs(E).T, extent=extend, cmap='magma')
+    im0 = ax[0].imshow(np.abs(E).T, extent=extend, cmap=cmap_amplitude)
     ax[0].set_title('|Amplitude|')
     fig.colorbar(im0, ax=ax[0], fraction=0.04, pad=0.02)
-    
-    im1 = ax[1].imshow(np.angle(E).T, extent=extend, cmap='hsv')
+    if phase_phi is not None:
+        im1 = ax[1].imshow(np.angle(E).T, extent=extend, cmap='hsv', vmin=-np.pi, vmax=np.pi)
+    else:
+        im1 = ax[1].imshow(np.angle(E).T, extent=extend, cmap='hsv')
     ax[1].set_title('Phase')
     fig.colorbar(im1, ax=ax[1], fraction=0.04, pad=0.02)
     plt.tight_layout()

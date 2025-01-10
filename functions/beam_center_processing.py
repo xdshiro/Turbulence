@@ -22,7 +22,7 @@ The main function is called `beamFullCenter`, which computes the beam center and
   - my_functions.singularities: Functions for handling singularities.
   - my_functions.plotings: Functions for plotting.
   - my_functions.beams_and_pulses: Functions related to beams and pulses.
-  - data_generation_old: Data generation functions.
+  - data_generation_old: Data generation_4foils functions.
 
 ## Functions
 
@@ -864,7 +864,7 @@ def main_field_processing(
         # width *= scaling_factor
         # print(width, width / scaling_factor)
         ###################################################
-        # plotting spec to select moments. .T because Danilo's code saving it like that
+        # plotting spec to select moments. .T because Danilo_4foils_experiment's code saving it like that
         if plotting or False:
             _ = LG_spectrum(field_interpol.T, **moments_init, mesh=mesh_interpol, plot=True, width=width, k0=1)
 

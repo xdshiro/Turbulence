@@ -10,7 +10,7 @@ from tqdm import trange
 SAMPLES = 1
 indx_plus = 0
 
-plot = 0
+plot = 1
 plot_short = 0
 plot_3d = 0
 print_coeff = 0
@@ -151,9 +151,9 @@ for Rytov in Rytovs:
         'optimized', 'pm_03_z', '30oneX', '15oneZ', 'dennis',
         'trefoil_standard_12', 'trefoil_optimized'
     ]
-    # knots = [
-    #     'optimized', 'dennis', 'trefoil_optimized'
-    # ]
+    knots = [
+        'trefoil_optimized'
+    ]
     folder_path = os.path.join("..", folder)
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -191,6 +191,7 @@ for Rytov in Rytovs:
             )
             if plot and not plot_short:
                 plot_field_both(field_after_turb, extend=extend)
+            exit()
             if center_plane == 1:
                 field_center = field_after_turb
             else:

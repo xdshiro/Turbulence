@@ -10,16 +10,17 @@ from tqdm import trange
 import itertools
 
 foils = list(itertools.product(range(3), repeat=4))
+foils = [[2, 2, 2, 2]]
 # print(foils.index((2, 1, 2, 1)))
 # foils = foils[70:]
 # print(foils)
 # exit()
 
-SAMPLES = 500
-indx_plus = 500
+SAMPLES = 1
+indx_plus = 0
 
-plot = 0
-plot_3d = 0
+plot = 1
+plot_3d = 1
 print_coeff = 0
 
 print_values = 0
@@ -39,19 +40,20 @@ x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2
 res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 256, 256, 1
 
 # beam
-lmbda = 633e-9  # wavelength
-L_prop = 100  # propagation distance
-knot_length = 100  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
-width0 = 5e-3 / np.sqrt(2)  # beam width
+lmbda = 532e-9  # wavelength
+L_prop = 270 # propagation distance
+knot_length = 212.58897655870774 / 2 * 1.4  # we need RALEYIG!!!!!!!!  # 1000 how far is detector from the knot center
+width0 = 6e-3 / np.sqrt(2)  # beam width
 xy_lim_2D_origin = (-30.0e-3, 30.0e-3)  # window size to start with
-res_xy_2D_origin = 300  # resolution
+scale = 1.5
+res_xy_2D_origin = int(300 * scale)  # resolution
 
 res_z = 64  # resolution of the knot is res_z+1
-crop = 185  # for the knot propagation
-crop_3d = 100  # for the knot
+crop = int(185 * scale)  # for the knot propagation
+crop_3d = int(100 * scale)  # for the knot
 new_resolution = (64, 64)  # resolution of the knot to save
 
-screens_num1 = 4
+screens_num1 = 3
 multiplier1 = [1] * screens_num1
 screens_num2 = 1
 multiplier2 = [1] * screens_num2
@@ -59,6 +61,8 @@ multiplier2 = [1] * screens_num2
 # turbulence
 # Cn2 = 1.35e-13  # turbulence strength  is basically in the range of 10−17–10−12 m−2/3
 Cn2 = 3.21e-14
+Cn2 = 3.21e-150
+# # # # # Cn2 = 3.21e-15
 # # # # # Cn2 = 3.21e-15
 # Cn2 = 3.21e-40
 # https://www.mdpi.com/2076-3417/11/22/10548
@@ -157,7 +161,7 @@ for foil in foils:
             field_before_prop, beam_par, psh_par, prop1, multiplier=multiplier1, screens_num=screens_num1, seed=seed
         )
         if plot:
-            plot_field_both(field_after_turb, extend=extend)
+            plot_field_both(field_after_turb) #, extend=extend)
 
         field_center = propagation_ps(
             field_after_turb, beam_par, psh_par_0, prop2, multiplier=multiplier2, screens_num=screens_num2, seed=seed
@@ -166,7 +170,7 @@ for foil in foils:
         field_center = field_center / np.sqrt(np.sum(np.abs(field_center) ** 2))
         ###########################
         if plot:
-            plot_field_both(field_center, extend=extend)
+            plot_field_both(field_center) #, extend=extend)
 
         field_z_crop = field_center[
                        res_xy_2D_origin // 2 - crop // 2: res_xy_2D_origin // 2 + crop // 2,
@@ -178,7 +182,7 @@ for foil in foils:
 
             np.save(filename, field_z_crop)
         if plot:
-            plot_field_both(field_z_crop, extend=extend_crop)
+            plot_field_both(field_z_crop) #, extend=extend_crop)
 
         if spectrum_save:
             if centering:
@@ -236,7 +240,7 @@ for foil in foils:
         if no_last_plane:
             field_3d_crop = field_3d_crop[:, :, :-1]
         if plot_3d:
-            plot_field_both(field_3d_crop[:, :, res_z // 2], extend=extend_crop3d)
+            plot_field_both(field_3d_crop[:, :, res_z // 2]) #, extend=extend_crop3d)
 
         dots_init_dict, dots_init = sing.get_singularities(np.angle(field_3d_crop), axesAll=False, returnDict=True)
         if dots_init.size == 0:

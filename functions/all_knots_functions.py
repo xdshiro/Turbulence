@@ -103,6 +103,8 @@ Calculates the spectrum of the Laguerre-Gaussian beam for the given field.
 
 This script is essential for researchers working on the topological manipulation of optical fields, providing a versatile toolkit for creating and analyzing complex knot structures.
 """
+import matplotlib.pyplot as plt
+
 from functions.functions_turbulence import *
 import my_functions.singularities as sing
 import my_functions.plotings as pl
@@ -140,7 +142,7 @@ def braid(x, y, z, angle=0, pow_cos=1, pow_sin=1, theta=0, a_cos=1, a_sin=1):
             * sin_v(x, y, z, pow_sin) / a_sin_3D) * np.exp(1j * angle_3D)
 
 
-def hopf_standard_16(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
+def hopf_standard_16(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False, cmap='jet'):
     mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
     mesh_3D_new2 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
     xyz_array = [
@@ -181,7 +183,7 @@ def hopf_standard_16(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     if plot:
         plot_field_both(ans[:, :, res_z_3D // 2])
     values = cbs.LG_spectrum(
-        ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=True, width=w, k0=1,
+        ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=True, width=w, k0=1, cmap=cmap
     )
     l_save = []
     p_save = []
@@ -729,7 +731,7 @@ def hopf_30oneX(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     return weights_important
 
 
-def hopf_15oneZ(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
+def hopf_15oneZ(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False, cmap='jet'):
     mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(15))
     mesh_3D_new2 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
     xyz_array = [
@@ -770,7 +772,7 @@ def hopf_15oneZ(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     if plot:
         plot_field_both(ans[:, :, res_z_3D // 2])
     values = cbs.LG_spectrum(
-        ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=True, width=w, k0=1,
+        ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=True, width=w, k0=1, cmap=cmap
     )
     l_save = []
     p_save = []
@@ -843,6 +845,9 @@ def unknot_6(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     # mesh_3D_new2 = rotate_part(mesh_3D_new2, A, B, rot_x=0, rot_y=0, rot_z=0)
     xyz_array = [
         (mesh_3D_new2[0], mesh_3D_new2[1], mesh_3D_new2[2]),
+    ]
+    xyz_array = [
+        (mesh_3D[0], mesh_3D[1], mesh_3D[2]),
     ]
     # starting angle for each braid
     angle_array = np.array([0])
@@ -981,103 +986,6 @@ def unknot_4(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
     return weights_important
 
-
-def unknot_4_any(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False,
-                 angle_size=(2, 2, 2, 2)):
-    # angle_size=((1, 0), (3, 1), (4, 0))):
-    mesh_3D_new = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
-    for angle, size in enumerate(angle_size):
-        angles_dict = {
-            0: [(-np.pi / 4, np.pi / 4)],
-            1: [(np.pi / 4, 3 * np.pi / 4)],
-            2: [(-4 * np.pi / 4, -3 * np.pi / 4), (3 * np.pi / 4, 4 * np.pi / 4)],
-            3: [(-3 * np.pi / 4, -np.pi / 4)]
-        }
-        for ang in angles_dict[angle]:
-            if size == 2:
-                continue
-            if size == 1:
-                mesh_3D_new = lobe_smaller(mesh_3D_new, ang[0], ang[1], rot_x=0, rot_y=0, rot_z=0)
-            elif size == 0:
-                mesh_3D_new = lobe_remove(mesh_3D_new, ang[0], ang[1], rot_x=0, rot_y=0, rot_z=0)
-            else:
-                print(f"Invalid size {size} for angle {angle}")
-
-    # angles = [1, 2, 3, 4]
-    # sizes = [1, 2]
-    #
-    # A, B = -np.pi / 4, np.pi / 4
-    # mesh_3D_new = lobe_smaller(mesh_3D_new, A, B, rot_x=0, rot_y=0, rot_z=0)
-    # A, B = -4 * np.pi / 4, -3 * np.pi / 4
-    # mesh_3D_new = lobe_remove(mesh_3D_new, A, B, rot_x=0, rot_y=0, rot_z=0)
-    # A, B = 3 * np.pi / 4, 4 * np.pi / 4
-    # mesh_3D_new = lobe_remove(mesh_3D_new, A, B, rot_x=0, rot_y=0, rot_z=0)
-    # A, B = -3 * np.pi / 6, -1 * np.pi / 6
-    # mesh_3D_new2 = rotate_part(mesh_3D_new2, A, B, rot_x=0, rot_y=0, rot_z=0)
-
-    xyz_array = [
-        (mesh_3D_new[0], mesh_3D_new[1], mesh_3D_new[2]),
-    ]
-    # starting angle for each braid
-    angle_array = np.array([0])
-    # powers in cos in sin
-    power = 4
-    pow_cos_array = [power]
-    pow_sin_array = [power]
-    # conjugating the braid (in "Milnor" space)
-    conj_array = [0]
-    # moving x+iy (same as in the paper)
-    theta_array = [0.0 * np.pi, 0 * np.pi]
-    # braid scaling
-    a_cos_array = [1]
-    a_sin_array = [1]
-
-    ans = 1
-    for i, xyz in enumerate(xyz_array):
-        if conj_array[i]:
-            ans *= np.conjugate(braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
-                                           a_cos_array[i], a_sin_array[i]))
-        else:
-            ans *= braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
-                              a_cos_array[i], a_sin_array[i])
-    R = np.sqrt(mesh_3D[0] ** 2 + mesh_3D[1] ** 2)
-    ans *= (1 + R ** 2) ** power
-    ws = {
-        0: 3,
-        1: 2.6,
-        # 2: 1.6,
-        2: 2.6 ** (1 / 2),
-        3: 1.2,
-        4: 0.85,
-        5: 0.75,
-        6: 0.65,
-    }
-    w = ws[power]
-    ans *= LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
-
-    moments = {'p': (0, 10), 'l': (-10, 10)}
-
-    _, _, res_z_3D = np.shape(mesh_3D_new[0])
-    x_2D = mesh_3D[0][:, :, 0]
-    y_2D = mesh_3D[1][:, :, 0]
-    if plot:
-        plot_field_both(ans[:, :, res_z_3D // 2])
-    values = cbs.LG_spectrum(
-        ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=True, width=w, k0=1,
-    )
-    l_save = []
-    p_save = []
-    weight_save = []
-    moment0 = moments['l'][0]
-    for l, p_array in enumerate(values):
-        for p, value in enumerate(p_array):
-            if abs(value) > modes_cutoff * abs(values).max():
-                l_save.append(l + moment0)
-                p_save.append(p)
-                weight_save.append(value)
-    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
-    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
-    return weights_important
 
 
 def borromean(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False):
@@ -2091,13 +1999,170 @@ def field_knot_from_weights(values, mesh, w_real, k0=1, x0=0, y0=0, z0=0):
     return field_new
 
 
+def unknot_4_any(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False,
+                 angle_size=(2, 2, 2, 2), cmap='jet'):
+    # angle_size=((1, 0), (3, 1), (4, 0))):
+    mesh_3D_new = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
+    for angle, size in enumerate(angle_size):
+        angles_dict = {
+            0: [(-np.pi / 4, np.pi / 4)],
+            1: [(np.pi / 4, 3 * np.pi / 4)],
+            2: [(-4 * np.pi / 4, -3 * np.pi / 4), (3 * np.pi / 4, 4 * np.pi / 4)],
+            3: [(-3 * np.pi / 4, -np.pi / 4)]
+        }
+        for ang in angles_dict[angle]:
+            if size == 2:
+                continue
+            if size == 1:
+                mesh_3D_new = lobe_smaller(mesh_3D_new, ang[0], ang[1], rot_x=0, rot_y=0, rot_z=0)
+            elif size == 0:
+                mesh_3D_new = lobe_remove(mesh_3D_new, ang[0], ang[1], rot_x=0, rot_y=0, rot_z=0)
+            else:
+                print(f"Invalid size {size} for angle {angle}")
+
+    # angles = [1, 2, 3, 4]
+    # sizes = [1, 2]
+    #
+    # A, B = -np.pi / 4, np.pi / 4
+    # mesh_3D_new = lobe_smaller(mesh_3D_new, A, B, rot_x=0, rot_y=0, rot_z=0)
+    # A, B = -4 * np.pi / 4, -3 * np.pi / 4
+    # mesh_3D_new = lobe_remove(mesh_3D_new, A, B, rot_x=0, rot_y=0, rot_z=0)
+    # A, B = 3 * np.pi / 4, 4 * np.pi / 4
+    # mesh_3D_new = lobe_remove(mesh_3D_new, A, B, rot_x=0, rot_y=0, rot_z=0)
+    # A, B = -3 * np.pi / 6, -1 * np.pi / 6
+    # mesh_3D_new2 = rotate_part(mesh_3D_new2, A, B, rot_x=0, rot_y=0, rot_z=0)
+
+    xyz_array = [
+        (mesh_3D_new[0], mesh_3D_new[1], mesh_3D_new[2]),
+    ]
+    # starting angle for each braid
+    angle_array = np.array([0])
+    # powers in cos in sin
+    power = 4
+    pow_cos_array = [power]
+    pow_sin_array = [power]
+    # conjugating the braid (in "Milnor" space)
+    conj_array = [0]
+    # moving x+iy (same as in the paper)
+    theta_array = [0.0 * np.pi, 0 * np.pi]
+    # braid scaling
+    a_cos_array = [1]
+    a_sin_array = [1]
+
+    ans = 1
+    for i, xyz in enumerate(xyz_array):
+        if conj_array[i]:
+            ans *= np.conjugate(braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
+                                           a_cos_array[i], a_sin_array[i]))
+        else:
+            ans *= braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
+                              a_cos_array[i], a_sin_array[i])
+    R = np.sqrt(mesh_3D[0] ** 2 + mesh_3D[1] ** 2)
+    ans *= (1 + R ** 2) ** power
+    ws = {
+        0: 3,
+        1: 2.6,
+        # 2: 1.6,
+        2: 2.6 ** (1 / 2),
+        3: 1.2,
+        4: 0.85,
+        5: 0.75,
+        6: 0.65,
+    }
+    w = ws[power]
+    ans *= LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
+
+    moments = {'p': (0, 10), 'l': (-10, 10)}
+
+    _, _, res_z_3D = np.shape(mesh_3D_new[0])
+    x_2D = mesh_3D[0][:, :, 0]
+    y_2D = mesh_3D[1][:, :, 0]
+    if plot:
+        plot_field_both(ans[:, :, res_z_3D // 2])
+    values = cbs.LG_spectrum(
+        ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=plot, width=w, k0=1, cmap=cmap
+    )
+    l_save = []
+    p_save = []
+    weight_save = []
+    moment0 = moments['l'][0]
+    for l, p_array in enumerate(values):
+        for p, value in enumerate(p_array):
+            if abs(value) > modes_cutoff * abs(values).max():
+                l_save.append(l + moment0)
+                p_save.append(p)
+                weight_save.append(value)
+    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+    return weights_important
+
+def braids_testing(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False, cmap='jet'):
+    mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
+    mesh_3D_new2 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
+    xyz_array = [
+        (mesh_3D_new1[0], mesh_3D_new1[1], mesh_3D_new1[2]),
+    ]
+    # starting angle for each braid
+    angle_array = np.array([0, 1. * np.pi])
+    # powers in cos in sin
+    pow_cos_array = [4, 1]
+    pow_sin_array = [4, 1]
+    # conjugating the braid (in "Milnor" space)
+    conj_array = [0, 0]
+    # moving x+iy (same as in the paper)
+    theta_array = [0.0 * np.pi, 0 * np.pi]
+    # braid scaling
+    a_cos_array = [1, 1]
+    a_sin_array = [1, 1]
+
+    ans = 1
+    for i, xyz in enumerate(xyz_array):
+        if conj_array[i]:
+            ans *= np.conjugate(braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
+                                           a_cos_array[i], a_sin_array[i]))
+        else:
+            ans *= braid_func(*xyz, angle_array[i], pow_cos_array[i], pow_sin_array[i], theta_array[i],
+                              a_cos_array[i], a_sin_array[i])
+    R = np.sqrt(mesh_3D[0] ** 2 + mesh_3D[1] ** 2)
+    ans *= (1 + R ** 2) ** 4
+    w = 1.0
+    plot_field_both(ans[:, :, np.shape(ans)[2] // 2])
+    plt.show()
+    exit()
+    ans *= LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
+
+    moments = {'p': (0, 6), 'l': (-6, 6)}
+
+    _, _, res_z_3D = np.shape(mesh_3D_new1[0])
+    x_2D = mesh_3D[0][:, :, 0]
+    y_2D = mesh_3D[1][:, :, 0]
+    if plot:
+        plot_field_both(ans[:, :, res_z_3D // 2])
+    values = cbs.LG_spectrum(
+        ans[:, :, res_z_3D // 2], **moments, mesh=(x_2D, y_2D), plot=True, width=w, k0=1, cmap=cmap
+    )
+    l_save = []
+    p_save = []
+    weight_save = []
+    moment0 = moments['l'][0]
+    for l, p_array in enumerate(values):
+        for p, value in enumerate(p_array):
+            if abs(value) > modes_cutoff * abs(values).max():
+                l_save.append(l + moment0)
+                p_save.append(p)
+                weight_save.append(value)
+    weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+    return weights_important
+
+
 if __name__ == "__main__":
 
     x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2.0)
     # x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-10.0, 10.0), (-10.0, 10.0), (-2.0, 2.0)
     # x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-5.0, 5.0), (-5.0, 5.0), (-2.0, 2.0)
     res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 90, 90, 40
-    res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 120, 120, 90
+    # res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 120, 120, 90
     # res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 100, 100, 100
     if res_z_3D_knot != 1:
         z_3D_knot = np.linspace(*z_lim_3D_knot, res_z_3D_knot)
@@ -2115,9 +2180,9 @@ if __name__ == "__main__":
     # mesh_2D_original = np.meshgrid(x_2D_origin, y_2D_origin, indexing='ij')
 
     # values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
-    #                       angle_size=(2, 2, 2, 1))
-    values = trefoil_optimized_new(mesh_3D_knot, braid_func=braid, plot=True)
-    # values = trefoil_optimized(mesh_3D_knot, braid_func=braid, plot=True)
+    #                       angle_size=(2, 1, 2, 0))
+    # values = trefoil_optimized_new(mesh_3D_knot, braid_func=braid, plot=True)
+    values = braids_testing(mesh_3D_knot, braid_func=braid, plot=True)
     # field = trefoil_standard_12_phase_only(mesh_3D_knot, braid_func=braid, plot=True)
     # beam_par = (0, 0, width0, 1)
     # psh_par_0 = (1 * 1e100, res_x_3D_knot, (x_lim_3D_knot[1] - x_lim_3D_knot[0]) / res_x_3D_knot, 1, 1 * 1e100)
@@ -2132,9 +2197,9 @@ if __name__ == "__main__":
     )
     # grad_x, grad_y = np.gradient(field[:, :, res_z_3D_knot // 2])
     # magnitude = np.sqrt(np.abs(grad_x) ** 2 + np.abs(grad_y) ** 2)
-    plot_field_both(field[:, :, res_z_3D_knot // 2])
-    plot_field_both(field[:, :, res_z_3D_knot // 4])
-    plot_field_both(field[:, :, 0])
+    # plot_field_both(field[:, :, res_z_3D_knot // 2])
+    # plot_field_both(field[:, :, res_z_3D_knot // 4])
+    # plot_field_both(field[:, :, 0])
     # plot_field_both(magnitude)
     #
     dots_bound = [
