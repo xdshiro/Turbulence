@@ -864,7 +864,7 @@ def main_field_processing(
         # width *= scaling_factor
         # print(width, width / scaling_factor)
         ###################################################
-        # plotting spec to select moments. .T because Danilo_4foils_experiment's code saving it like that
+        # plotting spec to select moments. .T because paper_final_experiment_Danilo_4foils's code saving it like that
         if plotting or False:
             _ = LG_spectrum(field_interpol.T, **moments_init, mesh=mesh_interpol, plot=True, width=width, k0=1)
 

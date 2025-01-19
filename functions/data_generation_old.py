@@ -287,7 +287,7 @@ def main_field_processing(
     # rescaling the beam width
     width = width / np.shape(field_norm)[0] * np.shape(field_interpol)[0]
 
-    # plotting spec to select moments. .T because Danilo_4foils_experiment's code saving it like that
+    # plotting spec to select moments. .T because paper_final_experiment_Danilo_4foils's code saving it like that
     if plotting:
         _ = cbs.LG_spectrum(field_interpol.T, **moments_init, mesh=mesh_interpol, plot=plotting, width=width, k0=1)
 
