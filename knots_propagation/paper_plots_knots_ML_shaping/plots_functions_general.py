@@ -292,6 +292,40 @@ def plot_black_dots_paper(dots, dots_bound=None, size=15, width=185, show=True, 
 
 def plot_field_both_paper(E, extend=None):
 	# Set Times New Roman as the font globally
+
+	xyLabelFontSize = fopts
+	ticksFontSize = tick_fopts
+
+	fig, ax = plt.subplots(1, 2, figsize=(13.5, 6))
+
+	# Plot |Amplitude|
+	im0 = ax[0].imshow(np.abs(E).T, extent=extend, cmap="Blues_r", interpolation='nearest')
+	cbar0 = fig.colorbar(im0, ax=ax[0], fraction=0.046, pad=0.01)
+	cbar0.ax.tick_params(labelsize=ticksFontSize)  # Set colorbar tick font size
+	cbar0.set_ticks([0, 1])  # Custom ticks for |Amplitude|
+	ax[0].set_xlabel('x (mm)', fontsize=xyLabelFontSize)  # X-axis label
+	ax[0].set_ylabel('y (mm)', fontsize=xyLabelFontSize)  # Y-axis label
+	ax[0].tick_params(axis='both', labelsize=ticksFontSize)  # Set axis tick font size
+
+	# Plot Phase
+	# im1 = ax[1].imshow(np.angle(E).T, extent=extend, cmap='twilight_shifted', vmin=-np.pi, vmax=np.pi, interpolation='nearest')
+	im1 = ax[1].imshow(np.angle(E).T, extent=extend, cmap='gray', vmin=-np.pi, vmax=np.pi, interpolation='nearest')
+	cbar1 = fig.colorbar(im1, ax=ax[1], fraction=0.046, pad=0.01)
+	cbar1.ax.tick_params(labelsize=ticksFontSize)  # Set colorbar tick font size
+	cbar1.set_ticks([-np.pi, 0, np.pi])  # Custom ticks for Phase
+	cbar1.set_ticklabels([r'$-\pi$', r'$0$', r'$\pi$'])  # Use LaTeX for Phase ticks
+	ax[1].set_xlabel('x (mm)', fontsize=xyLabelFontSize)  # X-axis label
+	ax[1].set_ylabel('y (mm)', fontsize=xyLabelFontSize)  # Y-axis label
+	ax[1].tick_params(axis='both', labelsize=ticksFontSize)  # Set axis tick font size
+
+	# Adjust layout
+	plt.tight_layout()
+
+	# Display the figure
+	plt.show()
+
+def plot_field_both_paper_old_version(E, extend=None):
+	# Set Times New Roman as the font globally
 	
 	xyLabelFontSize = fopts
 	ticksFontSize = tick_fopts

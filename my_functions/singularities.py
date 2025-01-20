@@ -34,7 +34,7 @@ import timeit
 import sympy
 # from python_tsp.distances import euclidean_distance_matrix
 # from python_tsp.heuristics import solve_tsp_local_search
-from vispy import app
+# from vispy import app
 
 """
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
