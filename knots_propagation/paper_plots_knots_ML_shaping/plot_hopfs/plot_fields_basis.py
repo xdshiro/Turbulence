@@ -28,6 +28,11 @@ foils_paths = [
 	'data_all_hopfs_basis\\hopf_field_1e-40_trefoil_optimized.npy',
 
 ]
+foils_paths = [
+	'data_all_hopfs_basis\\hopf_field_1e-40_standard_14.npy',
+
+
+]
 
 for path in foils_paths:
 	foil4_field = np.load(path)
