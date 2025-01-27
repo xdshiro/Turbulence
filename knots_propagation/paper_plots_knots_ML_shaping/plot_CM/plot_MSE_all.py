@@ -13,16 +13,19 @@ def calculate_accuracy(cm):
     return accuracy
 # List of files and their corresponding labels
 files = [
-    {"path": "data\\MSE_spec_part_005.npz", "label": "Spectre MSE, Knots, $\sigma_R^2=0.05$,"},
-    {"path": "data\\MSE_spec_part_015.npz", "label": "Spectre MSE, Knots, $\sigma_R^2=0.15$,"},
-    {"path": "data\\MSE_spec_part_025.npz", "label": "Spectre MSE, Knots, $\sigma_R^2=0.25$,"},
-    {"path": "data\\MSE_spec_part_all.npz", "label": "Spectre MSE, Knots, Combined,"},
-    {"path": "data\\MSE_dots_part_005.npz", "label": "Shape MSE, Knots, $\sigma_R^2=0.05$,"},
-    {"path": "data\\MSE_dots_part_015.npz", "label": "Shape MSE, Knots, $\sigma_R^2=0.15$,"},
-    {"path": "data\\MSE_dots_part_025.npz", "label": "Shape MSE, Knots, $\sigma_R^2=0.25$,"},
-    {"path": "data\\MSE_dots_part_all.npz", "label": "Shape MSE, Knots, Combined,"},
+    {"path": "data\\MSE_spec_part_005.npz", "label": r"Spectre MSE, Knots, $\sigma_R^2=0.05$,"},
+    {"path": "data\\MSE_spec_part_015.npz", "label": r"Spectre MSE, Knots, $\sigma_R^2=0.15$,"},
+    {"path": "data\\MSE_spec_part_025.npz", "label": r"Spectre MSE, Knots, $\sigma_R^2=0.25$,"},
+    {"path": "data\\MSE_spec_part_all.npz", "label": r"Spectre MSE, Knots, Combined,"},
+    {"path": "data\\MSE_dots_part_005.npz", "label": r"Shape MSE, Knots, $\sigma_R^2=0.05$,"},
+    {"path": "data\\MSE_dots_part_015.npz", "label": r"Shape MSE, Knots, $\sigma_R^2=0.15$,"},
+    {"path": "data\\MSE_dots_part_025.npz", "label": r"Shape MSE, Knots, $\sigma_R^2=0.25$,"},
+    {"path": "data\\MSE_dots_part_all.npz", "label": r"Shape MSE, Knots, Combined,"},
 ]
-
+files = [
+    {"path": "data\\MSE_spec_part_all.npz", "label": r"Spectre-based MSE."},
+    {"path": "data\\MSE_dots_part_all.npz", "label": r"Shape-based MSE."},
+]
 # Class labels
 class_labels = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'T1', 'T2']
 
@@ -31,5 +34,5 @@ for file in files:
     data = np.load(file["path"])
     cm = data['cm']
     accuracy = calculate_accuracy(cm)
-    label = file["label"] + f" {accuracy * 100:0.3}"
+    label = file["label"] + f" Total Accuracy={accuracy * 100:0.3}%"
     plot_confusion_matrix(cm, class_labels, label=label)

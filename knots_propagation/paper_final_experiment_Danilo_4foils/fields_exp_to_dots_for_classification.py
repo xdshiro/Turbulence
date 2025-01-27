@@ -94,6 +94,43 @@ import json
 # ---------------------------------
 # Functions
 # ---------------------------------
+
+
+def filter_isolated_points(dots):
+	"""
+    Filters out points that do not have any neighbors within a 2-integer radius.
+
+    Parameters:
+        dots (numpy.ndarray): Array of integer coordinates with shape (N, 3).
+
+    Returns:
+        numpy.ndarray: Filtered array containing only points with at least one neighbor within a 2-step radius.
+    """
+	filtered_dots = []
+	dots_set = set(map(tuple, dots))  # Convert dots to a set for fast lookup
+
+	for dot in dots:
+		x, y, z = dot
+		neighbor_count = 0  # Initialize neighbor count
+
+		# Check all possible neighbors within a 2-step radius
+		for dx in range(-4, 5):  # -2 to 2 (inclusive)
+			for dy in range(-4, 5):
+				for dz in range(-4, 5):
+					if dx == 0 and dy == 0 and dz == 0:  # Skip the current dot itself
+						continue
+					if (x + dx, y + dy, z + dz) in dots_set:
+						neighbor_count += 1
+					if neighbor_count > 1:  # Stop checking once we find more than 2 neighbors
+						filtered_dots.append(dot)
+						break
+				if neighbor_count > 1:
+					break
+			if neighbor_count > 1:
+				break
+
+	return np.array(filtered_dots)
+
 def compute_center_of_mass(field):
 	"""
 	Computes the center of mass of the absolute value of a complex field.
@@ -208,8 +245,8 @@ if __name__ == "__main__":
 	
 	# Main folder path containing subfolders
 	main_folder_path = 'C:/Users/Cmex-/Box/Flowers Exp/T_30/'
-	main_folder_path = 'C:/Users/Cmex-/Box/Flowers Exp/flowers_noturb'
-	folder_save = 'all_flowers10_5.0'
+	main_folder_path = 'C:/Users/Cmex-/Box/Flowers Exp/flower2222_plot'
+	folder_save = 'flower_2222_noturb'
 	
 	# Create output folder if it doesn't exist
 	if not os.path.exists(f'./{folder_save}'):
@@ -256,6 +293,8 @@ if __name__ == "__main__":
 			for indx, field in enumerate(processed_fields):
 				if plot:
 					plot_field_both(field)
+				# np.save(f'foil4_2222_exp_noturb_field.npy', field)
+				np.save(f'foil4_2222_exp_turb_field.npy', field)
 				field_3d = beam_expander(field, beam_par, psh_par_0, distance_both=knot_length, steps_one=res_z // 2)
 				x_cent = field_3d.shape[0] // 2
 				y_cent = field_3d.shape[1] // 2
@@ -277,7 +316,7 @@ if __name__ == "__main__":
 				)
 				_, idx = np.unique(view, return_index=True)
 				dots_cut = dots_cut_non_unique[idx]
-				
+				dots_cut = filter_isolated_points(dots_cut)
 				# Scale dots to new resolution
 				original_resolution = (crop_3d, crop_3d)
 				scale_x = saving_size[0] / original_resolution[0]
@@ -293,7 +332,8 @@ if __name__ == "__main__":
 				dots_cut = (dots_cut - shift) * np.array([1, 1, -1]) + shift
 				if plot:
 					pl.plotDots(dots_cut, dots_bound, color='black', show=True, size=10)
-				
+				# np.save(f'foil4_2222_exp_noturb_dots.npy', dots_cut)
+				np.save(f'foil4_2222_exp_turb_dots.npy', dots_cut)
 				dots_cut_modified = np.vstack([[indx, 0, 0], saving_knot, scaled_data])
 				if save:
 					filename = f'./{folder_save}/data_experiment_{flower}.csv'

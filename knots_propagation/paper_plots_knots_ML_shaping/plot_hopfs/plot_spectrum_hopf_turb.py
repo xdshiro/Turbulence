@@ -1,6 +1,6 @@
 from knots_propagation.paper_plots_knots_ML_shaping.plots_functions_general import *
 foils_paths = [
-	'hopf_spectr_0.15_trefoil_standard_12.npy',
+	'data_trefoils_turb\\hopf_spectr_0.15_trefoil_standard_12.npy',
 ]
 
 # foils_paths = [
@@ -11,7 +11,7 @@ foils_paths = [
 for path in foils_paths:
 	foil4_spectrum_sorted = np.load(path)
 
-	plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -6, 6, 0, 6, every_ticks=True)
+	plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -6, 6, 0, 6, every_ticks=False)
 # plotDots_foils_paper_by_phi(foil4
 # _dots, dots_bound, show=True, size=10)
 # print(foil4_dots)

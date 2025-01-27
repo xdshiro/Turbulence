@@ -11,21 +11,20 @@ import itertools
 from matplotlib.colors import LinearSegmentedColormap
 
 foils_paths = [
-	'foil4_dots_XY_noturb_[2, 2, 2, 2]_sorted.npy',
-	'foil4_dots_XY_noturb_[2, 2, 2, 0]_sorted.npy',
-	'foil4_dots_XY_noturb_[2, 1, 2, 0]_sorted.npy',
+	'data_foils_noturb/foil4_dots_XY_noturb_[2, 2, 2, 2]_sorted.npy',
+	'data_foils_noturb/foil4_dots_XY_noturb_[2, 2, 2, 0]_sorted.npy',
+	'data_foils_noturb/foil4_dots_XY_noturb_[2, 1, 2, 0]_sorted.npy',
 ]
 
 foils_paths = [
-	'foil4_dots_XY_noturb_[2, 2, 2, 2]_sorted.npy',
+	'data_foils_noturb/foil4_dots_XY_noturb_[2, 1, 2, 0]_sorted.npy',
 ]
-
 indices_all = [[70, 230, 390, 550],
                [70, 71, 230, 395],
                [62, 63, 210, 280],
                ]
 
-indices_all = [[70, 230, 390, 550],
+indices_all = [[62, 63, 210, 280],
                ]
 def sort_dots_to_create_line_with_threshold(dots, TH):
 	"""
@@ -105,13 +104,18 @@ for path, indices in zip(foils_paths, indices_all):
 	foil4_dots_sorted = np.load(path)
 	dots_bound = [
 		[-100, -100, 0],
+
+
 		[100, 100, 129],
 	]
 	# foil4_dts_sorted = sort_dots_to_create_line_with_threshold(foil4_dots, TH=30)
 	# np.save('foil4_dots_XY_noturb_[2, 2, 2, 2]_sorted.npy', foil4_dots_sorted)
 	# plot_3d_line(foil4_dots_sorted)
 	print(len(foil4_dots_sorted))
+	# B&W
+	# plot_black_dots_paper(foil4_dots_sorted, dots_bound=dots_bound)
 	plotDots_foils_paper_by_indices(foil4_dots_sorted, indices, dots_bound=dots_bound)
+	plotDots_foils_paper_by_indices(foil4_dots_sorted, indices, dots_bound=dots_bound, general_view=True)
 # plotDots_foils_paper_by_phi(foil4
 # _dots, dots_bound, show=True, size=10)
 # print(foil4_dots)

@@ -15,7 +15,7 @@ knots = [
 	'trefoil_optimized',
 ]
 
-sigma = 0.25
+sigma = 0.15
 foils_paths = [
 	f'data_all_hopfs_basis_turb\\hopf_field_{sigma}_standard_14.npy',
 	f'data_all_hopfs_basis_turb\\hopf_field_{sigma}_standard_16.npy',
@@ -43,10 +43,11 @@ foils_paths = [
 	# f'data_all_hopfs_basis_turb\\hopf_field_{sigma}_trefoil_standard_12.npy',
 	# f'data_all_hopfs_basis_turb\\hopf_field_{sigma}_trefoil_optimized.npy',
 ]
+
 for path in foils_paths:
 	foil4_field = np.load(path)
 	foil4_field = foil4_field / np.max(np.abs(foil4_field))
-	XY_max = 30e-3 * 185 / 300 * 1e3
+	XY_max = 30e-3 * 185 / 300 * 1e3 / 6
 	X = [-XY_max, XY_max]
 	Y = [-XY_max, XY_max]
 	plot_field_both_paper(foil4_field, extend=[*X, *Y])

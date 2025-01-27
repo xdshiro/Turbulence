@@ -14,9 +14,7 @@ foils_paths = [
 	'data_all_hopfs_basis\\hopf_spectr_before_1e-40_trefoil_standard_12.npy',
 	'data_all_hopfs_basis\\hopf_spectr_before_1e-40_trefoil_optimized.npy',
 ]
-# foils_paths = [
-# 	'data_all_hopfs_basis\\hopf_spectr_before__1e-40_standard_14.npy',
-# ]
+
 for path in foils_paths:
 	foil4_spectrum_sorted = np.load(path)
 

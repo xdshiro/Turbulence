@@ -32,6 +32,8 @@ foils_paths = [
 # foils_paths = [
 # 	'data_all_hopfs_basis\\hopf_spectr__1e-40_standard_14.npy',
 # ]
+
+
 for path in foils_paths:
 	foil4_spectrum_sorted = np.load(path)
 

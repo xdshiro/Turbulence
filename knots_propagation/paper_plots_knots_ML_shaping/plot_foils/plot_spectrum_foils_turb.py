@@ -1,26 +1,28 @@
 from knots_propagation.paper_plots_knots_ML_shaping.plots_functions_general import *
 
 foils_paths = [
-	'foil4_spectr_XY__0.05_[2, 2, 2, 2].npy',
-	'foil4_spectr_XY__0.05_[2, 2, 2, 0].npy',
-	'foil4_spectr_XY__0.05_[2, 1, 2, 0].npy',
-	'foil4_spectr_XY__0.15_[2, 2, 2, 2].npy',
-	'foil4_spectr_XY__0.15_[2, 2, 2, 0].npy',
-	'foil4_spectr_XY__0.15_[2, 1, 2, 0].npy',
-	'foil4_spectr_XY__0.25_[2, 2, 2, 2].npy',
-	'foil4_spectr_XY__0.25_[2, 2, 2, 0].npy',
-	'foil4_spectr_XY__0.25_[2, 1, 2, 0].npy',
+	'data_foils_turb/foil4_spectr_XY__0.05_[2, 2, 2, 2].npy',
+	'data_foils_turb/foil4_spectr_XY__0.05_[2, 2, 2, 0].npy',
+	'data_foils_turb/foil4_spectr_XY__0.05_[2, 1, 2, 0].npy',
+	'data_foils_turb/foil4_spectr_XY__0.15_[2, 2, 2, 2].npy',
+	'data_foils_turb/foil4_spectr_XY__0.15_[2, 2, 2, 0].npy',
+	'data_foils_turb/foil4_spectr_XY__0.15_[2, 1, 2, 0].npy',
+	'data_foils_turb/foil4_spectr_XY__0.25_[2, 2, 2, 2].npy',
+	'data_foils_turb/foil4_spectr_XY__0.25_[2, 2, 2, 0].npy',
+	'data_foils_turb/foil4_spectr_XY__0.25_[2, 1, 2, 0].npy',
 ]
 
-# foils_paths = [
-# 	'foil4_spectr_XY_noturb_[2, 1, 2, 0].npy',
-# ]
+foils_paths = [
+	'data_foils_turb/foil4_spectr_XY__0.05_[2, 2, 2, 2].npy',
+]
 
 
 for path in foils_paths:
 	foil4_spectrum_sorted = np.load(path)
 	
-	plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -10, 10, 0, 10)
+	plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -10, 10, 0, 10
+									 , l1_lim=-6, l2_lim=6, p1_lim=0, p2_lim=6)
+	# plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -10, 10, 0, 10)
 # plotDots_foils_paper_by_phi(foil4
 # _dots, dots_bound, show=True, size=10)
 # print(foil4_dots)

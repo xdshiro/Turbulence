@@ -12,7 +12,7 @@ from matplotlib.colors import LinearSegmentedColormap
 
 foils_paths = [
 	# 'hopf_dots_0.05_trefoil_standard_12.npy',
-	'hopf_dots_0.15_trefoil_standard_12.npy',
+	'data_trefoils_turb\\hopf_dots_0.15_trefoil_standard_12.npy',
 	# 'hopf_dots_0.25_trefoil_standard_12.npy',
 
 ]
@@ -29,4 +29,5 @@ for path in foils_paths:
 		[100, 100, 129],
 	]
 	
-	plot_black_dots_paper(foil4_dots, dots_bound=dots_bound)
+	plot_black_dots_paper(foil4_dots, dots_bound=dots_bound, general_view=True, font_size=48)
+	# plot_black_dots_paper(foil4_dots, dots_bound=dots_bound, general_view=False, font_size=48)

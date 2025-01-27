@@ -26,9 +26,11 @@ knots = [
     'trefoil_standard_12', 'trefoil_optimized'
 ]
 
+# Knot types
 knots = [
     'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'T1', 'T2'
 ]
+
 # Stability data
 stabilities_005 = [101 - 80, 101 - 70 + (70 - 66) / 2, 101 - 81 + 0 / 2,
                    101 - 85 + 4 / 2, 101 - 75, 100 - 40 + (40 - 32) / 2,
@@ -47,29 +49,32 @@ stabilities_025 = [1, 3 + 2 / 2, 1 + 2 / 3,
 
 # Confidence interval function
 def confidence_interval(p, n, confidence_level=0.95):
-    z = norm.ppf((1 + confidence_level) / 2)  # Z-score for confidence level
-    p = np.array(p) / 100  # Convert percentage to proportion
-    se = np.sqrt((p * (1 - p)) / n)  # Standard error
-    ci = z * se  # Confidence interval
-    return ci * 100  # Convert back to percentage
-
-# Parameters
-n_samples = 300
-confidence_level = 0.95
+    from scipy.stats import norm
+    z = norm.ppf((1 + confidence_level) / 2)  # Z-score
+    p = np.array(p) / 100.0                  # Convert to fraction
+    se = np.sqrt((p * (1 - p)) / n)          # Standard error
+    ci = z * se                              # Margin of error
+    return ci * 100                          # Back to %
 
 # Calculate confidence intervals
-stabilities_005_delta = confidence_interval(stabilities_005, n_samples, confidence_level)
-stabilities_015_delta = confidence_interval(stabilities_015, n_samples, confidence_level)
-stabilities_025_delta = confidence_interval(stabilities_025, n_samples, confidence_level)
+n_samples = 300
+stabilities_005_delta = confidence_interval(stabilities_005, n_samples)
+stabilities_015_delta = confidence_interval(stabilities_015, n_samples)
+stabilities_025_delta = confidence_interval(stabilities_025, n_samples)
 
-# Define the space between columns by adjusting the position of each column
-x_shift = 0.27  # Shift factor for column spacing
+# Spacing parameters
+x_shift = 0.27
 width = 0.25
 group_shift = 0.9
-# Plot for stabilities_005 with more space for all three columns
+
+# Define three "Blues" shades (ColorBrewer Blues for 3 categories)
+# You can pick any you like, or lighten/darken them as needed
+blues_colors = ["#deebf7", "#9ecae1", "#3182bd"]
+
+# Build figure
 fig_005 = go.Figure()
 
-# Add bar plot for 0.05 turbulence strength with more spacing
+# ---------- 0.05 Turbulence ----------
 fig_005.add_trace(go.Bar(
     x=[i * group_shift - x_shift for i in range(len(knots))],
     y=stabilities_005,
@@ -77,16 +82,24 @@ fig_005.add_trace(go.Bar(
         type='data',
         array=stabilities_005_delta,
         visible=True,
-        color='black',  # Set error bar color to black for contrast
-        thickness=2,    # Increase thickness
-        width=4,        # Add wider caps for visibility
+        color='black',
+        thickness=2,
+        width=4,
     ),
     name=r"$\sigma_R^2=0.05$",
-    marker=dict(color='teal', line=dict(color='black', width=1)),  # Softer teal color
-    width=width,  # Narrower column width to create more space between columns
+    # name=r"$\sigma_R^2=0.05$",
+    marker=dict(
+        color=blues_colors[0],
+        line=dict(color='black', width=1)  # Black border for each bar
+    ),
+    width=width,
+    # Add the values on top of each bar:
+    text=[f"{val:.1f}" for val in stabilities_005],  # Format to 1 decimal place
+    textposition='outside',        # Place text above the bar
+    textfont=dict(size=14, color='black')
 ))
 
-# Add bar plot for 0.15 turbulence strength with more spacing
+# ---------- 0.15 Turbulence ----------
 fig_005.add_trace(go.Bar(
     x=[i * group_shift for i in range(len(knots))],
     y=stabilities_015,
@@ -94,16 +107,22 @@ fig_005.add_trace(go.Bar(
         type='data',
         array=stabilities_015_delta,
         visible=True,
-        color='black',  # Set error bar color to black for contrast
-        thickness=2,    # Increase thickness
-        width=4,        # Add wider caps for visibility
+        color='black',
+        thickness=2,
+        width=4,
     ),
     name=r"$\sigma_R^2=0.15$",
-    marker=dict(color='salmon', line=dict(color='black', width=1)),  # Softer salmon color
-    width=width,  # Narrower column width to create more space between columns
+    marker=dict(
+        color=blues_colors[1],
+        line=dict(color='black', width=1)
+    ),
+    width=width,
+    text=[f"{val:.1f}" for val in stabilities_015],
+    textposition='outside',
+    textfont=dict(size=14, color='black')
 ))
 
-# Add bar plot for 0.25 turbulence strength with more spacing
+# ---------- 0.25 Turbulence ----------
 fig_005.add_trace(go.Bar(
     x=[i * group_shift + x_shift for i in range(len(knots))],
     y=stabilities_025,
@@ -116,59 +135,63 @@ fig_005.add_trace(go.Bar(
         width=4,
     ),
     name=r"$\sigma_R^2=0.25$",
-    marker=dict(color='lightblue', line=dict(color='black', width=1)),
-    width=width,  # Narrower column width to create more space between columns
+    marker=dict(
+        color=blues_colors[2],
+        line=dict(color='black', width=1)
+    ),
+    width=width,
+    text=[f"{val:.1f}" for val in stabilities_025],
+    textposition='outside',
+    textfont=dict(size=14, color='black')
 ))
 
 fig_005.update_layout(
-    # title="Stability of Optical Knots Under Different Turbulence Strengths",
     xaxis_title="Knot Type",
     yaxis_title="Recovered Knots(%)",
     yaxis_range=[0, 100],
-    font=dict(family='Arial', size=22, color='black'),  # Set all font colors to black
+    font=dict(family='Arial', size=20, color='black'),
     plot_bgcolor='white',
     paper_bgcolor='white',
     xaxis=dict(
-        tickvals=[i * group_shift for i in range(len(knots))],  # Align tick positions with bar groups
-        ticktext=knots,  # Correctly assign tick labels
-        tickangle=45,
+        tickvals=[i * group_shift for i in range(len(knots))],
+        ticktext=knots,
+        tickangle=0,
         showgrid=True,
         gridcolor='lightgray',
-        zeroline=False
+        zeroline=False,
+        # Draw black frame around X-axis:
+        showline=True,
+        linecolor='black',
+        linewidth=1,
+        mirror=True  # Mirror means we also get a top axis line
     ),
     yaxis=dict(
         showgrid=True,
         gridcolor='lightgray',
-        zeroline=False
+        zeroline=False,
+        # Draw black frame around Y-axis:
+        showline=True,
+        linecolor='black',
+        linewidth=1,
+        mirror=True
     ),
     showlegend=True,
     legend=dict(
-        x=0.75,       # Adjust the x-position within the figure
-        y=1,          # Move it down slightly
+        x=0.867,
+        y=0.99,
         bgcolor='rgba(255,255,255,0)',
         bordercolor='black',
         borderwidth=1
     ),
-    bargap=0.15,       # Adjust spacing within groups
-    bargroupgap=0.2    # Adjust spacing between groups
-,
-    margin=dict(
-        l=50,   # Left margin
-        r=10,   # Right margin
-        t=5,   # Top margin
-        b=50    # Bottom margin
-    ),
-    width=1000,         # Set the width of the figure
-    height=650         # Set the height of the figure
+    bargap=0.15,
+    bargroupgap=0.2,
+    margin=dict(l=50, r=10, t=5, b=50),
+    width=1000,
+    height=650
 )
 
-
-
-# Display the plot
-# fig_005.show()
-
-
+# Show figure (uncomment if running interactively)
+fig_005.show()
 
 # Save the plot to a file
-fig_005.write_image("stability_plot_005_015_025.png") #, width=1000, height=650)  # Save as PNG
-# fig_005.write_image("stability_plot_005.pdf")  # Save as PDF
+# fig_005.write_html("stability_plot_005_015_025_2.html")

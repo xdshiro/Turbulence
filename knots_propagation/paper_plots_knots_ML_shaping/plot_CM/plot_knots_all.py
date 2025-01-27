@@ -33,7 +33,10 @@ files_spectre_CNN = [
     {"path": "data\\hopfs_spectr_cnn_all.npz", "label": f"Spectre-based CNN, Knots, Combined,"},
 
 ]
-
+files_spectre_CNN = [
+    {"path": "data\\hopfs_dots_all.npz", "label": f"Shape-based CNN."},
+    {"path": "data\\hopfs_spectr_fc_all.npz", "label": f"Spectre-based FCNN."},
+]
 files = files_spectre_FCNN
 files = files_dots
 files = files_spectre_CNN
@@ -45,5 +48,5 @@ for file in files:
     data = np.load(file["path"])
     cm = data['cm']
     accuracy = calculate_accuracy(cm)
-    label = file["label"] + f" Accuracy={accuracy * 100:0.3}%"
+    label = file["label"] + f" Total Accuracy={accuracy * 100:0.3}%"
     plot_confusion_matrix(cm, class_labels, label=label)
