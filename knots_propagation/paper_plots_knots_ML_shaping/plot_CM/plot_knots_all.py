@@ -13,32 +13,33 @@ def calculate_accuracy(cm):
     return accuracy
 # List of files and their corresponding labels
 files_dots = [
-    {"path": "data\\hopfs_dots_005.npz", "label": f"Shape-based CNN, Knots, $\\sigma_R^2=0.05$,"},
-    {"path": "data\\hopfs_dots_015.npz", "label": f"Shape-based CNN, Knots, $\\sigma_R^2=0.15$,"},
-    {"path": "data\\hopfs_dots_025.npz", "label": f"Shape-based CNN, Knots, $\\sigma_R^2=0.25$,"},
-    {"path": "data\\hopfs_dots_all.npz", "label": f"Shape-based CNN, Knots, Combined,"},
+    {"path": "data\\hopfs_dots_005.npz", "label": f"Shape-based CNN. $\\sigma_R^2=0.05$."},
+    {"path": "data\\hopfs_dots_015.npz", "label": f"Shape-based CNN. $\\sigma_R^2=0.15$."},
+    {"path": "data\\hopfs_dots_025.npz", "label": f"Shape-based CNN. $\\sigma_R^2=0.25$."},
+    # {"path": "data\\hopfs_dots_all.npz", "label": f"Shape-based CNN, Knots, Combined,"},
 
 ]
 files_spectre_FCNN = [
-    {"path": "data\\hopfs_spectr_fc_005.npz", "label": f"Spectre-based FCNN, Knots, $\\sigma_R^2=0.05$,"},
-    {"path": "data\\hopfs_spectr_fc_015.npz", "label": f"Spectre-based FCNN, Knots, $\\sigma_R^2=0.15$,"},
-    {"path": "data\\hopfs_spectr_fc_025.npz", "label": f"Spectre-based FCNN, Knots, $\\sigma_R^2=0.25$,"},
-    {"path": "data\\hopfs_spectr_fc_all.npz", "label": f"Spectre-based FCNN, Knots, Combined,"},
+    {"path": "data\\hopfs_spectr_fc_005.npz", "label": f"Spectre-based FCNN. $\\sigma_R^2=0.05$."},
+    {"path": "data\\hopfs_spectr_fc_015.npz", "label": f"Spectre-based FCNN. $\\sigma_R^2=0.15$."},
+    {"path": "data\\hopfs_spectr_fc_025.npz", "label": f"Spectre-based FCNN. $\\sigma_R^2=0.25$."},
+    # {"path": "data\\hopfs_spectr_fc_all.npz", "label": f"Spectre-based FCNN, Knots, Combined,"},
 
 ]
 files_spectre_CNN = [
-    {"path": "data\\hopfs_spectr_cnn_005.npz", "label": f"Spectre-based CNN, Knots, $\\sigma_R^2=0.05$,"},
-    {"path": "data\\hopfs_spectr_cnn_015.npz", "label": f"Spectre-based CNN, Knots, $\\sigma_R^2=0.15$,"},
-    {"path": "data\\hopfs_spectr_cnn_025.npz", "label": f"Spectre-based CNN, Knots, $\\sigma_R^2=0.25$,"},
-    {"path": "data\\hopfs_spectr_cnn_all.npz", "label": f"Spectre-based CNN, Knots, Combined,"},
+    # {"path": "data\\hopfs_spectr_cnn_005.npz", "label": f"Spectre-based CNN. $\\sigma_R^2=0.05$."},
+    # {"path": "data\\hopfs_spectr_cnn_015.npz", "label": f"Spectre-based CNN. $\\sigma_R^2=0.15$."},
+    # {"path": "data\\hopfs_spectr_cnn_025.npz", "label": f"Spectre-based CNN. $\\sigma_R^2=0.25$."},
+    {"path": "data\\hopfs_spectr_cnn_all.npz", "label": f"Spectre-based CNN."},
 
 ]
-files_spectre_CNN = [
+files_main = [
     {"path": "data\\hopfs_dots_all.npz", "label": f"Shape-based CNN."},
     {"path": "data\\hopfs_spectr_fc_all.npz", "label": f"Spectre-based FCNN."},
 ]
-files = files_spectre_FCNN
 files = files_dots
+files = files_main
+files = files_spectre_FCNN
 files = files_spectre_CNN
 # Class labels
 class_labels = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'T1', 'T2']

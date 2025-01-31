@@ -15,17 +15,16 @@ foils_paths = [
 	'data_foils_noturb/foil4_dots_XY_noturb_[2, 2, 2, 0]_sorted.npy',
 	'data_foils_noturb/foil4_dots_XY_noturb_[2, 1, 2, 0]_sorted.npy',
 ]
-
-foils_paths = [
-	'data_foils_noturb/foil4_dots_XY_noturb_[2, 1, 2, 0]_sorted.npy',
-]
 indices_all = [[70, 230, 390, 550],
                [70, 71, 230, 395],
                [62, 63, 210, 280],
                ]
-
-indices_all = [[62, 63, 210, 280],
-               ]
+# foils_paths = [
+# 	'data_foils_noturb/foil4_dots_XY_noturb_[2, 1, 2, 0]_sorted.npy',
+# ]
+#
+# indices_all = [[62, 63, 210, 280],
+#                ]
 def sort_dots_to_create_line_with_threshold(dots, TH):
 	"""
 	Sort a 3D array of points to create a line in 3D space such that

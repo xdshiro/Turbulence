@@ -9,6 +9,8 @@ import json
 from tqdm import trange
 import itertools
 from matplotlib.colors import LinearSegmentedColormap
+
+
 sigma = 0.25
 foils_paths = [
 	f'data_all_hopfs_basis_turb\\hopf_dots_{sigma}_standard_14.npy',
@@ -26,7 +28,7 @@ foils_paths = [
 ]
 foils_paths = [
 	# f'data_all_hopfs_basis_turb\\hopf_dots_{sigma}_standard_14.npy',
-	f'data_all_hopfs_basis_turb\\hopf_dots_{sigma}_standard_16.npy',
+	### f'data_all_hopfs_basis_turb\\hopf_dots_{sigma}_standard_16.npy',
 	# f'data_all_hopfs_basis_turb\\hopf_dots_{sigma}_standard_18.npy',
 	f'data_all_hopfs_basis_turb\\hopf_dots_{sigma}_30both.npy',
 	# f'data_all_hopfs_basis_turb\\hopf_dots_{sigma}_30oneZ.npy',

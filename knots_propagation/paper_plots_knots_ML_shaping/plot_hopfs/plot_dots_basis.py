@@ -39,4 +39,4 @@ for path in foils_paths:
 		[100 / 2 * 1.5, 100 / 2 * 1.5, 129 / 2 * 1.5],
 	]
 
-	plot_black_dots_paper(foil4_dots, dots_bound=dots_bound)
+	plot_black_dots_paper(foil4_dots, dots_bound=dots_bound, general_view=True)

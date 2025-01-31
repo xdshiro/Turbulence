@@ -13,15 +13,15 @@ def calculate_accuracy(cm):
     return accuracy
 # List of files and their corresponding labels
 files = [
-    {"path": "data\\foils_dots_part_005.npz", "label": f"Shape-based CNN, 'Flowers', r$\\sigma_R^2=0.05$,"},
-    {"path": "data\\foils_dots_part_015.npz", "label": f"Shape-based CNN, 'Flowers', r$\\sigma_R^2=0.15$,"},
-    {"path": "data\\foils_dots_part_025.npz", "label": f"Shape-based CNN, 'Flowers', r$\\sigma_R^2=0.25$,"},
-    {"path": "data\\foils_dots_part_all.npz", "label": f"Shape-based CNN, 'Flowers', Combined,"},
+    {"path": "data\\foils_dots_part_005.npz", "label": f"Shape-based CNN. $\\sigma_R^2=0.05$."},
+    {"path": "data\\foils_dots_part_015.npz", "label": f"Shape-based CNN. $\\sigma_R^2=0.15$."},
+    {"path": "data\\foils_dots_part_025.npz", "label": f"Shape-based CNN. $\\sigma_R^2=0.25$."},
+    {"path": "data\\foils_dots_part_all.npz", "label": f"Shape-based CNN."},
 
 ]
-files = [
-{"path": "data\\foils_dots_part_all.npz", "label": f"Shape-based CNN."},
-]
+# files = [
+# {"path": "data\\foils_dots_part_all.npz", "label": f"Shape-based CNN."},
+# ]
 # Class labels
 class_labels = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'T1', 'T2']
 class_labels = list(itertools.product(range(3), repeat=4))

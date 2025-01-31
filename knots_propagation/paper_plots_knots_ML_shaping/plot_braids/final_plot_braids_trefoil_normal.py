@@ -339,17 +339,37 @@ if 1:
 
     width = 30
     scale = 1.6
-    color1 = ([0, '#660000'], [1, '#ff0000'])
-    color2 = ([0, '#000099'], [1, '#007dff'])
-    '#134a0d'
-    # Define yellow to orange for color3
-    color3_start = '#ffff00'  # Yellow
-    color3_end = '#ff9900'  # Orange
-    color3_mid = interpolate_color(color3_start, color3_end, 0.5)  # Midpoint for yellow to orange
-    color31 = ([0, color3_start], [1, color3_mid])  # Red to dark purple
-    color32 = ([0, color3_mid], [1, color3_end])  # Dark purple to green
-    
-    color4 = ([0, '#134a0d'], [1, '#19ff19'])
+    # color1 = ([0, '#660000'], [1, '#ff0000'])
+    # color2 = ([0, '#000099'], [1, '#007dff'])
+    # '#134a0d'
+    # # Define yellow to orange for color3
+    # color3_start = '#ffff00'  # Yellow
+    # color3_end = '#ff9900'  # Orange
+    # color3_mid = interpolate_color(color3_start, color3_end, 0.5)  # Midpoint for yellow to orange
+    # color31 = ([0, color3_start], [1, color3_mid])  # Red to dark purple
+    # color32 = ([0, color3_mid], [1, color3_end])  # Dark purple to green
+    #
+    # color4 = ([0, '#134a0d'], [1, '#19ff19'])
+    colors = [
+        "#6baed6",  # Medium blue from Blues
+        "#666666",  # Medium gray (between #555555 and #808080)
+        "#08519c",  # Darker blue from Blues
+        "#000000",  # Black
+    ]
+
+    # Replace color definitions with new colors
+    color1 = ([0, colors[0]], [1, colors[0]])  # Black to darker blue
+    color2 = ([0, colors[1]], [1, colors[1]])  # Darker blue to medium blue
+
+    # Interpolate for a gradient from blue to gray
+    color3_start = colors[2]  # Medium blue
+    color3_end = colors[2]  # Medium gray
+    color3_mid = interpolate_color(color3_start, color3_end, 0.5)  # Midpoint
+
+    color31 = ([0, color3_start], [1, color3_mid])  # Blue to midpoint
+    color32 = ([0, color3_mid], [1, color3_end])  # Midpoint to gray
+
+    color4 = ([0, colors[3]], [1, colors[3]])  # Medium gray to medium blue
 
     dots1 = np.stack([x1, y1, z1], axis=1)
     dots2 = np.stack([x2, y2, z2], axis=1)

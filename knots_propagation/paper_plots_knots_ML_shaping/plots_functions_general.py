@@ -613,7 +613,7 @@ def plot_confusion_matrix(cm, class_labels, label='', figsize=(20, 18), cmap="Bl
 	plt.show()
 
 
-def plot_confusion_matrix_big(cm, class_labels, label='', figsize=(40 ,35), cmap="Blues",
+def plot_confusion_matrix_big(cm, class_labels, label='', figsize=(40 ,35.5), cmap="Blues",
 						  annot_fontsize=fopts):
 	"""
 	Plot the confusion matrix with custom font sizes and class labels.

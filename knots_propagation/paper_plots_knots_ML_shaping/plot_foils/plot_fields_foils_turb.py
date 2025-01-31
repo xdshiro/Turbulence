@@ -12,21 +12,21 @@ from matplotlib.colors import LinearSegmentedColormap
 
 foils_paths = [
 	'data_foils_turb/foil4_field_XY_0.05_[2, 2, 2, 2].npy',
-	'data_foils_turb/foil4_field_XY_0.05_[2, 2, 2, 0].npy',
+	# 'data_foils_turb/foil4_field_XY_0.05_[2, 2, 2, 0].npy',
 	'data_foils_turb/foil4_field_XY_0.05_[2, 1, 2, 0].npy',
 'data_foils_turb/foil4_field_XY_0.15_[2, 2, 2, 2].npy',
-	'data_foils_turb/foil4_field_XY_0.15_[2, 2, 2, 0].npy',
+	# 'data_foils_turb/foil4_field_XY_0.15_[2, 2, 2, 0].npy',
 	'data_foils_turb/foil4_field_XY_0.15_[2, 1, 2, 0].npy',
 'data_foils_turb/foil4_field_XY_0.25_[2, 2, 2, 2].npy',
-	'data_foils_turb/foil4_field_XY_0.25_[2, 2, 2, 0].npy',
+	# 'data_foils_turb/foil4_field_XY_0.25_[2, 2, 2, 0].npy',
 	'data_foils_turb/foil4_field_XY_0.25_[2, 1, 2, 0].npy',
 ]
 
-foils_paths = [
-	'data_foils_turb/foil4_field_XY_0.05_[2, 2, 2, 2].npy',
-# 'foil4_field_XY_0.15_[2, 2, 2, 2].npy',
-# 'foil4_field_XY_0.25_[2, 2, 2, 2].npy',
-]
+# foils_paths = [
+# 	'data_foils_turb/foil4_field_XY_0.05_[2, 2, 2, 2].npy',
+# # 'foil4_field_XY_0.15_[2, 2, 2, 2].npy',
+# # 'foil4_field_XY_0.25_[2, 2, 2, 2].npy',
+# ]
 
 for path in foils_paths:
 	foil4_field = np.load(path)

@@ -18,7 +18,7 @@ foils_paths = [
 ]
 foils_paths = [
 	# f'data_all_hopfs_basis_turb\\hopf_spectr_{sigma}_standard_14.npy',
-	f'data_all_hopfs_basis_turb\\hopf_spectr_{sigma}_standard_16.npy',
+	#### f'data_all_hopfs_basis_turb\\hopf_spectr_{sigma}_standard_16.npy',
 	# f'data_all_hopfs_basis_turb\\hopf_spectr_{sigma}_standard_18.npy',
 	f'data_all_hopfs_basis_turb\\hopf_spectr_{sigma}_30both.npy',
 	# f'data_all_hopfs_basis_turb\\hopf_spectr_{sigma}_30oneZ.npy',
@@ -37,7 +37,7 @@ foils_paths = [
 for path in foils_paths:
 	foil4_spectrum_sorted = np.load(path)
 
-	plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -6, 6, 0, 6, every_ticks=True)
+	plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -6, 6, 0, 6, every_ticks=False)
 # plotDots_foils_paper_by_phi(foil4
 # _dots, dots_bound, show=True, size=10)
 # print(foil4_dots)

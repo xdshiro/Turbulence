@@ -5,9 +5,9 @@ foils_paths = [
 	'data_foils_noturb/foil4_spectr_XY_noturb_[2, 1, 2, 0].npy',
 ]
 
-foils_paths = [
-	'data_foils_noturb/foil4_spectr_XY_noturb_[2, 2, 2, 2].npy',
-]
+# foils_paths = [
+# 	'data_foils_noturb/foil4_spectr_XY_noturb_[2, 2, 2, 2].npy',
+# ]
 
 
 for path in foils_paths:
@@ -15,7 +15,7 @@ for path in foils_paths:
 	plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -10, 10, 0, 10
 									 , l1_lim=-6, l2_lim=6, p1_lim=0, p2_lim=6
 									 , figsize=(10, 5.5))
-	# plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -10, 10, 0, 10)
+	plot_shifted_paper_grid_spectrum(foil4_spectrum_sorted, -10, 10, 0, 10, figsize=(10 * 1.5, 5.5 * 1.5))
 # plotDots_foils_paper_by_phi(foil4
 # _dots, dots_bound, show=True, size=10)
 # print(foil4_dots)

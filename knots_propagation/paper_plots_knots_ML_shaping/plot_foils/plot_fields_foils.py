@@ -6,12 +6,12 @@ foils_paths = [
 	'data_foils_noturb/foil4_field_XY_noturb_[2, 2, 2, 0].npy',
 	'data_foils_noturb/foil4_field_XY_noturb_[2, 1, 2, 0].npy',
 ]
-foils_paths = [
-	'data_foils_noturb/foil4_field_XY_noturb_[2, 2, 2, 2].npy',
-]
-foils_paths = [
-	'data_foils_noturb/foil4_field_XY_noturb_[2, 1, 2, 0].npy',
-]
+# foils_paths = [
+# 	'data_foils_noturb/foil4_field_XY_noturb_[2, 2, 2, 2].npy',
+# ]
+# foils_paths = [
+# 	'data_foils_noturb/foil4_field_XY_noturb_[2, 1, 2, 0].npy',
+# ]
 
 for path in foils_paths:
 	foil4_field = np.load(path)

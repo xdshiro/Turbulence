@@ -46,7 +46,7 @@ err_015 = confidence_interval(stabilities_015, n_samples)
 err_025 = confidence_interval(stabilities_025, n_samples)
 
 # ========== LAYOUT SETTINGS ==========
-fig, ax = plt.subplots(figsize=(28, 8))
+fig, ax = plt.subplots(figsize=(26, 7))
 
 # Increase bar width and reduce spacing between groups
 width = 0.25
