@@ -199,8 +199,9 @@ def process_folder(folder_path, window_size, xy_lim_2D_origin, rescale_size, one
 # Main Script
 # ---------------------------------
 if __name__ == "__main__":
-	# plot = True
-	# save = False
+	plot = True
+	save = False
+	one = True
 	# Toggle plot and save options
 	plot = False
 	save = True
@@ -209,7 +210,8 @@ if __name__ == "__main__":
 	# Main folder path containing subfolders
 	main_folder_path = 'C:/Users/Cmex-/Box/Flowers Exp/T_30/'
 	main_folder_path = 'C:/Users/Cmex-/Box/Flowers Exp/T_30_'
-	folder_save = 'all_flowers20_005'
+	main_folder_path = 'C:/Users/Cmex-/Box/Flowers Exp/T65_20_each'
+	folder_save = 'all_flowers20_025'
 	
 	# Create output folder if it doesn't exist
 	
