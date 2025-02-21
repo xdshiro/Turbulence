@@ -33,6 +33,18 @@ stabilities_025 = [1, 3 + 2 / 2, 1 + 2 / 3,
                    2 + 1 / 3, 4 + 0 / 2, 1 + 1 / 3,
                    1 + 0 / 2, 3 + 2 / 2]
 
+avg_005 = np.array(stabilities_005).mean()
+avg_015 = np.array(stabilities_015).mean()
+avg_025 = np.array(stabilities_025).mean()
+
+# Compute the overall average stability (mean of the three averages)
+overall_avg = np.mean([avg_005, avg_015, avg_025])
+
+print("Average stability (σ_R² = 0.05):", avg_005)
+print("Average stability (σ_R² = 0.15):", avg_015)
+print("Average stability (σ_R² = 0.25):", avg_025)
+print("Overall average stability:", overall_avg)
+
 def confidence_interval(p, n, confidence_level=0.95):
     z = norm.ppf((1 + confidence_level) / 2)
     p = np.array(p) / 100

@@ -2096,6 +2096,255 @@ def unknot_4_any(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False,
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
     return weights_important
 
+
+def unknot_6_any(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False,
+                 angle_size=(2, 2, 2, 2, 2, 2), cmap='jet'):
+    """
+    Create a 6-lobe structure from the input 3D mesh.
+
+    Parameters:
+      mesh_3D      : tuple of arrays representing the 3D meshgrid.
+      braid_func   : function for the braid operation.
+      modes_cutoff : threshold for selecting mode weights.
+      plot         : whether to produce plots.
+      angle_size   : a 6-element tuple controlling modifications in each lobe.
+                     For each element:
+                        2 = do nothing,
+                        1 = lobe_smaller,
+                        0 = lobe_remove.
+      cmap         : colormap to use for plotting.
+
+    Returns:
+      weights_important : dictionary with keys 'l', 'p', and 'weight' describing the modes.
+    """
+
+    # Optionally rotate the original mesh (here with zero rotations)
+    mesh_3D_new = rotate_meshgrid(*mesh_3D, np.radians(0), np.radians(0), np.radians(0))
+
+    # Define the angular sectors for the 6 lobes.
+    angles_dict = {
+        0: [(-np.pi / 6, np.pi / 6)],  # Lobe centered at 0
+        1: [(np.pi / 6, np.pi / 2)],  # Lobe centered at π/3
+        2: [(np.pi / 2, 5 * np.pi / 6)],  # Lobe centered at 2π/3
+        3: [(5 * np.pi / 6, np.pi), (-np.pi, -5 * np.pi / 6)],  # Lobe centered at π (split due to periodicity)
+        4: [(-5 * np.pi / 6, -np.pi / 2)],  # Lobe centered at -2π/3
+        5: [(-np.pi / 2, -np.pi / 6)]  # Lobe centered at -π/3
+    }
+
+    # Modify the mesh in each lobe according to the corresponding entry in angle_size.
+    for angle, size in enumerate(angle_size):
+        for ang in angles_dict[angle]:
+            if size == 2:
+                continue
+            elif size == 1:
+                mesh_3D_new = lobe_smaller(mesh_3D_new, ang[0], ang[1],
+                                           rot_x=0, rot_y=0, rot_z=0)
+            elif size == 0:
+                mesh_3D_new = lobe_remove(mesh_3D_new, ang[0], ang[1],
+                                          rot_x=0, rot_y=0, rot_z=0)
+            else:
+                print(f"Invalid size {size} for angle index {angle}")
+
+    # Build the field using the braid function and additional factors.
+    xyz_array = [
+        (mesh_3D_new[0], mesh_3D_new[1], mesh_3D_new[2]),
+    ]
+    # Starting angle for each braid
+    angle_array = np.array([0])
+    # Powers in cosine and sine terms
+    power = 6
+    pow_cos_array = [power]
+    pow_sin_array = [power]
+    # Flag to indicate conjugation
+    conj_array = [0]
+    # Additional phase shifts (as in your paper)
+    theta_array = [0.0 * np.pi, 0 * np.pi]
+    # Braid scaling factors
+    a_cos_array = [1]
+    a_sin_array = [1]
+
+    ans = 1
+    for i, xyz in enumerate(xyz_array):
+        if conj_array[i]:
+            ans *= np.conjugate(braid_func(*xyz, angle_array[i],
+                                           pow_cos_array[i], pow_sin_array[i],
+                                           theta_array[i], a_cos_array[i], a_sin_array[i]))
+        else:
+            ans *= braid_func(*xyz, angle_array[i],
+                              pow_cos_array[i], pow_sin_array[i],
+                              theta_array[i], a_cos_array[i], a_sin_array[i])
+
+    # Multiply by a radial scaling factor
+    R = np.sqrt(mesh_3D[0] ** 2 + mesh_3D[1] ** 2)
+    ans *= (1 + R ** 2) ** power
+
+    # Use a Laguerre–Gaussian (LG) envelope (adjust parameters as needed)
+    ws = {
+        0: 3,
+        1: 2.6,
+        2: 2.6 ** (1 / 2),
+        3: 1.2,
+        4: 0.85,
+        5: 0.75,
+        6: 0.65,
+    }
+    w = ws[power]
+    ans *= LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
+
+    # Set the moments for the spectrum calculation.
+    moments = {'p': (0, 10), 'l': (-10, 10)}
+    _, _, res_z_3D = np.shape(mesh_3D_new[0])
+    x_2D = mesh_3D[0][:, :, 0]
+    y_2D = mesh_3D[1][:, :, 0]
+
+    if plot:
+        plot_field_both(ans[:, :, res_z_3D // 2])
+
+    # Calculate the LG spectrum
+    values = cbs.LG_spectrum(ans[:, :, res_z_3D // 2],
+                             **moments, mesh=(x_2D, y_2D),
+                             plot=plot, width=w, k0=1, cmap=cmap)
+
+    # Extract significant mode components.
+    l_save = []
+    p_save = []
+    weight_save = []
+    moment0 = moments['l'][0]
+    for l, p_array in enumerate(values):
+        for p, value in enumerate(p_array):
+            if abs(value) > modes_cutoff * abs(values).max():
+                l_save.append(l + moment0)
+                p_save.append(p)
+                weight_save.append(value)
+    weight_save = np.array(weight_save) / (np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100)
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+
+    return weights_important
+
+
+def unknot_5_any(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False,
+                 angle_size=(2, 2, 2, 2, 2), cmap='jet'):
+    """
+    Create a 5-lobe structure from the input 3D mesh.
+
+    Parameters:
+      mesh_3D      : tuple of arrays representing the 3D meshgrid.
+      braid_func   : function for the braid operation.
+      modes_cutoff : threshold for selecting mode weights.
+      plot         : whether to produce plots.
+      angle_size   : a 5-element tuple controlling modifications in each lobe.
+                     For each element:
+                        2 = do nothing,
+                        1 = lobe_smaller,
+                        0 = lobe_remove.
+      cmap         : colormap to use for plotting.
+
+    Returns:
+      weights_important : dictionary with keys 'l', 'p', and 'weight' describing the modes.
+    """
+    # Optionally rotate the original mesh (here with zero rotations)
+    mesh_3D_new = rotate_meshgrid(*mesh_3D, np.radians(0), np.radians(0), np.radians(0))
+
+    # Partition the full circle into 5 equal sectors.
+    # Here we divide the interval [-pi, pi] into 5 equal parts.
+    # The boundaries are: -pi, -pi + 2π/5, -pi + 4π/5, -pi + 6π/5, -pi + 8π/5, π.
+    angles_dict = {
+        0: [(-np.pi, -np.pi + 2 * np.pi / 5)],               # Sector 0: [-π, -π+0.4π]
+        1: [(-np.pi + 2 * np.pi / 5, -np.pi + 4 * np.pi / 5)],   # Sector 1: [-π+0.4π, -π+0.8π]
+        2: [(-np.pi + 4 * np.pi / 5, -np.pi + 6 * np.pi / 5)],   # Sector 2: [-π+0.8π, -π+1.2π] => centered at 0
+        3: [(-np.pi + 6 * np.pi / 5, -np.pi + 8 * np.pi / 5)],   # Sector 3: [-π+1.2π, -π+1.6π]
+        4: [(-np.pi + 8 * np.pi / 5, np.pi)]                   # Sector 4: [-π+1.6π, π]
+    }
+
+    # Modify the mesh in each sector according to the corresponding entry in angle_size.
+    for angle, size in enumerate(angle_size):
+        for ang in angles_dict[angle]:
+            if size == 2:
+                continue
+            elif size == 1:
+                mesh_3D_new = lobe_smaller(mesh_3D_new, ang[0], ang[1],
+                                           rot_x=0, rot_y=0, rot_z=0)
+            elif size == 0:
+                mesh_3D_new = lobe_remove(mesh_3D_new, ang[0], ang[1],
+                                          rot_x=0, rot_y=0, rot_z=0)
+            else:
+                print(f"Invalid size {size} for angle index {angle}")
+
+    # Build the field using the braid function and additional factors.
+    xyz_array = [
+        (mesh_3D_new[0], mesh_3D_new[1], mesh_3D_new[2]),
+    ]
+    # Starting angle for each braid
+    angle_array = np.array([0])
+    # Set the power (which now matches the 5-lobe structure)
+    power = 5
+    pow_cos_array = [power]
+    pow_sin_array = [power]
+    # Flag to indicate conjugation
+    conj_array = [0]
+    # Additional phase shifts (as in your paper)
+    theta_array = [0.0 * np.pi, 0 * np.pi]
+    # Braid scaling factors
+    a_cos_array = [1]
+    a_sin_array = [1]
+
+    ans = 1
+    for i, xyz in enumerate(xyz_array):
+        if conj_array[i]:
+            ans *= np.conjugate(braid_func(*xyz, angle_array[i],
+                                           pow_cos_array[i], pow_sin_array[i],
+                                           theta_array[i], a_cos_array[i], a_sin_array[i]))
+        else:
+            ans *= braid_func(*xyz, angle_array[i],
+                              pow_cos_array[i], pow_sin_array[i],
+                              theta_array[i], a_cos_array[i], a_sin_array[i])
+
+    # Multiply by a radial scaling factor
+    R = np.sqrt(mesh_3D[0] ** 2 + mesh_3D[1] ** 2)
+    ans *= (1 + R ** 2) ** power
+
+    # Use a Laguerre–Gaussian (LG) envelope (adjust parameters as needed)
+    ws = {
+        0: 3,
+        1: 2.6,
+        2: 2.6 ** (1 / 2),
+        3: 1.2,
+        4: 0.85,
+        5: 0.75,
+        6: 0.65,
+    }
+    w = ws[power]
+    ans *= LG_simple(*mesh_3D[:2], 0, l=0, p=0, width=w, k0=1, x0=0, y0=0, z0=0)
+
+    # Set the moments for the spectrum calculation.
+    moments = {'p': (0, 10), 'l': (-10, 10)}
+    _, _, res_z_3D = np.shape(mesh_3D_new[0])
+    x_2D = mesh_3D[0][:, :, 0]
+    y_2D = mesh_3D[1][:, :, 0]
+
+    if plot:
+        plot_field_both(ans[:, :, res_z_3D // 2])
+
+    # Calculate the LG spectrum
+    values = cbs.LG_spectrum(ans[:, :, res_z_3D // 2],
+                             **moments, mesh=(x_2D, y_2D),
+                             plot=plot, width=w, k0=1, cmap=cmap)
+
+    # Extract significant mode components.
+    l_save = []
+    p_save = []
+    weight_save = []
+    moment0 = moments['l'][0]
+    for l, p_array in enumerate(values):
+        for p, value in enumerate(p_array):
+            if abs(value) > modes_cutoff * abs(values).max():
+                l_save.append(l + moment0)
+                p_save.append(p)
+                weight_save.append(value)
+    weight_save = np.array(weight_save) / (np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100)
+    weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
+
+    return weights_important
 def braids_testing(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=False, cmap='jet'):
     mesh_3D_new1 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
     mesh_3D_new2 = rotate_meshgrid(*mesh_3D, np.radians(00), np.radians(00), np.radians(0))
