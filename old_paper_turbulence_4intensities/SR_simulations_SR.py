@@ -1,13 +1,6 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from aotools.turbulence import phasescreen
-from scipy.special import laguerre
-from aotools import opticalpropagation
-from aotools.turbulence.phasescreen import ft_phase_screen as ps
-from aotools.turbulence.phasescreen import ft_sh_phase_screen as psh
-from functions.functions_turbulence import *
+
 from functions.all_knots_functions import *
-import math
+
 
 def crop_field_3d(field_3d, crop_percentage):
     # Get the shape of the field_3d
@@ -131,6 +124,7 @@ Rytov_values = [0.025, 0.05, 0.1, 0.15, 0.2]
 SR_values = [88, 80, 70]  # 135
 Rytov_values = [0.03, 0.052, 0.091]  # 135
 Rytov_values = [0.05, 0.1, 0.15]  # 270
+Rytov_values = [0.086, 0.161, 0.28]  # 540
 Rytov_values = [0.086, 0.161, 0.28]  # 540
 # Rytov_values = [0.052]
 # [1.73, 3.13]

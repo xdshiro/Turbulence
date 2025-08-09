@@ -21,10 +21,10 @@ foils_paths = [
 	# 'data_foils_turb/foil4_dots_XY__0.25_[2, 2, 2, 0].npy',
 	'data_foils_turb/foil4_dots_XY__0.25_[2, 1, 2, 0].npy',
 ]
-# foils_paths = [
-# 	'data_foils_turb/foil4_dots_XY__0.05_[2, 2, 2, 2].npy',
-#
-# ]
+foils_paths = [
+	'data_foils_turb/foil4_dots_XY__0.05_[2, 2, 2, 2].npy',
+
+]
 
 
 # foils_paths = [

@@ -29,6 +29,9 @@ foils_paths = [
 
 ]
 
+foils_paths = [
+	'data_all_hopfs_basis\\hopf_field_1e-40_trefoil_standard_12.npy',
+]
 for path in foils_paths:
 	foil4_field = np.load(path)
 	foil4_field = foil4_field / np.max(np.abs(foil4_field))
@@ -36,4 +39,5 @@ for path in foils_paths:
 	X = [-XY_max, XY_max]
 	Y = [-XY_max, XY_max]
 	# plot_field_both_paper(foil4_field, extend=[*X, *Y], colorbars='amplitude')
-	plot_field_both_paper(foil4_field, extend=[*X, *Y], colorbars='phase')
+	plot_field_both_paper(foil4_field, extend=[*X, *Y], colorbars='both')
+	plot_field_both_paper_separate(foil4_field, extend=[*X, *Y], colorbars='both')

@@ -1972,7 +1972,7 @@ def trefoil_optimized_new(mesh_3D, braid_func=braid, modes_cutoff=0.01, plot=Fal
     weight_save = [1.35, -3.93, 7.48, -3.29, -4.02, -0.23, -0.47] #all step 0.5
     weight_save = [1.13, -4.02, 7.32, -3.48, -3.69, 0.0, -0.43] #all but 6 step 0.5
     weight_save = [1.05, -4.05, 7.48, -3.03, -4.03, -1.19, 0.0] #all but 7 step 0.5
-    
+    weight_save = [1.31, -3.95, 7.49, -3.27, -4.01, -1.24, 0.51]
     weight_save /= np.sqrt(np.sum(np.array(weight_save) ** 2)) * 100
     weights_important = {'l': l_save, 'p': p_save, 'weight': weight_save}
     return weights_important
@@ -2409,8 +2409,8 @@ if __name__ == "__main__":
 
     x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-7.0, 7.0), (-7.0, 7.0), (-2.0, 2.0)
     # x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-10.0, 10.0), (-10.0, 10.0), (-2.0, 2.0)
-    # x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-5.0, 5.0), (-5.0, 5.0), (-2.0, 2.0)
-    res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 90, 90, 40
+    # x_lim_3D_knot, y_lim_3D_knot, z_lim_3D_knot = (-4.0, 4.0), (-4.0, 4.0), (-2.0, 2.0)
+    res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 120, 120, 90
     # res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 120, 120, 90
     # res_x_3D_knot, res_y_3D_knot, res_z_3D_knot = 100, 100, 100
     if res_z_3D_knot != 1:
@@ -2431,8 +2431,18 @@ if __name__ == "__main__":
     # values = unknot_4_any(mesh_3D_knot, braid_func=braid, plot=True,
     #                       angle_size=(2, 1, 2, 0))
     # values = trefoil_optimized_new(mesh_3D_knot, braid_func=braid, plot=True)
-    values = braids_testing(mesh_3D_knot, braid_func=braid, plot=True)
-    # field = trefoil_standard_12_phase_only(mesh_3D_knot, braid_func=braid, plot=True)
+    # values = braids_testing(mesh_3D_knot, braid_func=braid, plot=True)
+
+    # values = trefoil_optimized_new(mesh_3D_knot, braid_func=braid, plot=True)
+    values = trefoil_optimized(mesh_3D_knot, braid_func=braid, plot=True)
+    field = field_knot_from_weights(
+        values, mesh_3D_knot, width0, k0=k0, x0=0, y0=0, z0=z0
+    )
+    from knots_propagation.paper_plots_knots_ML_shaping.plots_functions_general import *
+
+    plot_field_both_paper(field[:, :, res_z_3D_knot // 2],
+                          extend=[-7 / np.sqrt(2), 7 / np.sqrt(2), -7 / np.sqrt(2), 7 / np.sqrt(2)], colorbars='both')
+    exit()
     # beam_par = (0, 0, width0, 1)
     # psh_par_0 = (1 * 1e100, res_x_3D_knot, (x_lim_3D_knot[1] - x_lim_3D_knot[0]) / res_x_3D_knot, 1, 1 * 1e100)
     # field = beam_expander(field[:, :, res_z_3D_knot // 2], beam_par, psh_par_0, distance_both=5, steps_one=20)
@@ -2441,12 +2451,10 @@ if __name__ == "__main__":
     # p = [0, 2]
     # weights = [1, 1]
     # values = field_combination_LG(l, p, weights)
-    field = field_knot_from_weights(
-        values, mesh_3D_knot, width0, k0=k0, x0=0, y0=0, z0=z0
-    )
+
     # grad_x, grad_y = np.gradient(field[:, :, res_z_3D_knot // 2])
     # magnitude = np.sqrt(np.abs(grad_x) ** 2 + np.abs(grad_y) ** 2)
-    # plot_field_both(field[:, :, res_z_3D_knot // 2])
+    plot_field_both(field[:, :, res_z_3D_knot // 2])
     # plot_field_both(field[:, :, res_z_3D_knot // 4])
     # plot_field_both(field[:, :, 0])
     # plot_field_both(magnitude)

@@ -180,6 +180,11 @@ knots = [
 	'trefoil_standard_12',
 	'trefoil_optimized',
 ]
+knots = [
+
+	'15oneZ',  # 7
+
+]
 Rytovs = [0.05]  # , 0.2]
 Rytovs = [0.03, 0.052, 0.091]  # 135
 # Rytovs = [0.0000005]  # 540
@@ -296,6 +301,7 @@ for Rytov in Rytovs:
 			field_before_prop_spec_before, **moments, mesh=mesh_2D_original_spec, plot=False, width=width0, k0=k0,
 			functions=LG_simple, x0=0, y0=0, z0=z0
 		)
+
 		# print(values)
 		spectrum1 = spectrum1 / np.sqrt(np.sum(np.abs(spectrum1) ** 2)) * 100
 		vmin, vmax = 0, np.abs(spectrum1).max()
@@ -308,6 +314,23 @@ for Rytov in Rytovs:
 		plt.yticks(np.arange(p1, p2 + 1))
 		plt.xticks(np.arange(l1, l2 + 1))
 		plt.show()
+
+
+		p_values = np.arange(p1, p2 + 1)
+		l_values = np.arange(l1, l2 + 1)
+
+		# Compute absolute values of moments
+		abs_moments = np.abs(spectrum1)
+		valid_indices = np.argwhere(abs_moments > 1)
+		# Extract (l, p) pairs and moments, sorting first by p then by l
+		sorted_indices = sorted(valid_indices, key=lambda x: (x[0], x[1]))
+		lp_pairs = [(l_values[i], p_values[j]) for i, j in sorted_indices]
+		weights = np.array([spectrum1[i, j] for i, j in sorted_indices])
+		print(np.angle(weights) / np.pi)
+		# Print results
+		print("Pairs (l, p):", lp_pairs)
+		print("Weights:", np.round(weights / 10, 3))
+		continue
 		np.save(f'hopf_spectr_before_{Rytov}_{knot}.npy', spectrum1)
 		
 		# if plot:

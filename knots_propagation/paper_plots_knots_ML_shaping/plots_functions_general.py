@@ -478,6 +478,7 @@ def plot_field_both_paper(E, extend=None, colorbars='phase', figsize=(10, 9),
 	im_phase = ax.imshow(np.angle(E).T,
 						 extent=extend,
 						 cmap='gray',
+						 # cmap='hsv',
 						 vmin=-np.pi,
 						 vmax=np.pi)
 
@@ -502,12 +503,15 @@ def plot_field_both_paper(E, extend=None, colorbars='phase', figsize=(10, 9),
 						  width="35%",
 						  height="35%",
 						  loc="upper left",
+						  # loc="upper right",
 						  bbox_to_anchor=(0.0, 0.0, 1.0, 1.0),
+						  # bbox_to_anchor=(-0.1, 0.0, 1.0, 1.0),
 						  bbox_transform=ax.transAxes)
 
 	im_amp = inset_ax.imshow(np.abs(E).T,
 							 extent=extend,
 							 cmap=my_cmap)  # or your custom my_cmap
+							 # cmap='magma')  # or your custom my_cmap
 
 	inset_ax.set_xticks([])
 	inset_ax.set_yticks([])
@@ -518,18 +522,147 @@ def plot_field_both_paper(E, extend=None, colorbars='phase', figsize=(10, 9),
 	for spine in inset_ax.spines.values():
 		spine.set_edgecolor('white')
 		spine.set_linewidth(1)
-
-	# Create AMPLITUDE colorbar only if requested
 	if colorbars in ('amplitude', 'both'):
-		# Place colorbar on the main axis's side as well:
-		cbar_amp = fig.colorbar(im_phase, ax=ax,fraction=0.1, pad=0.01, aspect=20)
+		# Create an inset axis for the amplitude colorbar on the right of the inset
+		cax = inset_axes(inset_ax,
+						 width="10%",  # Adjust width as needed
+						 height="80%",  # Same height as inset_ax
+						 loc='lower left',
+						 bbox_to_anchor=(1.02, 0.1, 1, 1),
+
+						 bbox_transform=inset_ax.transAxes,
+						 borderpad=0)
+		# Use the amplitude image (im_amp) for the colorbar
+		cbar_amp = fig.colorbar(im_amp, cax=cax)
 		cbar_amp.set_ticks([0, 1])
 		cbar_amp.ax.tick_params(labelsize=ticksFontSize)
-		# Optionally set amplitude ticks:
-		# cbar_amp.set_ticks([0, 1])
-		# cbar_amp.set_label('|E|', fontsize=xyLabelFontSize)
-	# ax.set_anchor('SW')
+	# # Create AMPLITUDE colorbar only if requested
+	# if colorbars in ('amplitude', 'both'):
+	# 	# Place colorbar on the main axis's side as well:
+	# 	cbar_amp = fig.colorbar(im_phase, ax=ax,fraction=0.1, pad=0.01, aspect=20)
+	# 	cbar_amp.set_ticks([0, 1])
+	# 	cbar_amp.ax.tick_params(labelsize=ticksFontSize)
+	# 	# Optionally set amplitude ticks:
+	# 	# cbar_amp.set_ticks([0, 1])
+	# 	# cbar_amp.set_label('|E|', fontsize=xyLabelFontSize)
+	# # ax.set_anchor('SW')
 	plt.show()
+
+def plot_field_both_paper_separate(E, extend=None, colorbars='phase', figsize=(17, 8),
+                                   xyLabelFontSize=fopts, ticksFontSize=tick_fopts):
+	"""
+	Plots:
+	  - Phase of E on the left panel
+	  - Amplitude of E on the right panel
+
+	colorbars can be:
+	  'none'       -> No colorbars
+	  'amplitude'  -> Only amplitude colorbar
+	  'phase'      -> Only phase colorbar
+	  'both'       -> Both colorbars
+	"""
+
+	# Create figure and axes
+	fig, (ax_phase, ax_amp) = plt.subplots(1, 2, figsize=figsize, constrained_layout=True)
+
+	# -- PHASE PLOT --
+	im_phase = ax_phase.imshow(np.angle(E).T,
+							   extent=extend,
+							   cmap='gray',
+							   vmin=-np.pi,
+							   vmax=np.pi)
+
+	if colorbars in ('phase', 'both'):
+		cbar_phase = fig.colorbar(im_phase, ax=ax_phase, fraction=0.046, pad=0.04)
+		cbar_phase.ax.tick_params(labelsize=ticksFontSize)
+		cbar_phase.set_ticks([-np.pi, 0, np.pi])
+		cbar_phase.set_ticklabels([r'$-\pi$', r'$0$', r'$\pi$'])
+
+	ax_phase.set_xlabel('$x/w_0$', fontsize=xyLabelFontSize)
+	ax_phase.set_ylabel('$y/w_0$', fontsize=xyLabelFontSize)
+	ax_phase.tick_params(axis='both', labelsize=ticksFontSize)
+	ax_phase.set_xticks([-3, 0, 3])
+	ax_phase.set_yticks([-3, 0, 3])
+	ax_phase.set_title("Phase", fontsize=xyLabelFontSize)
+
+	# -- AMPLITUDE PLOT --
+	im_amp = ax_amp.imshow(np.abs(E).T,
+						   extent=extend,
+						   cmap=my_cmap)  # Replace 'magma' with your my_cmap if needed
+
+	if colorbars in ('amplitude', 'both'):
+		cbar_amp = fig.colorbar(im_amp, ax=ax_amp, fraction=0.046, pad=0.04)
+		cbar_amp.ax.tick_params(labelsize=ticksFontSize)
+		cbar_amp.set_ticks([0, 1])
+
+	ax_amp.set_xlabel('$x/w_0$', fontsize=xyLabelFontSize)
+	ax_amp.set_ylabel('$y/w_0$', fontsize=xyLabelFontSize)
+	ax_amp.tick_params(axis='both', labelsize=ticksFontSize)
+	ax_amp.set_xticks([-3, 0, 3])
+	ax_amp.set_yticks([-3, 0, 3])
+	ax_amp.set_title("Amplitude", fontsize=xyLabelFontSize)
+
+	plt.show()
+
+def plot_field_both_paper_separate_LG(E, extend=None, colorbars='phase', figsize=(17, 8),
+                                   xyLabelFontSize=fopts, ticksFontSize=tick_fopts):
+	"""
+	Plots:
+	  - Phase of E on the left panel
+	  - Amplitude of E on the right panel
+
+	colorbars can be:
+	  'none'       -> No colorbars
+	  'amplitude'  -> Only amplitude colorbar
+	  'phase'      -> Only phase colorbar
+	  'both'       -> Both colorbars
+	"""
+
+	# Create figure and axes
+	fig, (ax_phase, ax_amp) = plt.subplots(1, 2, figsize=figsize, constrained_layout=True)
+
+	# -- PHASE PLOT --
+	im_phase = ax_phase.imshow(np.angle(E).T,
+							   extent=extend,
+							   cmap='gray',
+							   vmin=-np.pi,
+							   vmax=np.pi)
+
+	if colorbars in ('phase', 'both'):
+		cbar_phase = fig.colorbar(im_phase, ax=ax_phase, fraction=0.046, pad=0.04)
+		cbar_phase.ax.tick_params(labelsize=ticksFontSize)
+		cbar_phase.set_ticks([-np.pi, 0, np.pi])
+		cbar_phase.set_ticklabels([r'$-\pi$', r'$0$', r'$\pi$'])
+	ax_phase.set_xlim(-2.8, 2.8)
+	ax_phase.set_ylim(-2.8, 2.8)
+	ax_phase.set_xlabel('$x/w_0$', fontsize=xyLabelFontSize)
+	ax_phase.set_ylabel('$y/w_0$', fontsize=xyLabelFontSize)
+	ax_phase.tick_params(axis='both', labelsize=ticksFontSize)
+	ax_phase.set_xticks([-2, 0, 2])
+	ax_phase.set_yticks([-2, 0, 2])
+	ax_phase.set_title("Phase", fontsize=xyLabelFontSize)
+
+	# -- AMPLITUDE PLOT --
+	im_amp = ax_amp.imshow(np.abs(E).T,
+						   extent=extend,
+						   cmap=my_cmap)  # Replace 'magma' with your my_cmap if needed
+
+	if colorbars in ('amplitude', 'both'):
+		cbar_amp = fig.colorbar(im_amp, ax=ax_amp, fraction=0.046, pad=0.04)
+		cbar_amp.ax.tick_params(labelsize=ticksFontSize)
+		cbar_amp.set_ticks([0, 1])
+	ax_amp.set_xlim(-2.8, 2.8)
+	ax_amp.set_ylim(-2.8, 2.8)
+	ax_amp.set_xlabel('$x/w_0$', fontsize=xyLabelFontSize)
+	ax_amp.set_ylabel('$y/w_0$', fontsize=xyLabelFontSize)
+	ax_amp.tick_params(axis='both', labelsize=ticksFontSize)
+	ax_amp.set_xticks([-2, 0, 2])
+	ax_amp.set_yticks([-2, 0, 2])
+	ax_amp.set_title("Amplitude", fontsize=xyLabelFontSize)
+
+	plt.show()
+
+
 
 def plot_field_both_paper_old_version(E, extend=None):
 	# Set Times New Roman as the font globally

@@ -8,10 +8,10 @@ foils_paths = [
 ]
 
 foils_paths = [
-	'data_foils_exp/foil4_2222_exp_noturb_field.npy',
+	'data_foils_exp/foil4_2222_exp_turb_field.npy',
 ]
 foils_paths = [
-	'data_foils_exp/foil4_2222_exp_turb_field.npy',
+	'data_foils_exp/foil4_2222_exp_noturb_field.npy',
 ]
 
 for path in foils_paths:
@@ -20,4 +20,4 @@ for path in foils_paths:
 	XY_max = 30e-3 * 185 / 300 * 1e3 / 6 * np.sqrt(2)
 	X = [-XY_max, XY_max]
 	Y = [-XY_max, XY_max]
-	plot_field_both_paper(foil4_field, extend=[*X, *Y])
+	plot_field_both_paper(foil4_field, extend=[*X, *Y], colorbars='both')

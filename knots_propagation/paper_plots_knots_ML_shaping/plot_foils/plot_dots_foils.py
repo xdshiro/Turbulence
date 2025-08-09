@@ -113,8 +113,9 @@ for path, indices in zip(foils_paths, indices_all):
 	print(len(foil4_dots_sorted))
 	# B&W
 	# plot_black_dots_paper(foil4_dots_sorted, dots_bound=dots_bound)
-	plotDots_foils_paper_by_indices(foil4_dots_sorted, indices, dots_bound=dots_bound)
-	plotDots_foils_paper_by_indices(foil4_dots_sorted, indices, dots_bound=dots_bound, general_view=True)
+	# plotDots_foils_paper_by_indices(foil4_dots_sorted, indices, dots_bound=dots_bound)
+	plotDots_foils_paper_by_indices(foil4_dots_sorted, indices, dots_bound=dots_bound, general_view=True,
+									font_size=128)
 # plotDots_foils_paper_by_phi(foil4
 # _dots, dots_bound, show=True, size=10)
 # print(foil4_dots)

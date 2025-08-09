@@ -17,9 +17,9 @@ tick_label_fontsize = 16 * 2       # 32
 legend_fontsize = 16 * 2           # 32
 
 # ========== DATA ==========
-accuracy = [43.3, 49, 51.4, 54.1, 54.3, 56.3, 58.9, 60.4, 61.7, 62.2]
+accuracy = [16.5, 43.3, 49, 51.4, 54.1, 54.3, 56.3, 58.9, 60.4, 61.7, 62.2]
 
-samples = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+samples = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 # ========== PLOT SETTINGS ==========
 fig, ax = plt.subplots(figsize=(10, 7))
@@ -38,7 +38,7 @@ ax.set_ylabel('Accuracy on Test Dataset (%)', fontsize=axis_label_fontsize)
 
 # Set the tick label sizes
 ax.tick_params(axis='both', labelsize=tick_label_fontsize)
-ax.set_xticks(range(1, 11))
+ax.set_xticks(range(0, 11))
 # Optionally add a legend with the specified font size.
 # ax.legend(fontsize=legend_fontsize)
 # ax.set_ylim(0, 65)
