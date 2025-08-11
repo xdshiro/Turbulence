@@ -359,16 +359,13 @@ class WaveguideModeSolver:
             dEy_dx = Dx_2D(Ey)
             dEx_dy = Dy_2D(Ex)
             dEz_dx = Dx_2D(Ez)
-            # dEz_dy = Dy_2D(Ey)
-            dEz_dy = Dy_2D(Ey)
+            dEz_dy = Dy_2D(Ez)
 
+            beta = beta_target
 
-            # Hx = (1.0 / (1j * omega * mu0)) * dEz_dy
-            # Hy = -(1.0 / (1j * omega * mu0)) * dEz_dx
-            # Hz = (1.0 / (1j * omega * mu0)) * (dEy_dx - dEx_dy)
-            Hx = (1.0 / (1j * omega * mu0)) * dEz_dy
-            Hy = -(1.0 / (1j * omega * mu0)) * dEz_dx
-            Hz = (1.0 / (1j * omega * mu0)) * (dEy_dx - dEx_dy)
+            Hx = (1.0 / (1j * omega * mu0)) * (1j * beta * Ey - dEz_dy)
+            Hy = -(1.0 / (1j * omega * mu0)) * (dEz_dx - 1j * beta * Ex)
+            Hz = (1.0 / (1j * omega * mu0)) * (dEx_dy - dEy_dx)
 
             self.H_fields.append((Hx, Hy, Hz))
 
@@ -485,7 +482,7 @@ class WaveguideModeSolver:
         import matplotlib.pyplot as plt
 
         fig, ax = plt.subplots(figsize=(10, 6))
-        num_modes = n_effs_sweep.shape[1]
+        num_modes = min(5, n_effs_sweep.shape[1])
         for m in range(num_modes):
             valid = ~np.isnan(n_effs_sweep[:, m])
             ax.plot(

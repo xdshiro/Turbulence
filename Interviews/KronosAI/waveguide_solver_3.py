@@ -13,16 +13,16 @@ params = {
     'domain': {
         'width': 3e-6,
         'height': 2e-6,
-        'dx': 20e-9,
-        'dy': 20e-9,
+        'dx': 40e-9,
+        'dy': 40e-9,
     },
     'wavelength': {
-        'sweep_min': 1300e-9,
-        'sweep_max': 1600e-9,
-        'sweep_points': 5,
+        'sweep_min': 1310e-9,
+        'sweep_max': 1550e-9,
+        'sweep_points': 10,
     },
         'sweep': {
-        'n_modes': 15,
+        'n_modes': 5,
     },
     'solver': {
         'target_delta': 1.0,
@@ -57,55 +57,66 @@ def build_derivative_operators(nx, ny, dx, dy):
 
 
 def wavelength_sweep(core_width, core_height, n_core, n_clad, wavelengths, n_modes=2, params=None):
-    width  = params['domain']['width']
-    height = params['domain']['height']
-    dx     = params['domain']['dx']
-    dy     = params['domain']['dy']
-
-
     n_effs = np.full((len(wavelengths), n_modes), np.nan)
 
-    solver = WaveguideModeSolver(width, height, dx, dy, wavelengths[0], n_modes=n_modes, params=params)
-    solver.add_rectangle(-core_width/2, core_width/2, -core_height/2, core_height/2,
-                             n_core, n_clad)
+    solver = WaveguideModeSolver(params, wavelength=wavelengths[0], n_modes=n_modes)
+    solver.add_rectangle(-core_width/2, core_width/2, -core_height/2, core_height/2, n_core, n_clad)
 
     for i, wl in enumerate(wavelengths):
         print(f"Solving for wavelength {wl*1e9:.1f} nm")
-
         solver.update_wavelength(wl)
         neffs = solver.solve()
-
-        print(f"Found {len(neffs)} modes with n_eff values {[f'{n.real:.6f}' for n in neffs]}")  # now returns 1D array
+        print(f"Found {len(neffs)} modes with n_eff values {[f'{n.real:.6f}' for n in neffs]}")
         for j in range(min(len(neffs), n_modes)):
             n_effs[i, j] = np.real(neffs[j])
 
     return wavelengths, n_effs
 
 class WaveguideModeSolver:
-    def __init__(self, width, height, dx, dy, wavelength, n_modes, params):
-        self.width = width
-        self.height = height
-        self.dx = dx
-        self.dy = dy
-        self.wavelength = wavelength
-        self.n_modes = n_modes
+    def __init__(self, params, wavelength=None, n_modes=None):
+        # keep the dict
         self.params = params
+
+        # unpack once
+        wg  = params['waveguide']
+        dom = params['domain']
+        wl  = params['wavelength']
+        sp  = params['sweep']
+
+        # grid / material
+        self.width  = dom['width']
+        self.height = dom['height']
+        self.dx     = dom['dx']
+        self.dy     = dom['dy']
+
+        # how many modes to solve
+        self.n_modes = n_modes if n_modes is not None else sp['n_modes']
+
+        # choose a wavelength (prefer explicit arg, else 'center' if present, else sweep_min)
+        if wavelength is None:
+            wavelength = wl.get('center', wl['sweep_min'])
+        self.wavelength = wavelength
+
+        # constants
         self.epsilon0 = 8.8541878128e-12
-        self.c = 299792458.0
-        self.mu0 = 4e-7 * np.pi
+        self.c        = 299792458.0
+        self.mu0      = 4e-7 * np.pi
 
-        self.nx = int(width/self.dx)
-        self.ny = int(height/self.dy)
+        # grid sizes
+        self.nx = int(self.width  / self.dx)
+        self.ny = int(self.height / self.dy)
 
+        # operators, k0
         self.Dx, self.Dy = build_derivative_operators(self.nx, self.ny, self.dx, self.dy)
-        self.update_wavelength(wavelength)
+        self.update_wavelength(self.wavelength)
 
+        # background εr and coords
         self.epsilon_r = np.ones((self.ny, self.nx))
-
-        self.x = np.linspace(-self.width/2, self.width/2, self.nx)
+        self.x = np.linspace(-self.width/2,  self.width/2,  self.nx)
         self.y = np.linspace(-self.height/2, self.height/2, self.ny)
         self.xx, self.yy = np.meshgrid(self.x, self.y)
 
+        # geometry store
         self.waveguide_regions = []
 
     def update_wavelength(self, wavelength):
@@ -284,7 +295,7 @@ class WaveguideModeSolver:
 
         for idx, n_eff in enumerate(n_effs[1:self.n_modes], 1):
             if idx not in valid_indices:
-                if n_clad * 0.7 < np.real(n_eff) < n_clad * 1.3 and np.abs(np.imag(n_eff)) < 0.1:
+                if n_clad * 0.6 < np.real(n_eff) < n_clad * 1.4 and np.abs(np.imag(n_eff)) < 0.1:
                     valid_indices.append(idx)
 
         # filtering for other modes
@@ -359,16 +370,14 @@ class WaveguideModeSolver:
             dEy_dx = Dx_2D(Ey)
             dEx_dy = Dy_2D(Ex)
             dEz_dx = Dx_2D(Ez)
-            # dEz_dy = Dy_2D(Ey)
-            dEz_dy = Dy_2D(Ey)
+            dEz_dy = Dy_2D(Ez)
 
+            # beta = beta_target
+            beta = np.sqrt(eigvals[mode_idx] + 0j)
 
-            # Hx = (1.0 / (1j * omega * mu0)) * dEz_dy
-            # Hy = -(1.0 / (1j * omega * mu0)) * dEz_dx
-            # Hz = (1.0 / (1j * omega * mu0)) * (dEy_dx - dEx_dy)
-            Hx = (1.0 / (1j * omega * mu0)) * dEz_dy
-            Hy = -(1.0 / (1j * omega * mu0)) * dEz_dx
-            Hz = (1.0 / (1j * omega * mu0)) * (dEy_dx - dEx_dy)
+            Hx = (1.0 / (1j * omega * mu0)) * (1j * beta * Ey - dEz_dy)
+            Hy = -(1.0 / (1j * omega * mu0)) * (dEz_dx - 1j * beta * Ex)
+            Hz = (1.0 / (1j * omega * mu0)) * (dEx_dy - dEy_dx)
 
             self.H_fields.append((Hx, Hy, Hz))
 
@@ -381,38 +390,32 @@ class WaveguideModeSolver:
 
     def plot_vectorial_mode(self, mode_idx):
         """
-        Plot fields for mode `mode_idx`, tagging it TE0/TM0/… from self.mode_labels.
+        Plot fields for mode with global index `mode_idx`, tagging it TE0/TM0/etc.
         """
-        # --- figure out the label and n_eff for this mode ---
-        label = self.mode_labels.get(mode_idx, "")
-        # find its index within the order you plotted them (so you can get the correct n_eff)
-        # assume guided_indices was saved on the solver
         try:
             plot_i = list(self.guided_indices).index(mode_idx)
-            n_eff_val = self.n_eff[plot_i].real
-            title_suffix = f"{label}, n_eff={n_eff_val:.4f}"
         except (AttributeError, ValueError):
-            title_suffix = label
+            print("Mode index not in guided_indices; skip.")
+            return
 
-        # Unpack fields
-        Ex, Ey, Ez = self.E_fields[mode_idx]
-        Hx, Hy, Hz = self.H_fields[mode_idx]
-        W = self.energy_density[mode_idx]
+        label = self.mode_labels.get(mode_idx, "")
+        n_eff_val = self.n_eff[plot_i].real
+        title_suffix = f"{label}, n_eff={n_eff_val:.4f}"
 
-        # axis scaling in µm
+        # Unpack fields for this guided mode position
+        Ex, Ey, Ez = self.E_fields[plot_i]
+        Hx, Hy, Hz = self.H_fields[plot_i]
+        W = self.energy_density[plot_i]
+
         X = self.x * 1e6
         Y = self.y * 1e6
         extent = [X[0], X[-1], Y[0], Y[-1]]
 
         from mpl_toolkits.axes_grid1 import make_axes_locatable
-
-        # Figure 1: real(E) and |E|, |H|
         fig1, axs = plt.subplots(3, 3, figsize=(12, 8))
+
         for ax, comp, lbl in zip(
-                axs[0],
-                [np.real(Ex), np.real(Ey), np.real(Ez)],
-                ['Re(Ex)', 'Re(Ey)', 'Re(Ez)']
-        ):
+                axs[0], [np.real(Ex), np.real(Ey), np.real(Ez)], ['Re(Ex)', 'Re(Ey)', 'Re(Ez)']):
             im = ax.imshow(comp, extent=extent, origin='lower', cmap='RdBu')
             ax.set_title(f"{lbl} {title_suffix}")
             ax.set_xlabel('x (µm)')
@@ -423,10 +426,7 @@ class WaveguideModeSolver:
             plt.colorbar(im, cax=cax)
 
         for ax, comp, lbl in zip(
-                axs[1],
-                [np.abs(Ex), np.abs(Ey), np.abs(Ez)],
-                ['|Ex|', '|Ey|', '|Ez|']
-        ):
+                axs[1], [np.abs(Ex), np.abs(Ey), np.abs(Ez)], ['|Ex|', '|Ey|', '|Ez|']):
             im = ax.imshow(comp, extent=extent, origin='lower', cmap='inferno')
             ax.set_title(f"{lbl} {title_suffix}")
             ax.set_xlabel('x (µm)')
@@ -437,10 +437,7 @@ class WaveguideModeSolver:
             plt.colorbar(im, cax=cax)
 
         for ax, comp, lbl in zip(
-                axs[2],
-                [np.abs(Hx), np.abs(Hy), np.abs(Hz)],
-                ['|Hx|', '|Hy|', '|Hz|']
-        ):
+                axs[2], [np.abs(Hx), np.abs(Hy), np.abs(Hz)], ['|Hx|', '|Hy|', '|Hz|']):
             im = ax.imshow(comp, extent=extent, origin='lower', cmap='inferno')
             ax.set_title(f"{lbl} {title_suffix}")
             ax.set_xlabel('x (µm)')
@@ -452,7 +449,6 @@ class WaveguideModeSolver:
 
         plt.tight_layout()
 
-        # Figure 2: energy density
         fig2, ax2 = plt.subplots(1, 1, figsize=(6, 5))
         im2 = ax2.imshow(W, extent=extent, origin='lower', cmap='plasma')
         ax2.set_title(f"Energy density W {title_suffix}")
@@ -464,6 +460,13 @@ class WaveguideModeSolver:
         plt.colorbar(im2, cax=cax2)
         plt.tight_layout()
         plt.show()
+
+    def _label_to_modeidx(self, label):
+        """Return the global mode index for a given label (e.g., 'TE0'), or None."""
+        for midx, lab in self.mode_labels.items():
+            if lab == label:
+                return midx
+        return None
 
     def _add_waveguide_overlay(self, ax):
         for region in self.waveguide_regions:
@@ -477,24 +480,55 @@ class WaveguideModeSolver:
 
             ax.add_patch(rect)
 
-    @staticmethod
-    def plot_dispersion(wl_sweep, n_effs_sweep):
+    def plot_dispersion(self, wl_sweep, n_effs_sweep, labels=None):
         """
-        Plot effective index vs wavelength for each mode in the sweep.
+        Plot effective index vs wavelength for each mode in the sweep
+        using predefined colors/markers/linestyles for the first 5 modes.
         """
         import matplotlib.pyplot as plt
 
+        # Style table for modes 0..4
+        # This is used to make sure all the lines are nicely visible
+        # especially the ones with the same refractive index, e.g. modes of the same order
+        styles = [
+            dict(marker='o', linestyle='-', color='blue', linewidth=3, markersize=10, label='Mode 0 (TE0)'),
+            dict(marker='^', linestyle='--', color='cyan', linewidth=2, markersize=8, label='Mode 1 (TM0)'),
+            dict(marker='o', linestyle='-', color='red', linewidth=3, markersize=10, label='Mode 2 (TE1)'),
+            dict(marker='o', linestyle='-', color='green', linewidth=2, markersize=10, label='Mode 3 (TM1)'),
+            dict(marker='^', linestyle='--', color='orange', linewidth=2, markersize=8, label='Mode 4 (TE2)'),
+        ]
+
+        # Allow custom labels if provided
+        if labels is not None:
+            for i, lab in enumerate(labels):
+                if i < len(styles):
+                    styles[i]['label'] = lab
+
         fig, ax = plt.subplots(figsize=(10, 6))
         num_modes = n_effs_sweep.shape[1]
+
         for m in range(num_modes):
             valid = ~np.isnan(n_effs_sweep[:, m])
+            if not np.any(valid):
+                continue
+
+            if m < len(styles):
+                s = styles[m]
+            else:
+                # fallback style for >5 modes
+                s = dict(marker='o', linestyle='-', linewidth=2, markersize=6, label=f"Mode {m}")
+
             ax.plot(
                 wl_sweep[valid] * 1e9,
                 n_effs_sweep[valid, m].real,
-                marker='o',
-                linewidth=2,
-                label=f"Mode {m}"
+                marker=s.get('marker', 'o'),
+                linestyle=s.get('linestyle', '-'),
+                color=s.get('color', None),
+                linewidth=s.get('linewidth', 2),
+                markersize=s.get('markersize', 6),
+                label=s.get('label', f"Mode {m}")
             )
+
         ax.set_xlabel("Wavelength (nm)", fontsize=16)
         ax.set_ylabel("Effective index", fontsize=16)
         ax.grid(True)
@@ -502,16 +536,16 @@ class WaveguideModeSolver:
         fig.tight_layout()
         plt.show()
 
-    @classmethod
-    def full_analysis(cls, params,
+    def full_analysis(self,
                       plot_wavelengths=(1310e-9, 1550e-9),
                       num_plot_modes=5):
         """
         1) Run wavelength sweep and plot dispersion.
         2) At each wavelength in plot_wavelengths, solve, classify TE/TM,
-           and plot the first num_plot_modes modes.
+           and plot TE0, TM0, and the 5th guided mode (if present).
         """
-        # unpack params (same as in your main)
+        # use the instance's params
+        params = self.params
         wg = params['waveguide']
         dom = params['domain']
         wl_p = params['wavelength']
@@ -519,8 +553,6 @@ class WaveguideModeSolver:
 
         core_w, core_h = wg['core_width'], wg['core_height']
         n_core, n_clad = wg['n_Si'], wg['n_SiO2']
-        width, height = dom['width'], dom['height']
-        dx, dy = dom['dx'], dom['dy']
 
         wl_min = wl_p['sweep_min']
         wl_max = wl_p['sweep_max']
@@ -533,102 +565,43 @@ class WaveguideModeSolver:
             core_w, core_h, n_core, n_clad,
             wavelengths, n_modes=n_modes, params=params
         )
-        cls.plot_dispersion(wl_sweep, n_effs_sweep)
+        self.plot_dispersion(wl_sweep, n_effs_sweep)
 
         # 2) vectorial fields
         for wl in plot_wavelengths:
             print(f"\n--- Vectorial fields @ {wl * 1e9:.0f} nm ---")
-            solver = cls(width, height, dx, dy, wl,
-                         n_modes=max(n_modes, num_plot_modes),
-                         params=params)
-            # add your rectangle
-            solver.add_rectangle(
-                -core_w / 2, core_w / 2,
-                -core_h / 2, core_h / 2,
-                n_core, n_clad
-            )
-            neffs = solver.solve()
+
+            # spawn a fresh solver for this wavelength
+            solver = self.__class__(params, wavelength=wl,
+                                    n_modes=max(n_modes, num_plot_modes))
+
+            solver.add_rectangle(-core_w / 2, core_w / 2, -core_h / 2, core_h / 2, n_core, n_clad)
+            _ = solver.solve()
             solver.classify_TE_TM(solver.guided_indices)
 
-            for i in range(min(num_plot_modes, len(neffs))):
-                solver.plot_vectorial_mode(i)
+            # pick TE0, TM0 by label (if they exist)
+            want = []
+            m_te0 = solver._label_to_modeidx('TE0')
+            m_tm0 = solver._label_to_modeidx('TM0')
+            if m_te0 is not None: want.append(m_te0)
+            if m_tm0 is not None: want.append(m_tm0)
 
-# def main():
-#     waveguide_params = params['waveguide']
-#     domain_params = params['domain']
-#     wavelength_params = params['wavelength']
-#     sweep_params = params['sweep']
-#     # solver_params = params['solver']
-#
-#     core_width = waveguide_params['core_width']
-#     core_height = waveguide_params['core_height']
-#     n_Si = waveguide_params['n_Si']
-#     n_SiO2 = waveguide_params['n_SiO2']
-#
-#     width = domain_params['width']
-#     height = domain_params['height']
-#     dx = domain_params['dx']
-#     dy = domain_params['dy']
-#
-#     wl_min = wavelength_params['sweep_min']
-#     wl_max = wavelength_params['sweep_max']
-#     wl_points = wavelength_params['sweep_points']
-#
-#     n_modes = sweep_params['n_modes']
-#
-#
-#
-#     # Create and run the sweep
-#     wavelengths = np.linspace(wl_min, wl_max, wl_points)
-#     wl_sweep, n_effs_sweep = wavelength_sweep(core_width, core_height,
-#                                              n_Si, n_SiO2,
-#                                              wavelengths,
-#                                              n_modes=n_modes,
-#                                              params=params)
-#
-#     plt.figure(figsize=(10, 6))
-#
-#     mode0_valid = ~np.isnan(n_effs_sweep[:, 0])
-#     plt.plot(wl_sweep[mode0_valid] * 1e9, n_effs_sweep[mode0_valid, 0], 'o-', color='blue',
-#              linewidth=3, markersize=10, label='Mode 0 (TE0)')
-#
-#     mode1_valid = ~np.isnan(n_effs_sweep[:, 1])
-#     plt.plot(wl_sweep[mode1_valid] * 1e9, n_effs_sweep[mode1_valid, 1], '^--', color='cyan',
-#              linewidth=2, markersize=8, label='Mode 1 (TM0)')
-#
-#     mode2_valid = ~np.isnan(n_effs_sweep[:, 2])
-#     plt.plot(wl_sweep[mode2_valid] * 1e9, n_effs_sweep[mode2_valid, 2], 'x-', color='red',
-#              linewidth=3, markersize=10, label='Mode 2 (TE1)')
-#
-#     mode3_valid = ~np.isnan(n_effs_sweep[:, 3])
-#     plt.plot(wl_sweep[mode3_valid] * 1e9, n_effs_sweep[mode3_valid, 3], '^-', color='orange',
-#              linewidth=2, markersize=8, label='Mode 3 (TM1)')
-#
-#     mode4_valid = ~np.isnan(n_effs_sweep[:, 4])
-#     plt.plot(wl_sweep[mode4_valid] * 1e9, n_effs_sweep[mode4_valid, 4], 'o--', color='green',
-#              linewidth=2, markersize=8, label='Mode 4 (TE2)')
-#
-#     plt.xlabel('Wavelength (nm)', fontsize=16)
-#     plt.ylabel('Effective index', fontsize=16)
-#     plt.legend(fontsize=14, loc='best')
-#     plt.grid(True)
-#     plt.title('Guided modes effective index vs wavelength', fontsize=18)
-#     plt.tight_layout()
-#     plt.show()
-#
-#     # Plot the vectorial fields at specific wavelengths
-#     for wl in [1310e-9, 1550e-9]:
-#         solver_n_modes = max(5, n_modes)
-#         solver = WaveguideModeSolver(width, height, dx, dy, wl, n_modes=solver_n_modes, params=params)
-#         solver.add_rectangle(-core_width / 2, core_width / 2, -core_height / 2, core_height / 2,
-#                              n_Si, n_SiO2)
-#
-#         neffs = solver.solve()
-#         for i in range(min(5, len(neffs))):
-#             mode_type = "TE0" if i == 0 else "TM0" if i == 1 else "TE1" if i == 2 else "TM1"  if i==3 else "TE2"
-#             solver.plot_vectorial_mode(i, title_suffix=f'{mode_type}, n_eff={neffs[i].real:.2f} at {wl*1e9:.0f}nm')
+            # pick the 5th guided mode by position (0-based → index 4)
+            if hasattr(solver, 'guided_indices') and len(solver.guided_indices) >= 5:
+                want.append(solver.guided_indices[4])
 
+            # deduplicate while preserving order
+            seen, picked = set(), []
+            for m in want:
+                if m not in seen:
+                    picked.append(m)
+                    seen.add(m)
 
+            # plot only these
+            for m in picked:
+                solver.plot_vectorial_mode(m)
 
 if __name__ == '__main__':
-    WaveguideModeSolver.full_analysis(params)
+    if __name__ == '__main__':
+        driver = WaveguideModeSolver(params)  # uses sweep_min by default
+        driver.full_analysis(plot_wavelengths=(1310e-9, 1550e-9), num_plot_modes=5)
